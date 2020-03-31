@@ -12,10 +12,9 @@ const schema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['Admin', 'Coordinator']
+      enum: ['admin', 'coordinator']
     },
-    company: { type: ObjectId, ref: 'company' },
-    email: { type: String, unique: true }
+    company: { type: ObjectId, ref: 'company' }
   },
   {
     timestamps: true
