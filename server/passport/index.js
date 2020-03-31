@@ -1,5 +1,6 @@
 const passport = require('passport');
 const LocalUser = require('../models/LocalUser');
+const ClientUser = require('../models/ClientUser');
 
 // REQUIRE ALL STRATEGIES HERE!!!
 require('./strategies/local');
@@ -10,7 +11,15 @@ passport.serializeUser((user, cb) => {
 
 passport.deserializeUser((id, cb) => {
   LocalUser.findById(id)
-    .then(user => cb(null, user))
+    .then(user => {
+      if (user) {
+        cb(null, user);
+      } else {
+        ClientUser.findById(id)
+          .then(user => cb(null, user))
+          .catch(e => cb(err));
+      }
+    })
     .catch(e => cb(err));
 });
 

@@ -69,7 +69,7 @@ router.post(
         const errors = owasp.test(password).errors;
         if (errors.length == 0) {
           const newCompany = await Company.create({ name: companyName });
-          const newUser = await LocalUser.create({
+          let newUser = await LocalUser.create({
             username,
             password: hashPassword(password),
             name: {
@@ -104,7 +104,7 @@ router.post(
           first: firstName,
           last: lastName
         },
-        company: loggedAdmin.company._id,
+        company: loggedAdmin.company, // id of the company
         plan: plan // see plan options
       });
       if (parent) {
@@ -125,7 +125,7 @@ router.post(
   async (req, res, next) => {
     const loggedAdmin = req.user;
     const { username, type } = req.body;
-    const company = loggedAdmin.company._id;
+    const company = await Company.findById(loggedAdmin.company);
     const secret = process.env.JWTSECRET + username;
     if (loggedAdmin.type === 'admin') {
       const token = jwt.sign({ company, username, type }, secret, {
@@ -142,7 +142,7 @@ router.post(
 
       const mailOptions = {
         from: process.env.MAILER_EMAIL_ID,
-        to: email,
+        to: username,
         subject: 'Subby Link to register your company',
         text: `Hi! welcome to subby. ${loggedAdmin.company.name} has invited you to our platform. Use this Token to register: ${token}` //change this for HTML template
       };
@@ -186,7 +186,7 @@ router.post(
     if (!existingUser) {
       const errors = owasp.test(password).errors;
       if (errors.length == 0) {
-        if (decodedToken.type === admin) {
+        if (decodedToken.type === 'admin') {
           const newUser = await LocalUser.create({
             username,
             password: hashPassword(password),
@@ -195,9 +195,10 @@ router.post(
               last: lastName
             },
             type: 'admin',
-            company: newCompany._id
+            company: decodedToken.company
           });
-        } else if (decodedToken.type === coordinator) {
+          return res.json({ status: 'New Admin User Created' });
+        } else if (decodedToken.type === 'coordinator') {
           const newUser = await LocalUser.create({
             username,
             password: hashPassword(password),
@@ -206,9 +207,10 @@ router.post(
               last: lastName
             },
             type: 'coordinator',
-            company: newCompany._id
+            company: decodedToken.company
           });
-        } else if (decodedToken.type === user) {
+          return res.json({ status: 'New Coordinator User Created' });
+        } else if (decodedToken.type === 'user') {
           const newUser = await ClientUser.create({
             username,
             password: hashPassword(password),
@@ -217,9 +219,9 @@ router.post(
               last: lastName
             },
             phone,
-            company: decodedToken._id
+            company: decodedToken.company
           });
-          return res.json({ status: 'New User Created' });
+          return res.json({ status: 'New Client User Created' });
         }
       } else {
         return res.json({ status: 'invalid password', errors: errors });

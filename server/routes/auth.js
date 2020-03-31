@@ -44,7 +44,9 @@ router.post(
   passport.authenticate('local'),
   (req, res) => {
     // Return the logged in user
-    return res.json(_.pick(req.user, ['username', '_id']));
+    return res.json(
+      _.pick(req.user, ['username', '_id', 'company', 'name', 'type'])
+    );
   }
 );
 
