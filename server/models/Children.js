@@ -30,4 +30,4 @@ const schema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('clientUser', schema);
+module.exports = mongoose.model('children', schema);

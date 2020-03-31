@@ -75,6 +75,6 @@ router.get('/loggedin', (req, res, next) => {
 });
 
 const company = require('./company');
-router.use('/company', ensureLogin.ensureLoggedOut(), company);
+router.use('/company', company);
 
 module.exports = router;
