@@ -6,6 +6,7 @@ const ensureLogin = require('connect-ensure-login');
 const LocalUser = require('../models/LocalUser');
 const { hashPassword } = require('../lib/hashing');
 const { asyncController } = require('../lib/asyncController');
+const owasp = require('owasp-password-strength-test');
 
 // Register
 router.post(
@@ -14,6 +15,12 @@ router.post(
   async (req, res, next) => {
     const { username, password } = req.body;
     // Create the user, also check to wich company it belongs
+    const errors = owasp.test(password).errors;
+    if (errors.length == 0) {
+      return res.json({ status: 'correct password' });
+    } else {
+      return res.json({ status: 'invalid password', errors: errors });
+    }
   }
 );
 
