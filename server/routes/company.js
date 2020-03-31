@@ -58,8 +58,9 @@ router.post(
     jwt.verify(token, process.env.JWTSECRET, function(err, decoded) {
       if (err) {
         return res.status(401).json({ status: 'invalid token', errors: err });
+      } else {
+        decodedToken = decoded;
       }
-      decodedToken = decoded;
     });
     // if it get's here the token is valid
     const check = decodedToken.company === companyName;
@@ -178,8 +179,9 @@ router.post(
     jwt.verify(token, secret, function(err, decoded) {
       if (err) {
         return res.status(401).json({ status: 'invalid token', errors: err });
+      } else {
+        decodedToken = decoded;
       }
-      decodedToken = decoded;
     });
     // if it get's here the token is valid
     const existingUser = await ClientUser.findOne({ username });

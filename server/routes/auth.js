@@ -86,10 +86,11 @@ router.post(
             return res
               .status(401)
               .json({ status: 'invalid token', errors: err });
+          } else {
+            decodedToken = decoded;
           }
-          decodedToken = decoded;
         });
-        if (user.username === username) {
+        if (user.username === username && decodedToken) {
           const errors = owasp.test(password).errors;
           if (errors.length == 0) {
             user.password = hashPassword(password);
