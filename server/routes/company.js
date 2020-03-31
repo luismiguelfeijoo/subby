@@ -15,7 +15,7 @@ const owasp = require('owasp-password-strength-test');
 
 router.post('/', async (req, res, next) => {
   const { company, email } = req.body;
-  console.log(email);
+
   const token = jwt.sign({ company, email }, process.env.JWTSECRET, {
     expiresIn: 3600
   });
@@ -38,8 +38,9 @@ router.post('/', async (req, res, next) => {
   transporter.sendMail(mailOptions, function(error, info) {
     if (error) {
       console.log(error);
+      return res.status(500).json({ status: 'mail not sent', errors: error });
     } else {
-      console.log('Email sent: ' + info.response);
+      return res.json({ status: 'email sent', info: info });
     }
   });
 });
@@ -81,6 +82,8 @@ router.post(
         } else {
           return res.json({ status: 'invalid password', errors: errors });
         }
+      } else {
+        res.status(401).json({ status: 'Not able to create company' });
       }
     }
   }
