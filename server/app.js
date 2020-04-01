@@ -65,7 +65,7 @@ require('./passport')(app);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // default value for title local
-app.locals.title = 'Profile App';
+app.locals.title = 'Subby API';
 
 // Routes middleware goes here
 const index = require('./routes/index');
