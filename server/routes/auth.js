@@ -80,16 +80,7 @@ router.post(
       const user = localUser ? localUser : clientUser;
       if (user) {
         const secret = user.password + user.createdAt;
-        let decodedToken;
-        jwt.verify(token, secret, function(err, decoded) {
-          if (err) {
-            return res
-              .status(401)
-              .json({ status: 'invalid token', errors: err });
-          } else {
-            decodedToken = decoded;
-          }
-        });
+        const decodedToken = jwt.verify(token, secret);
         if (user.username === username && decodedToken) {
           const errors = owasp.test(password).errors;
           if (errors.length == 0) {
@@ -106,7 +97,7 @@ router.post(
         return res.status(401).json({ status: 'User not found' });
       }
     } catch (error) {
-      next(error);
+      return res.status(401).json({ error: error });
     }
   }
 );
