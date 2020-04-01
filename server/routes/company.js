@@ -36,7 +36,7 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
       from: process.env.MAILER_EMAIL_ID,
       to: email,
       subject: 'Subby Link to register your company',
-      text: `Hi! welcome to subby, use this Token to set up your account: ${token}` //change this for HTML template
+      text: `Hi! welcome to subby, click on this link to set up your account: http://localhost:3000/new-company/${token}` //change this for HTML template
     };
 
     transporter.sendMail(mailOptions, function(error, info) {
@@ -58,17 +58,17 @@ router.post(
   ensureLogin.ensureLoggedOut(),
   async (req, res, next) => {
     const { token } = req.params;
-    const { username, password, firstName, lastName, companyName } = req.body;
+    const { username, password, firstName, lastName } = req.body;
     // Create the user, also check to wich company it belongs
     try {
       const decodedToken = jwt.verify(token, process.env.JWTSECRET);
-      const check = decodedToken.company === companyName;
+      const check = decodedToken.company;
       if (check) {
-        const existingCompany = await Company.findOne({ name: companyName });
+        const existingCompany = await Company.findOne({ name: check });
         if (!existingCompany) {
           const errors = owasp.test(password).errors;
           if (errors.length == 0) {
-            const newCompany = await Company.create({ name: companyName });
+            const newCompany = await Company.create({ name: check });
             let newUser = await LocalUser.create({
               username,
               password: hashPassword(password),

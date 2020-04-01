@@ -10,10 +10,23 @@ const api = axios.create({
 
 //Review every api
 
-export const doCompanyRegister = async ({ company, email }) => {
+export const askCompanyToken = async ({ company, email }) => {
   const res = await api.post('/auth/company', {
     email,
     company
+  });
+  return res.data;
+};
+
+export const doCompanyRegister = async (
+  { username, firstName, lastName, password },
+  token
+) => {
+  const res = await api.post(`/auth/company/signup/${token}`, {
+    username,
+    firstName,
+    lastName,
+    password
   });
   return res.data;
 };
