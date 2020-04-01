@@ -10,6 +10,14 @@ const api = axios.create({
 
 //Review every api
 
+export const doCompanyRegister = async ({ company, email }) => {
+  const res = await api.post('/auth/company', {
+    email,
+    company
+  });
+  return res.data;
+};
+
 export const doSignup = async ({ username, password, course, campus }) => {
   const res = await api.post('/auth/signup', {
     username,

@@ -1,9 +1,10 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { InputBase, Error, SelectBase } from './utils/styles.js';
+import { Form, Input } from 'antd';
 
-export const Input = React.forwardRef(
-  ({ placeholder, name, type, defaultValue = '' }, ref) => {
+export const CustomInput = React.forwardRef(
+  ({ placeholder, name, type, defaultValue = '', label }, ref) => {
     const { errors } = useFormContext();
     const errorHandler = () => {
       if (errors[name]?.message) {
@@ -13,19 +14,24 @@ export const Input = React.forwardRef(
       }
     };
     return (
-      <>
-        {errorHandler() && <Error>{errors[name].message}</Error>}
-        <InputBase
+      <Form.Item
+        label={name}
+        name={name}
+        rules={[
+          {
+            required: true,
+            errors: errors[name]?.message ? errors[name].message : placeholder
+          }
+        ]}
+      >
+        <Input
           type={type}
           name={name}
-          placeholder={
-            errors[name]?.message ? errors[name].message : placeholder
-          }
+          placeholder={name}
           ref={ref}
           errors={errors}
-          defaultValue={defaultValue}
         />
-      </>
+      </Form.Item>
     );
   }
 );
