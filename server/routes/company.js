@@ -77,9 +77,15 @@ router.post(
               first: firstName,
               last: lastName
             },
-            type: 'admin',
-            company: newCompany._id
+            type: 'admin'
+            //company: newCompany._id
           });
+          await newUser
+            .populate({
+              path: 'company',
+              match: { name: companyName }
+            })
+            .execPopulate();
           return res.json({ status: 'Company & admin user created' });
         } else {
           return res.json({ status: 'invalid password', errors: errors });
@@ -208,15 +214,9 @@ router.post(
               first: firstName,
               last: lastName
             },
-            type: 'coordinator'
-            //company: decodedToken.company
+            type: 'coordinator',
+            company: decodedToken.company
           });
-          await newUser
-            .populate({
-              path: 'company',
-              match: { name: companyName }
-            })
-            .execPopulate();
           return res.json({ status: 'New Coordinator User Created' });
         } else if (decodedToken.type === 'user') {
           const newUser = await ClientUser.create({
