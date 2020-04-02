@@ -5,6 +5,8 @@ import { HomePage } from '../../pages/Home.page';
 import { NewCompanyPage } from '../../pages/NewCompany.page';
 import { CompanyRegisterPage } from '../../pages/CompanyRegister.page';
 import { LoginPage } from '../../pages/Login.page';
+import { ResetPasswordReq } from '../../pages/ResetPasswordReq.page';
+import { ResetPasswordForm } from '../../pages/ResetPasswordForm.page';
 
 export const App = withUser(() => {
   return (
@@ -17,6 +19,11 @@ export const App = withUser(() => {
           component={props => <CompanyRegisterPage {...props} />}
         />
         <Route path='/login' component={LoginPage} />
+        <Route path='/reset-password' exact component={ResetPasswordReq} />
+        <Route
+          path='/reset-password/:id/:token'
+          component={props => <ResetPasswordForm {...props} />}
+        />
       </Switch>
     </Router>
   );

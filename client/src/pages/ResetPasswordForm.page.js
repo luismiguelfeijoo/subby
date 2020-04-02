@@ -1,6 +1,10 @@
 import React, { useContext, useRef, useEffect } from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import { UserContext, doCompanySignup } from '../../lib/auth.api';
+import {
+  UserContext,
+  doCompanySignup,
+  doPasswordReset
+} from '../../lib/auth.api';
 import { useForm, FormContext } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { Input } from '../components/Input';
@@ -8,28 +12,27 @@ import { Button, Form } from './utils/styles';
 import jwt from 'jsonwebtoken';
 import { LayoutTemplate } from '../components/Layout';
 
-export const CompanyRegisterPage = withProtected(
+export const ResetPasswordForm = withProtected(
   withRouter(({ history, match }) => {
     const { setLoading } = useContext(UserContext);
 
+    /* Use this to only paint this view if the token is correct
     useEffect(() => {
       setLoading(true);
       try {
         let decode = jwt.verify(match.params.token, process.env.JWTSECRET);
       } catch (error) {
-        history.push('/');
+        history.push('/login');
       } finally {
         setLoading(false);
       }
     }, []);
+    */
 
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
-        username: '',
-        password: '',
-        firstName: '',
-        lastName: ''
+        password: ''
       }
     });
 
@@ -41,7 +44,11 @@ export const CompanyRegisterPage = withProtected(
       //console.log(data);
       setLoading(true);
       try {
-        const response = await doCompanySignup(data, match.params.token);
+        const response = await doPasswordReset(
+          data,
+          match.params.token,
+          match.params.id
+        );
         history.push('/login');
       } catch (error) {
         // Add modal to show error
@@ -54,18 +61,6 @@ export const CompanyRegisterPage = withProtected(
       <LayoutTemplate>
         <FormContext {...methods}>
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <Input
-              name='username'
-              placeholder='Tell us your email'
-              ref={register({
-                required: 'Required *',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: 'invalid email address'
-                }
-              })}
-              type='text'
-            />
             <Input
               name='password'
               type='password'
@@ -91,21 +86,8 @@ export const CompanyRegisterPage = withProtected(
             />
 
             {errors.password_repeat && <p>{errors.password_repeat.message}</p>}
-            <Input
-              name='firstName'
-              placeholder='First Name'
-              ref={register({
-                required: 'Required *'
-              })}
-            />
-            <Input
-              name='lastName'
-              placeholder='Last Name'
-              ref={register({
-                required: 'Required *'
-              })}
-            />
-            <Button type='submit'>Send Info</Button>
+
+            <Button type='submit'>Update Password</Button>
           </Form>
         </FormContext>
       </LayoutTemplate>
