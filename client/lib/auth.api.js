@@ -18,7 +18,7 @@ export const askCompanyToken = async ({ company, email }) => {
   return res.data;
 };
 
-export const doCompanyRegister = async (
+export const doCompanySignup = async (
   { username, firstName, lastName, password },
   token
 ) => {

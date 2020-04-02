@@ -36,7 +36,7 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
       from: process.env.MAILER_EMAIL_ID,
       to: email,
       subject: 'Subby Link to register your company',
-      text: `Hi! welcome to subby, click on this link to set up your account: http://localhost:3000/new-company/${token}` //change this for HTML template
+      text: `Hi! welcome to subby, click on this link to set up your account: http://localhost:1234/new-company/${token}` //change this for HTML template
     };
 
     transporter.sendMail(mailOptions, function(error, info) {

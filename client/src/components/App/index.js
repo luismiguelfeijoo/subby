@@ -4,6 +4,7 @@ import { withUser } from '../../../lib/withUser';
 import { HomePage } from '../../pages/Home.page';
 import { NewCompanyPage } from '../../pages/NewCompany.page';
 import { CompanyRegisterPage } from '../../pages/CompanyRegister.page';
+import { LoginPage } from '../../pages/Login.page';
 
 export const App = withUser(() => {
   return (
@@ -15,6 +16,7 @@ export const App = withUser(() => {
           path='/new-company/:token'
           component={props => <CompanyRegisterPage {...props} />}
         />
+        <Route path='/login' component={LoginPage} />
       </Switch>
     </Router>
   );

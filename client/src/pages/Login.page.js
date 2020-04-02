@@ -1,35 +1,21 @@
 import React, { useContext, useRef, useEffect } from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import { UserContext, doCompanySignup } from '../../lib/auth.api';
+import { UserContext, doLogin } from '../../lib/auth.api';
 import { useForm, FormContext } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { Input } from '../components/Input';
 import { Button, Form } from './utils/styles';
-import jwt from 'jsonwebtoken';
 import { LayoutTemplate } from '../components/Layout';
 
-export const CompanyRegisterPage = withProtected(
+export const LoginPage = withProtected(
   withRouter(({ history, match }) => {
-    const { setLoading } = useContext(UserContext);
-
-    useEffect(() => {
-      setLoading(true);
-      try {
-        let decode = jwt.verify(match.params.token, process.env.JWTSECRET);
-      } catch (error) {
-        history.push('/');
-      } finally {
-        setLoading(false);
-      }
-    }, []);
+    const { setUser, setLoading } = useContext(UserContext);
 
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
         username: '',
-        password: '',
-        firstName: '',
-        lastName: ''
+        password: ''
       }
     });
 
@@ -38,26 +24,26 @@ export const CompanyRegisterPage = withProtected(
     password.current = watch('password', '');
 
     const onSubmit = async data => {
-      //console.log(data);
       setLoading(true);
       try {
-        const response = await doCompanySignup(data, match.params.token);
-        history.push('/login');
+        const newUser = await doLogin(data);
+        setUser(newUser);
+        history.push('/profile');
       } catch (error) {
-        // Add modal to show error
+        // do modal
         console.log(error);
       } finally {
         setLoading(false);
       }
     };
-    console.log(errors);
+
     return (
       <LayoutTemplate>
         <FormContext {...methods}>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Input
               name='username'
-              placeholder='Tell us your email'
+              placeholder='Email'
               ref={register({
                 required: 'Required *',
                 pattern: {
@@ -67,6 +53,7 @@ export const CompanyRegisterPage = withProtected(
               })}
               type='text'
             />
+
             <Input
               name='password'
               type='password'
@@ -92,20 +79,7 @@ export const CompanyRegisterPage = withProtected(
             />
 
             {errors.password_repeat && <p>{errors.password_repeat.message}</p>}
-            <Input
-              name='firstName'
-              placeholder='First Name'
-              ref={register({
-                required: 'Required *'
-              })}
-            />
-            <Input
-              name='lastName'
-              placeholder='Last Name'
-              ref={register({
-                required: 'Required *'
-              })}
-            />
+
             <Button type='submit'>Send Info</Button>
           </Form>
         </FormContext>
