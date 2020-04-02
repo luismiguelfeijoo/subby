@@ -6,6 +6,7 @@ import { withProtected } from '../../lib/protectedRoute';
 import { Input } from '../components/Input';
 import { Button, Form } from './utils/styles';
 import jwt from 'jsonwebtoken';
+import { LayoutTemplate } from '../components/Layout';
 
 export const CompanyRegisterPage = withProtected(
   withRouter(({ history, match }) => {
@@ -50,62 +51,64 @@ export const CompanyRegisterPage = withProtected(
     };
     console.log(errors);
     return (
-      <FormContext {...methods}>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            name='email'
-            placeholder='Tell us your email'
-            ref={register({
-              required: 'Required *',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                message: 'invalid email address'
-              }
-            })}
-            type='text'
-          />
-          <Input
-            name='password'
-            type='password'
-            placeholder='Password'
-            ref={register({
-              required: 'You must specify a password',
-              minLength: {
-                value: 10,
-                message: 'Password must have at least 10 characters'
-              }
-            })}
-          />
-          {errors.password && <p>{errors.password.message}</p>}
+      <LayoutTemplate>
+        <FormContext {...methods}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Input
+              name='email'
+              placeholder='Tell us your email'
+              ref={register({
+                required: 'Required *',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                  message: 'invalid email address'
+                }
+              })}
+              type='text'
+            />
+            <Input
+              name='password'
+              type='password'
+              placeholder='Password'
+              ref={register({
+                required: 'You must specify a password',
+                minLength: {
+                  value: 10,
+                  message: 'Password must have at least 10 characters'
+                }
+              })}
+            />
+            {errors.password && <p>{errors.password.message}</p>}
 
-          <Input
-            name='password_repeat'
-            type='password'
-            placeholder='Repeat Password'
-            ref={register({
-              validate: value =>
-                value === password.current || 'The passwords do not match'
-            })}
-          />
+            <Input
+              name='password_repeat'
+              type='password'
+              placeholder='Repeat Password'
+              ref={register({
+                validate: value =>
+                  value === password.current || 'The passwords do not match'
+              })}
+            />
 
-          {errors.password_repeat && <p>{errors.password_repeat.message}</p>}
-          <Input
-            name='firstName'
-            placeholder='First Name'
-            ref={register({
-              required: 'Required *'
-            })}
-          />
-          <Input
-            name='lastName'
-            placeholder='Last Name'
-            ref={register({
-              required: 'Required *'
-            })}
-          />
-          <Button type='submit'>Send Info</Button>
-        </Form>
-      </FormContext>
+            {errors.password_repeat && <p>{errors.password_repeat.message}</p>}
+            <Input
+              name='firstName'
+              placeholder='First Name'
+              ref={register({
+                required: 'Required *'
+              })}
+            />
+            <Input
+              name='lastName'
+              placeholder='Last Name'
+              ref={register({
+                required: 'Required *'
+              })}
+            />
+            <Button type='submit'>Send Info</Button>
+          </Form>
+        </FormContext>
+      </LayoutTemplate>
     );
   }),
   {

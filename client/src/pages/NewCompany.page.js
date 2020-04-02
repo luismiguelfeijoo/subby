@@ -3,6 +3,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { UserContext, askCompanyToken } from '../../lib/auth.api';
 import { useForm, FormContext } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
+import { LayoutTemplate } from '../components/Layout';
 import { Input } from '../components/Input';
 import { Button, Form } from './utils/styles';
 
@@ -34,31 +35,33 @@ export const NewCompanyPage = withProtected(
     };
 
     return (
-      <FormContext {...methods}>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            name='company'
-            placeholder='Tell us the name of your company'
-            ref={register({
-              required: 'Required *'
-            })}
-          />
-          <Input
-            name='email'
-            placeholder='Tell us your email'
-            ref={register({
-              required: 'Required *',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                message: 'invalid email address'
-              }
-            })}
-            type='text'
-          />
+      <LayoutTemplate>
+        <FormContext {...methods}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Input
+              name='company'
+              placeholder='Tell us the name of your company'
+              ref={register({
+                required: 'Required *'
+              })}
+            />
+            <Input
+              name='email'
+              placeholder='Tell us your email'
+              ref={register({
+                required: 'Required *',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                  message: 'invalid email address'
+                }
+              })}
+              type='text'
+            />
 
-          <Button type='submit'>Send Info</Button>
-        </Form>
-      </FormContext>
+            <Button type='submit'>Send Info</Button>
+          </Form>
+        </FormContext>
+      </LayoutTemplate>
     );
   }),
   {
