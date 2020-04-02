@@ -5,7 +5,7 @@ const { ObjectId } = mongoose.Schema.Types;
 const schema = new mongoose.Schema(
   {
     username: { type: String, unique: true, required: true }, //email
-    password: String,
+    password: { type: String, required: true },
     name: {
       first: { type: String },
       last: { type: String }
