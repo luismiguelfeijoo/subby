@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const passport = require('passport');
 const _ = require('lodash');
 const ensureLogin = require('connect-ensure-login');
 const LocalUser = require('../models/LocalUser');
@@ -10,7 +9,6 @@ const ClientUser = require('../models/ClientUser');
 const Company = require('../models/Company');
 const Children = require('../models/Children');
 const { hashPassword } = require('../lib/hashing');
-const { asyncController } = require('../lib/asyncController');
 const owasp = require('owasp-password-strength-test');
 
 // Generate register Token for new companies, ask for company and email
@@ -18,7 +16,7 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
   const { company, email } = req.body;
 
   const existingCompany = await Company.findOne({ name: company });
-  console.log(existingCompany);
+
   if (!existingCompany) {
     const token = jwt.sign({ company, email }, process.env.JWTSECRET, {
       expiresIn: 3600
