@@ -6,7 +6,7 @@ import { UserContext, getUserLogged } from './auth.api.js';
 export const withUser = Content => () => {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(false);
-
+  const [type, setType] = useState();
   useEffect(() => {
     setLoading(true);
     console.log('loading user...');

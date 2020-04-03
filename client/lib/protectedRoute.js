@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useUser, useUserIsLoading, UserContext } from './auth.api';
+import { UserContext } from './auth.api';
 //https://reacttraining.com/react-router/web/guides/quick-start
 import { Redirect } from 'react-router-dom';
 import { Loading } from './loading';
