@@ -51,7 +51,6 @@ export const LoginPage = withProtected(
                   message: 'invalid email address'
                 }
               })}
-              type='text'
             />
 
             <Input

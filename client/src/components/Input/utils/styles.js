@@ -40,9 +40,6 @@ export const SelectBase = styled.select`
   :focus {
     outline: none;
   }
-  ::-webkit-input-placeholder {
-    color: #${props => (props.errors[props.name]?.message ? 'EE6055' : 'f7fff7')};
-  }
 `;
 
 export const Error = styled.div`

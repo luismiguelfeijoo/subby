@@ -38,6 +38,24 @@ export const askUserToken = async ({ username, type }) => {
   return res.data;
 };
 
+export const createSubscription = async ({
+  username,
+  date,
+  planName,
+  price,
+  firstName,
+  lastName
+}) => {
+  const res = await api.post('/auth/company/new-subscription', {
+    username,
+    date: new Date(date),
+    planName,
+    firstName,
+    lastName
+  });
+  return res.data;
+};
+
 export const askPasswordToken = async ({ username }) => {
   const res = await api.post('/auth/reset-password', {
     username

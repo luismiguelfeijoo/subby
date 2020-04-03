@@ -95,12 +95,13 @@ router.post(
 
 // Create new children
 router.post(
-  '/new-children',
+  '/new-subscription',
   ensureLogin.ensureLoggedIn(),
   async (req, res, next) => {
     const loggedAdmin = req.user;
-    const { username, plan, firstName, lastName } = req.body;
-    parent = await ClientUser.findOne({ username });
+    const { username, date, planName, firstName, lastName } = req.body;
+    const plan = _.find(loggedAdmin.plans, { name: planName });
+    const parent = await ClientUser.findOne({ username });
     if (loggedAdmin.type === admin) {
       const newChildren = await Children.create({
         name: {
@@ -108,7 +109,7 @@ router.post(
           last: lastName
         },
         company: loggedAdmin.company, // id of the company
-        plan: plan // see plan options
+        plan: [{ name: planName, price: plan.price, date }] // see plan options
       });
       if (parent) {
         newChildren.parents.push(parent._id);
@@ -129,7 +130,7 @@ router.post(
     const loggedAdmin = req.user;
     const { username, type } = req.body;
     const company = await Company.findById(loggedAdmin.company);
-    const secret = process.env.JWTSECRET + username;
+    const secret = process.env.JWTSECRET;
 
     if (loggedAdmin.type === 'admin') {
       const existingUser =
@@ -184,12 +185,15 @@ router.post(
   ensureLogin.ensureLoggedOut(),
   async (req, res, next) => {
     const { token } = req.params;
-    const { username, password, firstName, lastName, phone } = req.body;
-    const secret = process.env.JWTSECRET + username;
+    const { password, firstName, lastName, phone } = req.body;
+    const secret = process.env.JWTSECRET;
     // Create the user, also check to wich company it belongs
     try {
       const decodedToken = jwt.verify(token, secret);
-      const existingUser = await ClientUser.findOne({ username });
+      const existingUser =
+        decodedToken.type === 'client'
+          ? await ClientUser.findOne({ username: decodedToken.username })
+          : await LocalUser.findOne({ username: decodedToken.username });
       if (!existingUser) {
         const errors = owasp.test(password).errors;
         if (errors.length == 0) {
@@ -217,7 +221,7 @@ router.post(
               company: decodedToken.company
             });
             return res.json({ status: 'New Coordinator User Created' });
-          } else if (decodedToken.type === 'user') {
+          } else if (decodedToken.type === 'client') {
             const newUser = await ClientUser.create({
               username,
               password: hashPassword(password),
