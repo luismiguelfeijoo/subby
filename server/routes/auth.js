@@ -125,7 +125,10 @@ router.post('/logout', ensureLogin.ensureLoggedIn(), (req, res, next) => {
 
 // Check if the user is logged in
 router.get('/loggedin', (req, res, next) => {
-  if (req.user) return res.json(_.pick(req.user, ['username', '_id']));
+  if (req.user)
+    return res.json(
+      _.pick(req.user, ['username', '_id', 'type', 'company', 'name'])
+    );
   else return res.status(401).json({ status: 'No user session present' });
 });
 

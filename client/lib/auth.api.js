@@ -30,6 +30,14 @@ export const doCompanySignup = async (
   return res.data;
 };
 
+export const askUserToken = async ({ username, type }) => {
+  const res = await api.post('/auth/company/new-user', {
+    username,
+    type
+  });
+  return res.data;
+};
+
 export const askPasswordToken = async ({ username }) => {
   const res = await api.post('/auth/reset-password', {
     username
@@ -43,6 +51,7 @@ export const doPasswordReset = async ({ password }, token, id) => {
   });
   return res.data;
 };
+
 export const doSignup = async ({ username, password, course, campus }) => {
   const res = await api.post('/auth/signup', {
     username,

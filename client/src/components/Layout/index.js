@@ -7,11 +7,13 @@ export const LayoutTemplate = ({ children, sider = false }) => {
   return (
     <Layout style={{ height: '100vh' }}>
       {sider ? (
-        <Sider>
-          <Header style={{ backgroundColor: gold.primary }}>Header</Header>
-          <Content>{children}</Content>
-          <Footer>Footer</Footer>
-        </Sider>
+        <>
+          <Sider style={{ backgroundColor: gold.primary }}></Sider>
+          <Layout style={{ height: '100vh' }}>
+            <Content>{children}</Content>
+            <Footer>Footer</Footer>
+          </Layout>
+        </>
       ) : (
         <>
           <Header style={{ backgroundColor: gold.primary }}>Header</Header>
