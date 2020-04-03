@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useEffect } from 'react';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { UserContext, doCompanySignup } from '../../lib/auth.api';
 import { useForm, FormContext } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
@@ -26,7 +26,6 @@ export const CompanyRegisterPage = withProtected(
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
-        username: '',
         password: '',
         firstName: '',
         lastName: ''
@@ -50,22 +49,11 @@ export const CompanyRegisterPage = withProtected(
         setLoading(false);
       }
     };
+
     return (
       <LayoutTemplate>
         <FormContext {...methods}>
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <Input
-              name='username'
-              placeholder='Tell us your email'
-              ref={register({
-                required: 'Required *',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: 'invalid email address'
-                }
-              })}
-              type='text'
-            />
             <Input
               name='password'
               type='password'

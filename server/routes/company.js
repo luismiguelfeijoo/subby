@@ -56,7 +56,7 @@ router.post(
   ensureLogin.ensureLoggedOut(),
   async (req, res, next) => {
     const { token } = req.params;
-    const { username, password, firstName, lastName } = req.body;
+    const { password, firstName, lastName } = req.body;
     // Create the user, also check to wich company it belongs
     try {
       const decodedToken = jwt.verify(token, process.env.JWTSECRET);
@@ -68,7 +68,7 @@ router.post(
           if (errors.length == 0) {
             const newCompany = await Company.create({ name: check });
             let newUser = await LocalUser.create({
-              username,
+              username: decodedToken.email,
               password: hashPassword(password),
               name: {
                 first: firstName,

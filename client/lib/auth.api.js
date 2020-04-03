@@ -23,7 +23,6 @@ export const doCompanySignup = async (
   token
 ) => {
   const res = await api.post(`/auth/company/signup/${token}`, {
-    username,
     firstName,
     lastName,
     password
