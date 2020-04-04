@@ -52,7 +52,7 @@ export const LoginPage = withProtected(
               help={errors.username?.message && errors.username.message}
             >
               <Controller
-                as={<Input />}
+                as={Input}
                 name='username'
                 placeholder='Username'
                 rules={{
@@ -72,7 +72,7 @@ export const LoginPage = withProtected(
               help={errors.password?.message && errors.password.message}
             >
               <Controller
-                as={Input}
+                as={Input.Password}
                 type='password'
                 placeholder='Password'
                 name='password'
@@ -86,29 +86,6 @@ export const LoginPage = withProtected(
               />
             </Form.Item>
 
-            <Form.Item
-              {...formItemLayout}
-              required={true}
-              validateStatus={
-                errors.password_repeat?.message ? 'error' : 'success'
-              }
-              help={
-                errors.password_repeat?.message &&
-                errors.password_repeat.message
-              }
-            >
-              <Controller
-                as={Input}
-                type='password'
-                placeholder='Repeat Password'
-                name='password_repeat'
-                rules={{
-                  required: 'Required',
-                  validate: value =>
-                    value === password.current || 'The passwords do not match'
-                }}
-              />
-            </Form.Item>
             <Form.Item {...formItemLayout}>
               <Button
                 type='primary'

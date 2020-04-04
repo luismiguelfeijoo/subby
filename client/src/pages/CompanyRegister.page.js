@@ -1,12 +1,12 @@
 import React, { useContext, useRef, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import { UserContext, doCompanySignup } from '../../lib/auth.api';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
-import { Input } from '../components/Input';
-import { Button, Form } from './utils/styles';
-import jwt from 'jsonwebtoken';
 import { LayoutTemplate } from '../components/Layout';
+import { Form, Input, Button } from 'antd';
+
+import jwt from 'jsonwebtoken';
 
 export const CompanyRegisterPage = withProtected(
   withRouter(({ history, match }) => {
@@ -22,6 +22,13 @@ export const CompanyRegisterPage = withProtected(
         setLoading(false);
       }
     }, []);
+
+    const formItemLayout = {
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16, offset: 4 }
+      }
+    };
 
     const methods = useForm({
       mode: 'onBlur',
@@ -53,47 +60,92 @@ export const CompanyRegisterPage = withProtected(
     return (
       <LayoutTemplate>
         <FormContext {...methods}>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <Input
-              name='password'
-              type='password'
-              placeholder='Password'
-              ref={register({
-                required: 'You must specify a password',
-                minLength: {
-                  value: 10,
-                  message: 'Password must have at least 10 characters'
-                }
-              })}
-            />
-            {errors.password && <p>{errors.password.message}</p>}
+          <Form>
+            <Form.Item
+              {...formItemLayout}
+              required={true}
+              validateStatus={errors.password?.message ? 'error' : 'success'}
+              help={errors.password?.message && errors.password.message}
+            >
+              <Controller
+                as={Input.Password}
+                type='password'
+                placeholder='Password'
+                name='password'
+                rules={{
+                  required: 'Required',
+                  minLength: {
+                    value: 10,
+                    message: 'Password must have at least 10 characters'
+                  }
+                }}
+              />
+            </Form.Item>
 
-            <Input
-              name='password_repeat'
-              type='password'
-              placeholder='Repeat Password'
-              ref={register({
-                validate: value =>
-                  value === password.current || 'The passwords do not match'
-              })}
-            />
-
-            {errors.password_repeat && <p>{errors.password_repeat.message}</p>}
-            <Input
-              name='firstName'
-              placeholder='First Name'
-              ref={register({
-                required: 'Required *'
-              })}
-            />
-            <Input
-              name='lastName'
-              placeholder='Last Name'
-              ref={register({
-                required: 'Required *'
-              })}
-            />
-            <Button type='submit'>Send Info</Button>
+            <Form.Item
+              {...formItemLayout}
+              required={true}
+              validateStatus={
+                errors.password_repeat?.message ? 'error' : 'success'
+              }
+              help={
+                errors.password_repeat?.message &&
+                errors.password_repeat.message
+              }
+            >
+              <Controller
+                as={Input.Password}
+                type='password'
+                placeholder='Repeat Password'
+                name='password_repeat'
+                rules={{
+                  required: 'Required',
+                  validate: value =>
+                    value === password.current || 'The passwords do not match'
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              {...formItemLayout}
+              required={true}
+              validateStatus={errors.firstName?.message ? 'error' : 'success'}
+              help={errors.firstName?.message && errors.firstName.message}
+            >
+              <Controller
+                as={Input}
+                type='text'
+                placeholder='First Name'
+                name='firstName'
+                rules={{
+                  required: 'Required'
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              {...formItemLayout}
+              required={true}
+              validateStatus={errors.lastName?.message ? 'error' : 'success'}
+              help={errors.lastName?.message && errors.lastName.message}
+            >
+              <Controller
+                as={Input}
+                type='text'
+                placeholder='Last Name'
+                name='lastName'
+                rules={{
+                  required: 'Required'
+                }}
+              />
+            </Form.Item>
+            <Form.Item {...formItemLayout}>
+              <Button
+                type='primary'
+                htmlType='submit'
+                onClick={handleSubmit(onSubmit)}
+              >
+                Sign Up
+              </Button>
+            </Form.Item>
           </Form>
         </FormContext>
       </LayoutTemplate>
