@@ -49,7 +49,7 @@ export const NewCompanyPage = withProtected(
               help={errors.company?.message && errors.company.message}
             >
               <Controller
-                as={<Input />}
+                as={Input}
                 name='company'
                 placeholder="What's the name of your company?"
                 rules={{
@@ -64,7 +64,7 @@ export const NewCompanyPage = withProtected(
               help={errors.email?.message && errors.email.message}
             >
               <Controller
-                as={<Input />}
+                as={Input}
                 name='email'
                 placeholder='Tell us your email'
                 rules={{

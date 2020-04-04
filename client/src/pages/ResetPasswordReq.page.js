@@ -1,15 +1,21 @@
 import React, { useContext, useRef, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import { UserContext, askPasswordToken } from '../../lib/auth.api';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
-import { Input } from '../components/Input';
-import { Button, Form } from './utils/styles';
 import { LayoutTemplate } from '../components/Layout';
+import { Form, Button, Input } from 'antd';
 
 export const ResetPasswordReq = withProtected(
   withRouter(({ history }) => {
     const { setLoading } = useContext(UserContext);
+
+    const formItemLayout = {
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16, offset: 4 }
+      }
+    };
 
     const methods = useForm({
       mode: 'onBlur',
@@ -36,20 +42,34 @@ export const ResetPasswordReq = withProtected(
     return (
       <LayoutTemplate>
         <FormContext {...methods}>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <Input
-              name='username'
-              placeholder='Email'
-              ref={register({
-                required: 'Required *',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: 'invalid email address'
-                }
-              })}
-              type='text'
-            />
-            <Button type='submit'>Request New Password</Button>
+          <Form>
+            <Form.Item
+              {...formItemLayout}
+              validateStatus={errors.username?.message ? 'error' : 'success'}
+              help={errors.username?.message && errors.username.message}
+            >
+              <Controller
+                as={Input}
+                name='username'
+                placeholder="What's your email"
+                rules={{
+                  required: 'Required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                    message: 'invalid email address'
+                  }
+                }}
+              />
+            </Form.Item>
+            <Form.Item {...formItemLayout}>
+              <Button
+                type='primary'
+                htmlType='submit'
+                onClick={handleSubmit(onSubmit)}
+              >
+                Request New Password
+              </Button>
+            </Form.Item>
           </Form>
         </FormContext>
       </LayoutTemplate>
