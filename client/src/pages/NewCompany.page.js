@@ -1,15 +1,21 @@
-import React, { useContext, useEffect } from 'react';
-import { withRouter, Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { withRouter } from 'react-router-dom';
 import { UserContext, askCompanyToken } from '../../lib/auth.api';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Input } from '../components/Input';
-import { Button, Form } from './utils/styles';
+import { Form, Button, Input } from 'antd';
 
 export const NewCompanyPage = withProtected(
   withRouter(({ history }) => {
     const { setLoading } = useContext(UserContext);
+
+    const formItemLayout = {
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16, offset: 4 }
+      }
+    };
 
     const methods = useForm({
       mode: 'onBlur',
@@ -22,7 +28,6 @@ export const NewCompanyPage = withProtected(
     const { register, handleSubmit, errors } = methods;
 
     const onSubmit = async data => {
-      //console.log(data);
       setLoading(true);
       try {
         const response = await askCompanyToken(data);
@@ -37,28 +42,50 @@ export const NewCompanyPage = withProtected(
     return (
       <LayoutTemplate>
         <FormContext {...methods}>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <Input
-              name='company'
-              placeholder='Tell us the name of your company'
-              ref={register({
-                required: 'Required *'
-              })}
-            />
-            <Input
-              name='email'
-              placeholder='Tell us your email'
-              ref={register({
-                required: 'Required *',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: 'invalid email address'
-                }
-              })}
-              type='text'
-            />
+          <Form>
+            <Form.Item
+              {...formItemLayout}
+              validateStatus={errors.company?.message ? 'error' : 'success'}
+              help={errors.company?.message && errors.company.message}
+            >
+              <Controller
+                as={<Input />}
+                name='company'
+                placeholder="What's the name of your company?"
+                rules={{
+                  required: 'We need the name of your company to let you in!'
+                }}
+              />
+            </Form.Item>
 
-            <Button type='submit'>Send Info</Button>
+            <Form.Item
+              {...formItemLayout}
+              validateStatus={errors.email?.message ? 'error' : 'success'}
+              help={errors.email?.message && errors.email.message}
+            >
+              <Controller
+                as={<Input />}
+                name='email'
+                placeholder='Tell us your email'
+                rules={{
+                  required: 'Required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                    message: 'invalid email address'
+                  }
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item {...formItemLayout}>
+              <Button
+                type='primary'
+                htmlType='submit'
+                onClick={handleSubmit(onSubmit)}
+              >
+                Send Info
+              </Button>
+            </Form.Item>
           </Form>
         </FormContext>
       </LayoutTemplate>
