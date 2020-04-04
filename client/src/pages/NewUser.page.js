@@ -5,22 +5,31 @@ import {
   askUserToken,
   createSubscription
 } from '../../lib/auth.api';
-import { useForm, FormContext } from 'react-hook-form';
+import { withTypeUser } from '../../lib/protectedTypeUser';
+import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Input, Select, SimpleSelect } from '../components/Input';
-import { Button, Form } from './utils/styles';
-import { withTypeUser } from '../../lib/protectedTypeUser';
+import { Form, Input, Button, Select, DatePicker } from 'antd';
+const { MonthPicker } = DatePicker;
+const { Option } = Select;
 
 export const NewUserPage = withProtected(
   withTypeUser(
     withRouter(({ history }) => {
       const { user, setLoading } = useContext(UserContext);
+      const [form] = Form.useForm();
       const [type, setType] = useState();
 
       useEffect(() => {
         // Retrieve all the active plans calling the API
       }, []);
+
+      const formItemLayout = {
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 16, offset: 4 }
+        }
+      };
 
       const methods = useForm({
         mode: 'onBlur'
@@ -41,6 +50,7 @@ export const NewUserPage = withProtected(
       };
 
       const onSubmitSub = async data => {
+        console.log(data);
         setLoading(true);
         try {
           const response = await createSubscription(data);
@@ -54,94 +64,173 @@ export const NewUserPage = withProtected(
 
       return (
         <LayoutTemplate sider={true}>
-          <SimpleSelect
-            name='type'
-            ref={register({
-              validate: value => {
-                return value !== '';
-              }
-            })}
-            onChange={event => setType(event.target.value)}
-            options={['User', 'Subscription']}
-            def='What are you going to add?'
-          />
+          <Form onFinish={value => console.log(value)} form={form}>
+            <Form.Item {...formItemLayout}>
+              <Select
+                placeholder='Add a ...'
+                onChange={value => setType(value)}
+                allowClear
+              >
+                <Option value='user'>User</Option>
+                <Option value='subscription'>Subscription</Option>
+              </Select>
+            </Form.Item>
+          </Form>
 
           {type === 'user' ? (
             <FormContext {...methods}>
-              <Form onSubmit={handleSubmit(onSubmitUser)}>
-                <Input
-                  name='username'
-                  placeholder='Email'
-                  ref={register({
-                    required: 'Required *',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: 'invalid email address'
+              <Form>
+                <Form.Item
+                  {...formItemLayout}
+                  validateStatus={
+                    errors.username?.message ? 'error' : 'success'
+                  }
+                  help={errors.username?.message && errors.username.message}
+                >
+                  <Controller
+                    as={Input}
+                    name='username'
+                    placeholder='Username'
+                    rules={{
+                      required: 'Required',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                        message: 'invalid email address'
+                      }
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  {...formItemLayout}
+                  validateStatus={errors.type?.message ? 'error' : 'success'}
+                  help={errors.type?.message && errors.type.message}
+                >
+                  <Controller
+                    as={
+                      <Select placeholder='Select the type of user!' allowClear>
+                        <Option value='client'>Client</Option>
+                        <Option value='coordinator'>Coordinator</Option>
+                        <Option value='admin'>Admin</Option>
+                      </Select>
                     }
-                  })}
-                  type='text'
-                />
-                <Select
-                  name='type'
-                  ref={register({
-                    validate: value => {
-                      return value !== '';
-                    }
-                  })}
-                  options={['client', 'coordinator', 'admin']}
-                  def='Select the type of user you want to create!'
-                />
-                <Button type='submit'>Create User</Button>
+                    rules={{
+                      required: 'Required'
+                    }}
+                    name='type'
+                  />
+                </Form.Item>
+
+                <Form.Item {...formItemLayout}>
+                  <Button
+                    type='primary'
+                    htmlType='submit'
+                    onClick={handleSubmit(onSubmitUser)}
+                  >
+                    Create User!
+                  </Button>
+                </Form.Item>
               </Form>
             </FormContext>
           ) : type ? (
             <FormContext {...methods}>
-              <Form onSubmit={handleSubmit(onSubmitSub)}>
-                <Input
-                  name='username'
-                  placeholder='Client username'
-                  ref={register({
-                    required: 'Required *',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: 'invalid email address'
+              <Form>
+                <Form.Item
+                  {...formItemLayout}
+                  validateStatus={
+                    errors.username?.message ? 'error' : 'success'
+                  }
+                  help={errors.username?.message && errors.username.message}
+                >
+                  <Controller
+                    as={Input}
+                    name='username'
+                    placeholder='Username'
+                    rules={{
+                      required: 'Required',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                        message: 'invalid email address'
+                      }
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  {...formItemLayout}
+                  required={true}
+                  validateStatus={
+                    errors.firstName?.message ? 'error' : 'success'
+                  }
+                  help={errors.firstName?.message && errors.firstName.message}
+                >
+                  <Controller
+                    as={Input}
+                    type='text'
+                    placeholder='First Name'
+                    name='firstName'
+                    rules={{
+                      required: 'Required'
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  {...formItemLayout}
+                  required={true}
+                  validateStatus={
+                    errors.lastName?.message ? 'error' : 'success'
+                  }
+                  help={errors.lastName?.message && errors.lastName.message}
+                >
+                  <Controller
+                    as={Input}
+                    type='text'
+                    placeholder='Last Name'
+                    name='lastName'
+                    rules={{
+                      required: 'Required'
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item
+                  {...formItemLayout}
+                  validateStatus={errors.plan?.message ? 'error' : 'success'}
+                  help={errors.plan?.message && errors.plan.message}
+                >
+                  <Controller
+                    as={
+                      <Select placeholder='Select a plan'>
+                        <Option value='planA'>Plan A</Option>
+                        <Option value='planB'>Plan B</Option>
+                      </Select>
                     }
-                  })}
-                  type='text'
-                />
-                <Input
-                  name='firstName'
-                  placeholder='First Name'
-                  ref={register({
-                    required: 'Required *'
-                  })}
-                />
-                <Input
-                  name='lastName'
-                  placeholder='Last Name'
-                  ref={register({
-                    required: 'Required *'
-                  })}
-                />
-                <Select
-                  name='plan'
-                  ref={register({
-                    validate: value => {
-                      return value !== '';
-                    }
-                  })}
-                  options={['client', 'coordinator', 'admin']}
-                  def='Select the plan you want to add'
-                />
-                <Input
-                  name='date'
-                  type='date'
-                  ref={register({
-                    required: true
-                  })}
-                  min='2019-12-31'
-                />
-                <Button type='submit'>Create Sub</Button>
+                    rules={{
+                      required: 'Required'
+                    }}
+                    name='plan'
+                  />
+                </Form.Item>
+                <Form.Item
+                  {...formItemLayout}
+                  validateStatus={errors.date?.message ? 'error' : 'success'}
+                  help={errors.date?.message && errors.date.message}
+                >
+                  <Controller
+                    as={DatePicker}
+                    rules={{
+                      required: 'Please, provide a starting date for the plan'
+                    }}
+                    format='DD-MM-YYYY'
+                    name='date'
+                  />
+                </Form.Item>
+                <Form.Item {...formItemLayout}>
+                  <Button
+                    type='primary'
+                    htmlType='submit'
+                    onClick={handleSubmit(onSubmitSub)}
+                  >
+                    Add Subscription!
+                  </Button>
+                </Form.Item>
               </Form>
             </FormContext>
           ) : (

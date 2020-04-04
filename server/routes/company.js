@@ -102,14 +102,14 @@ router.post(
     const { username, date, planName, firstName, lastName } = req.body;
     const plan = _.find(loggedAdmin.plans, { name: planName });
     const parent = await ClientUser.findOne({ username });
-    if (loggedAdmin.type === admin) {
+    if (loggedAdmin.type === 'admin') {
       const newChildren = await Children.create({
         name: {
           first: firstName,
           last: lastName
         },
         company: loggedAdmin.company, // id of the company
-        plan: [{ name: planName, price: plan.price, date }] // see plan options
+        plan: plan // see plan options
       });
       if (parent) {
         newChildren.parents.push(parent._id);

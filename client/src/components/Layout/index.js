@@ -7,7 +7,6 @@ import { generate, presetPalettes } from '@ant-design/colors';
 
 // Generate color palettes by a given color
 const colors = generate('#d66122');
-console.log(colors[5]);
 
 export const LayoutTemplate = ({ children, sider = false }) => {
   return (
