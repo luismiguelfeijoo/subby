@@ -1,16 +1,21 @@
 import React, { useContext, useRef, useEffect } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { UserContext, doLogin } from '../../lib/auth.api';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
-import { Input } from '../components/Input';
-import { Button, Form } from './utils/styles';
 import { LayoutTemplate } from '../components/Layout';
+import { Input, Form, Button } from 'antd';
 
 export const LoginPage = withProtected(
-  withRouter(({ history, match }) => {
+  withRouter(({ history }) => {
     const { setUser, setLoading } = useContext(UserContext);
 
+    const formItemLayout = {
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16, offset: 4 }
+      }
+    };
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
@@ -18,7 +23,16 @@ export const LoginPage = withProtected(
         password: ''
       }
     });
-
+    const validateMessages = {
+      required: '${label} is required!',
+      types: {
+        email: '${label} is not validate email!',
+        number: '${label} is not a validate number!'
+      },
+      number: {
+        range: '${label} must be between ${min} and ${max}'
+      }
+    };
     const { register, handleSubmit, errors, watch } = methods;
     const password = useRef({});
     password.current = watch('password', '');
@@ -40,7 +54,95 @@ export const LoginPage = withProtected(
     return (
       <LayoutTemplate>
         <FormContext {...methods}>
-          <Form onSubmit={handleSubmit(onSubmit)}>
+          <Form>
+            <Form.Item
+              {...formItemLayout}
+              validateStatus={errors.username?.message ? 'error' : 'success'}
+              help={errors.username?.message && errors.username.message}
+            >
+              <Controller
+                as={<Input />}
+                name='username'
+                placeholder='Username'
+                rules={{
+                  required: 'Required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                    message: 'invalid email address'
+                  }
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              {...formItemLayout}
+              required={true}
+              validateStatus={errors.password?.message ? 'error' : 'success'}
+              help={errors.password?.message && errors.password.message}
+            >
+              <Controller
+                as={Input}
+                type='password'
+                placeholder='Password'
+                name='password'
+                rules={{
+                  required: 'Required',
+                  minLength: {
+                    value: 10,
+                    message: 'Password must have at least 10 characters'
+                  }
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              {...formItemLayout}
+              required={true}
+              validateStatus={
+                errors.password_repeat?.message ? 'error' : 'success'
+              }
+              help={
+                errors.password_repeat?.message &&
+                errors.password_repeat.message
+              }
+            >
+              <Controller
+                as={Input}
+                type='password'
+                placeholder='Repeat Password'
+                name='password_repeat'
+                rules={{
+                  required: 'Required',
+                  validate: value =>
+                    value === password.current || 'The passwords do not match'
+                }}
+              />
+            </Form.Item>
+            <Form.Item {...formItemLayout}>
+              <Button
+                type='primary'
+                htmlType='submit'
+                onClick={handleSubmit(onSubmit)}
+              >
+                Login
+              </Button>
+            </Form.Item>
+          </Form>
+        </FormContext>
+      </LayoutTemplate>
+    );
+  }),
+  {
+    redirect: true,
+    redirectTo: 'profile',
+    inverted: true
+  }
+);
+
+/*
+import { Input } from '../components/Input';
+import { Button, Form } from './utils/styles';
+<Form onSubmit={handleSubmit(onSubmit)}>
             <Input
               name='username'
               placeholder='Email'
@@ -80,14 +182,4 @@ export const LoginPage = withProtected(
             {errors.password_repeat && <p>{errors.password_repeat.message}</p>}
 
             <Button type='submit'>Send Info</Button>
-          </Form>
-        </FormContext>
-      </LayoutTemplate>
-    );
-  }),
-  {
-    redirect: true,
-    redirectTo: 'profile',
-    inverted: true
-  }
-);
+          </Form>*/
