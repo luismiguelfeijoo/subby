@@ -10,6 +10,79 @@ const api = axios.create({
 
 //Review every api
 
+export const askCompanyToken = async ({ company, email }) => {
+  const res = await api.post('/auth/company', {
+    email,
+    company
+  });
+  return res.data;
+};
+
+export const doCompanySignup = async (
+  { username, firstName, lastName, password },
+  token
+) => {
+  const res = await api.post(`/auth/company/signup/${token}`, {
+    firstName,
+    lastName,
+    password
+  });
+  return res.data;
+};
+
+export const askUserToken = async ({ username, type }) => {
+  const res = await api.post('/auth/company/new-user', {
+    username,
+    type
+  });
+  return res.data;
+};
+
+export const doUserSignup = async (
+  { password, firstName, lastName, phone, prefix },
+  token
+) => {
+  const res = await api.post(`/auth/company/new-user/${token}`, {
+    password,
+    firstName,
+    lastName,
+    phone: { prefix, phone }
+  });
+  return res.data;
+};
+
+export const createSubscription = async ({
+  username,
+  date,
+  planName,
+  price,
+  firstName,
+  lastName
+}) => {
+  const res = await api.post('/auth/company/new-subscription', {
+    username,
+    date: new Date(date),
+    planName,
+    firstName,
+    lastName
+  });
+  return res.data;
+};
+
+export const askPasswordToken = async ({ username }) => {
+  const res = await api.post('/auth/reset-password', {
+    username
+  });
+  return res.data;
+};
+
+export const doPasswordReset = async ({ password }, token, id) => {
+  const res = await api.post(`/auth/reset-password/${id}/${token}`, {
+    password
+  });
+  return res.data;
+};
+
 export const doSignup = async ({ username, password, course, campus }) => {
   const res = await api.post('/auth/signup', {
     username,

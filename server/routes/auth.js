@@ -49,7 +49,7 @@ router.post(
         from: process.env.MAILER_EMAIL_ID,
         to: username,
         subject: 'Subby Link to reset password',
-        text: `Hi! use this token to reset your password ${token}` //change this for HTML template
+        text: `Hi! click this link to reset your password: http://localhost:1234/reset-password/${user._id}/${token}` //change this for HTML template
       };
       transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
@@ -69,19 +69,20 @@ router.post(
 
 // reset password
 router.post(
-  '/reset-password/:token',
+  '/reset-password/:id/:token',
   ensureLogin.ensureLoggedOut(),
   async (req, res, next) => {
-    const { token } = req.params;
-    const { username, password } = req.body;
+    const { id, token } = req.params;
+    const { password } = req.body;
     try {
-      const localUser = await LocalUser.findOne({ username });
-      const clientUser = await ClientUser.findOne({ username });
+      const localUser = await LocalUser.findById(id);
+      const clientUser = await ClientUser.findById(id);
       const user = localUser ? localUser : clientUser;
       if (user) {
         const secret = user.password + user.createdAt;
         const decodedToken = jwt.verify(token, secret);
-        if (user.username === username && decodedToken) {
+        console.log(decodedToken, secret);
+        if (user.username === decodedToken.username) {
           const errors = owasp.test(password).errors;
           if (errors.length == 0) {
             user.password = hashPassword(password);
@@ -124,7 +125,10 @@ router.post('/logout', ensureLogin.ensureLoggedIn(), (req, res, next) => {
 
 // Check if the user is logged in
 router.get('/loggedin', (req, res, next) => {
-  if (req.user) return res.json(_.pick(req.user, ['username', '_id']));
+  if (req.user)
+    return res.json(
+      _.pick(req.user, ['username', '_id', 'type', 'company', 'name'])
+    );
   else return res.status(401).json({ status: 'No user session present' });
 });
 

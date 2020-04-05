@@ -5,10 +5,9 @@ import { UserContext, getUserLogged } from './auth.api.js';
 // THIS is a HOC
 export const withUser = Content => () => {
   const [user, setUser] = useState();
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(true);
+  const [type, setType] = useState();
   useEffect(() => {
-    setLoading(true);
     console.log('loading user...');
     getUserLogged()
       .then(user => {

@@ -2,15 +2,13 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const passport = require('passport');
 const _ = require('lodash');
 const ensureLogin = require('connect-ensure-login');
 const LocalUser = require('../models/LocalUser');
 const ClientUser = require('../models/ClientUser');
 const Company = require('../models/Company');
-const Children = require('../models/Children');
+const Subscription = require('../models/Subscription');
 const { hashPassword } = require('../lib/hashing');
-const { asyncController } = require('../lib/asyncController');
 const owasp = require('owasp-password-strength-test');
 
 // Generate register Token for new companies, ask for company and email
@@ -18,7 +16,7 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
   const { company, email } = req.body;
 
   const existingCompany = await Company.findOne({ name: company });
-  console.log(existingCompany);
+
   if (!existingCompany) {
     const token = jwt.sign({ company, email }, process.env.JWTSECRET, {
       expiresIn: 3600
@@ -36,7 +34,7 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
       from: process.env.MAILER_EMAIL_ID,
       to: email,
       subject: 'Subby Link to register your company',
-      text: `Hi! welcome to subby, use this Token to set up your account: ${token}` //change this for HTML template
+      text: `Hi! welcome to subby, click on this link to set up your account: http://localhost:1234/new-company/${token}` //change this for HTML template
     };
 
     transporter.sendMail(mailOptions, function(error, info) {
@@ -58,19 +56,19 @@ router.post(
   ensureLogin.ensureLoggedOut(),
   async (req, res, next) => {
     const { token } = req.params;
-    const { username, password, firstName, lastName, companyName } = req.body;
+    const { password, firstName, lastName } = req.body;
     // Create the user, also check to wich company it belongs
     try {
       const decodedToken = jwt.verify(token, process.env.JWTSECRET);
-      const check = decodedToken.company === companyName;
+      const check = decodedToken.company;
       if (check) {
-        const existingCompany = await Company.findOne({ name: companyName });
+        const existingCompany = await Company.findOne({ name: check });
         if (!existingCompany) {
           const errors = owasp.test(password).errors;
           if (errors.length == 0) {
-            const newCompany = await Company.create({ name: companyName });
+            const newCompany = await Company.create({ name: check });
             let newUser = await LocalUser.create({
-              username,
+              username: decodedToken.email,
               password: hashPassword(password),
               name: {
                 first: firstName,
@@ -97,14 +95,15 @@ router.post(
 
 // Create new children
 router.post(
-  '/new-children',
+  '/new-subscription',
   ensureLogin.ensureLoggedIn(),
   async (req, res, next) => {
     const loggedAdmin = req.user;
-    const { username, plan, firstName, lastName } = req.body;
-    parent = await ClientUser.findOne({ username });
-    if (loggedAdmin.type === admin) {
-      const newChildren = await Children.create({
+    const { username, date, planName, firstName, lastName } = req.body;
+    const plan = _.find(loggedAdmin.plans, { name: planName });
+    const parent = await ClientUser.findOne({ username });
+    if (loggedAdmin.type === 'admin') {
+      const newSub = await Subscription.create({
         name: {
           first: firstName,
           last: lastName
@@ -113,8 +112,8 @@ router.post(
         plan: plan // see plan options
       });
       if (parent) {
-        newChildren.parents.push(parent._id);
-        await newChildren.save();
+        newSub.parents = [...newSub.parents, parent._id];
+        await newSub.save();
       }
       return res.json({ status: 'children created' });
     } else {
@@ -131,7 +130,6 @@ router.post(
     const loggedAdmin = req.user;
     const { username, type } = req.body;
     const company = await Company.findById(loggedAdmin.company);
-    const secret = process.env.JWTSECRET + username;
 
     if (loggedAdmin.type === 'admin') {
       const existingUser =
@@ -140,10 +138,14 @@ router.post(
           : await ClientUser.findOne({ username });
 
       if (!existingUser) {
-        const token = jwt.sign({ company, username, type }, secret, {
-          expiresIn: 60 * 15
-        });
-
+        const token = jwt.sign(
+          { id: company._id, username, type },
+          process.env.JWTSECRET,
+          {
+            expiresIn: 3600
+          }
+        );
+        //console.log('token', token);
         const transporter = nodemailer.createTransport({
           service: process.env.MAILER_SERVICE_PROVIDER || 'gmail',
           auth: {
@@ -155,8 +157,8 @@ router.post(
         const mailOptions = {
           from: process.env.MAILER_EMAIL_ID,
           to: username,
-          subject: 'Subby Link to register your company',
-          text: `Hi! welcome to subby. ${loggedAdmin.company.name} has invited you to our platform. Use this Token to register: ${token}` //change this for HTML template
+          subject: `${loggedAdmin.company.name} invited you to join SUBBY!`,
+          text: `Hi! welcome to subby. ${loggedAdmin.company.name} has invited you to our platform. Click this link to register http://localhost:1234/new-user/${token}` //change this for HTML template
         };
 
         transporter.sendMail(mailOptions, function(error, info) {
@@ -186,49 +188,51 @@ router.post(
   ensureLogin.ensureLoggedOut(),
   async (req, res, next) => {
     const { token } = req.params;
-    const { username, password, firstName, lastName, phone } = req.body;
-    const secret = process.env.JWTSECRET + username;
+    const { password, firstName, lastName, phone } = req.body;
     // Create the user, also check to wich company it belongs
     try {
-      const decodedToken = jwt.verify(token, secret);
-      const existingUser = await ClientUser.findOne({ username });
+      const decodedToken = jwt.verify(token, process.env.JWTSECRET);
+      const existingUser =
+        decodedToken.type === 'client'
+          ? await ClientUser.findOne({ username: decodedToken.username })
+          : await LocalUser.findOne({ username: decodedToken.username });
       if (!existingUser) {
         const errors = owasp.test(password).errors;
         if (errors.length == 0) {
           if (decodedToken.type === 'admin') {
             const newUser = await LocalUser.create({
-              username,
+              username: decodedToken.username,
               password: hashPassword(password),
               name: {
                 first: firstName,
                 last: lastName
               },
               type: 'admin',
-              company: decodedToken.company
+              company: decodedToken.id
             });
             return res.json({ status: 'New Admin User Created' });
           } else if (decodedToken.type === 'coordinator') {
             const newUser = await LocalUser.create({
-              username,
+              username: decodedToken.username,
               password: hashPassword(password),
               name: {
                 first: firstName,
                 last: lastName
               },
               type: 'coordinator',
-              company: decodedToken.company
+              company: decodedToken.id
             });
             return res.json({ status: 'New Coordinator User Created' });
-          } else if (decodedToken.type === 'user') {
+          } else if (decodedToken.type === 'client') {
             const newUser = await ClientUser.create({
-              username,
+              username: decodedToken.username,
               password: hashPassword(password),
               name: {
                 first: firstName,
                 last: lastName
               },
               phone,
-              company: decodedToken.company
+              company: decodedToken.id
             });
             return res.json({ status: 'New Client User Created' });
           }
@@ -239,7 +243,7 @@ router.post(
         return res.status(401).json({ status: 'Not able to create user' });
       }
     } catch (error) {
-      // if it get's here the token is valid
+      // if it get's here the token is invalid
       return res.status(401).json({ errors: error });
     }
   }
