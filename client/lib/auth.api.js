@@ -38,6 +38,19 @@ export const askUserToken = async ({ username, type }) => {
   return res.data;
 };
 
+export const doUserSignup = async (
+  { password, firstName, lastName, phone, prefix },
+  token
+) => {
+  const res = await api.post(`/auth/company/new-user/${token}`, {
+    password,
+    firstName,
+    lastName,
+    phone: { prefix, phone }
+  });
+  return res.data;
+};
+
 export const createSubscription = async ({
   username,
   date,

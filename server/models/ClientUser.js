@@ -10,9 +10,9 @@ const schema = new mongoose.Schema(
       first: { type: String },
       last: { type: String }
     },
-    children: { type: ObjectId, ref: 'children' },
+    children: { type: ObjectId, ref: 'subscription' },
     company: { type: ObjectId, ref: 'company' },
-    phone: { type: Number }
+    phone: { prefix: Number, phone: Number }
   },
   {
     timestamps: true

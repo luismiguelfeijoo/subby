@@ -8,7 +8,7 @@ const schema = new mongoose.Schema(
       first: { type: String },
       last: { type: String }
     },
-    parents: { type: ObjectId, ref: 'clientUser' },
+    parents: [{ type: ObjectId, ref: 'clientUser' }],
     company: { type: ObjectId, ref: 'company' },
     plan: [
       {
@@ -30,4 +30,4 @@ const schema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('children', schema);
+module.exports = mongoose.model('subscription', schema);
