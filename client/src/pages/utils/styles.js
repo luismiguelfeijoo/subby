@@ -19,3 +19,10 @@ export const Button = styled.button`
   background-color: #4ecdc4;
   border-style: solid;
 `;
+
+export const formItemLayout = {
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16, offset: 4 }
+  }
+};
