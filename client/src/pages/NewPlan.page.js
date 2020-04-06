@@ -1,15 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
-import {
-  UserContext,
-  askUserToken,
-  createSubscription
-} from '../../lib/auth.api';
+import { UserContext, createPlanOrExtra } from '../../lib/auth.api';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, Select, DatePicker } from 'antd';
+import { Form, Input, Button, Select } from 'antd';
 import { formItemLayout } from './utils/styles';
 const { Option } = Select;
 
@@ -39,16 +35,15 @@ export const NewPlanPage = withProtected(
             style={{
               width: 70
             }}
-            name='prefix'
+            name='currency'
           />
         </Form.Item>
       );
 
       const onSubmit = async data => {
         setLoading(true);
-
         try {
-          type === 'plan' ? console.log(data) : console.log(data);
+          const response = await createPlanOrExtra(data, type);
           history.push('/new-plan');
         } catch (error) {
           console.log(error);
@@ -56,7 +51,7 @@ export const NewPlanPage = withProtected(
           setLoading(false);
         }
       };
-      console.log(errors);
+
       return (
         <LayoutTemplate sider={true}>
           <Form form={form}>

@@ -69,6 +69,16 @@ export const createSubscription = async ({
   return res.data;
 };
 
+export const createPlanOrExtra = async ({ name, price, currency }, type) => {
+  const res = await api.post('/auth/company/new-plan-or-extra', {
+    name,
+    price,
+    currency,
+    type
+  });
+  return res.data;
+};
+
 export const askPasswordToken = async ({ username }) => {
   const res = await api.post('/auth/reset-password', {
     username
@@ -79,16 +89,6 @@ export const askPasswordToken = async ({ username }) => {
 export const doPasswordReset = async ({ password }, token, id) => {
   const res = await api.post(`/auth/reset-password/${id}/${token}`, {
     password
-  });
-  return res.data;
-};
-
-export const doSignup = async ({ username, password, course, campus }) => {
-  const res = await api.post('/auth/signup', {
-    username,
-    password,
-    course,
-    campus
   });
   return res.data;
 };
