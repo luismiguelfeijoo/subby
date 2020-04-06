@@ -27,11 +27,11 @@ export const NewPlanPage = withProtected(
           <Controller
             as={
               <Select>
-                <Option value='EUR'>€</Option>
-                <Option value='USD'>$</Option>
+                <Option value='€'>€</Option>
+                <Option value='$'>$</Option>
               </Select>
             }
-            defaultValue='EUR'
+            defaultValue='€'
             style={{
               width: 70
             }}
