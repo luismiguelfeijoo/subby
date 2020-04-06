@@ -21,7 +21,8 @@ const schema = new mongoose.Schema(
         id: { type: ObjectId, ref: 'extra' },
         date: { type: Date, default: Date.now }
       }
-    ]
+    ],
+    level: String
   },
   {
     timestamps: true

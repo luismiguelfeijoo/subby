@@ -97,6 +97,11 @@ export const getPlans = async () => {
   return res.data;
 };
 
+export const getSubscriptions = async () => {
+  const res = await api.get(`/retrieve/subscriptions`);
+  return res.data;
+};
+
 export const doLogin = async ({ username, password }) => {
   const res = await api.post('/auth/login', {
     username,

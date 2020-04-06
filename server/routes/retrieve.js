@@ -50,7 +50,7 @@ router.get(
     if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
       const subscriptions = await Subscription.find({
         company: loggedAdmin.company
-      });
+      }).populate('parents');
       return res.json(subscriptions);
     } else {
       return res.status(401).json({ status: 'Local user is not admin' });

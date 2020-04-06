@@ -7,6 +7,7 @@ import { NewCompanyRouter } from '../../routes/NewCompany.router';
 import { ResetPasswordRouter } from '../../routes/ResetPassword.router';
 import { NewUserRouter } from '../../routes/NewUser.router';
 import { NewPlanRouter } from '../../routes/NewPlan.router';
+import { CompanyRouter } from '../../routes/Company.router';
 
 export const App = withUser(() => {
   return (
@@ -29,6 +30,10 @@ export const App = withUser(() => {
         <Route
           path='/new-plan'
           component={props => <NewPlanRouter {...props} />}
+        />
+        <Route
+          path='/company'
+          component={props => <CompanyRouter {...props} />}
         />
       </Switch>
     </Router>

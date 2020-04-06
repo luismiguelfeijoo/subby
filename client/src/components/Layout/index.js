@@ -37,7 +37,6 @@ export const LayoutTemplate = ({ children, sider = false }) => {
             >
               {children}
             </Content>
-            <Footer>Footer</Footer>
           </Layout>
         </>
       ) : (
