@@ -3,7 +3,8 @@ import { withRouter } from 'react-router-dom';
 import {
   UserContext,
   askUserToken,
-  createSubscription
+  createSubscription,
+  getPlans
 } from '../../lib/auth.api';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
@@ -16,13 +17,26 @@ const { Option } = Select;
 export const NewUserPage = withProtected(
   withTypeUser(
     withRouter(({ history }) => {
-      const { user, setLoading } = useContext(UserContext);
+      const { user, loading, setLoading } = useContext(UserContext);
       const [form] = Form.useForm();
       const [type, setType] = useState();
+      const [plans, setPlans] = useState([]);
 
       useEffect(() => {
-        // Retrieve all the active plans calling the API
+        if (!loading) {
+          fetchPlans();
+        }
       }, []);
+
+      const fetchPlans = () => {
+        getPlans()
+          .then(plans => {
+            setPlans(plans);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      };
 
       const formItemLayout = {
         wrapperCol: {
@@ -198,14 +212,21 @@ export const NewUserPage = withProtected(
                   <Controller
                     as={
                       <Select placeholder='Select a plan'>
-                        <Option value='planA'>Plan A</Option>
-                        <Option value='planB'>Plan B</Option>
+                        {plans &&
+                          plans.map((plan, i) => {
+                            return (
+                              <Option value={plan.name} key={i}>{`${
+                                plan.name
+                              } - ${plan.price.price} ${plan.price.currency ||
+                                '$'}`}</Option>
+                            );
+                          })}
                       </Select>
                     }
                     rules={{
                       required: 'Required'
                     }}
-                    name='plan'
+                    name='planName'
                   />
                 </Form.Item>
                 <Form.Item

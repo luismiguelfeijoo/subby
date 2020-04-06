@@ -55,7 +55,6 @@ export const createSubscription = async ({
   username,
   date,
   planName,
-  price,
   firstName,
   lastName
 }) => {
@@ -90,6 +89,11 @@ export const doPasswordReset = async ({ password }, token, id) => {
   const res = await api.post(`/auth/reset-password/${id}/${token}`, {
     password
   });
+  return res.data;
+};
+
+export const getPlans = async () => {
+  const res = await api.get(`/retrieve/plans`);
   return res.data;
 };
 
