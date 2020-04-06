@@ -12,15 +12,13 @@ const schema = new mongoose.Schema(
     company: { type: ObjectId, ref: 'company' },
     plan: [
       {
-        name: { type: String },
-        price: { type: Number, default: 0 },
+        id: { type: ObjectId, ref: 'plan' },
         startDate: { type: Date, default: Date.now }
       }
     ],
     extra: [
       {
-        name: { type: String },
-        price: { type: Number, default: 0 },
+        id: { type: ObjectId, ref: 'extra' },
         date: { type: Date, default: Date.now }
       }
     ]
