@@ -8,6 +8,8 @@ const LocalUser = require('../models/LocalUser');
 const ClientUser = require('../models/ClientUser');
 const Company = require('../models/Company');
 const Subscription = require('../models/Subscription');
+const Plan = require('../models/Plan');
+const Extra = require('../models/Extra');
 const { hashPassword } = require('../lib/hashing');
 const owasp = require('owasp-password-strength-test');
 
@@ -93,7 +95,7 @@ router.post(
   }
 );
 
-// Create new children
+// Create new sub
 router.post(
   '/new-subscription',
   ensureLogin.ensureLoggedIn(),
@@ -245,6 +247,36 @@ router.post(
     } catch (error) {
       // if it get's here the token is invalid
       return res.status(401).json({ errors: error });
+    }
+  }
+);
+
+router.post(
+  '/new-plan-or-extra',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const loggedAdmin = req.user;
+    const { price, name, type } = req.body;
+    if (loggedAdmin.type === 'admin') {
+      if (type === 'plan') {
+        const newPlan = await Plan.create({
+          name,
+          price,
+          company: loggedAdmin.company // id of the company
+        });
+        return res.json({ status: 'Plan created' });
+      } else if (type === 'extra') {
+        const newExtra = await Extra.create({
+          name,
+          price,
+          company: loggedAdmin.company // id of the company
+        });
+        return res.json({ status: 'Extra created' });
+      } else {
+        res.status(401).json({ status: 'Type error' });
+      }
+    } else {
+      return res.status(401).json({ status: 'Local user is not admin' });
     }
   }
 );
