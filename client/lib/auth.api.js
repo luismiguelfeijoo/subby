@@ -102,6 +102,11 @@ export const getSubscriptions = async () => {
   return res.data;
 };
 
+export const getSingleSubscription = async id => {
+  const res = await api.get(`/retrieve/subscriptions/${id}`);
+  return res.data;
+};
+
 export const getClients = async () => {
   const res = await api.get(`/retrieve/clients`);
   return res.data;

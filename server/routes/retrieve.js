@@ -60,4 +60,25 @@ router.get(
   }
 );
 
+router.get(
+  '/subscriptions/:id',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const loggedAdmin = req.user;
+    try {
+      if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
+        const subscription = await Subscription.findById(id).populate(
+          'parents'
+        );
+        return res.json(subscription);
+      } else {
+        return res.status(401).json({ status: 'Local user is not admin' });
+      }
+    } catch (error) {
+      return res.status(401).json({ error });
+    }
+  }
+);
+
 module.exports = router;

@@ -10,7 +10,7 @@ import { DatePicker } from 'antd';
 import moment from 'moment';
 const count = 5;
 
-export const SubcriptionListPage = withProtected(
+export const SubscriptionListPage = withProtected(
   withTypeUser(
     withRouter(({ history }) => {
       const { user, loading, setLoading } = useContext(UserContext);
