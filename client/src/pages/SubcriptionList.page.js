@@ -5,7 +5,7 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { getSubscriptions } from '../../lib/auth.api';
-import { List, Avatar, Button, Skeleton } from 'antd';
+import { List } from 'antd';
 import { DatePicker } from 'antd';
 import moment from 'moment';
 const count = 5;
@@ -62,7 +62,7 @@ export const SubcriptionListPage = withProtected(
                       <div>
                         {sub.parents.reduce((acc, parent) => {
                           return acc !== ''
-                            ? ` , ${parent.name.first} ${parent.name.last}`
+                            ? `${acc}, ${parent.name.first} ${parent.name.last}`
                             : `Clients: ${parent.name.first} ${parent.name.last}`;
                         }, '')}
                       </div>

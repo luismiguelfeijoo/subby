@@ -116,8 +116,10 @@ router.post(
       if (parent) {
         newSub.parents = [...newSub.parents, parent._id];
         await newSub.save();
+        parent.subscriptions = [...parent.subscriptions, newSub._id];
+        await parent.save();
       }
-      return res.json({ status: 'children created' });
+      return res.json({ status: 'Subscription created' });
     } else {
       return res.status(401).json({ status: 'Local user is not admin' });
     }

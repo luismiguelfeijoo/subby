@@ -35,7 +35,9 @@ router.get('/extras', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
 router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   const loggedAdmin = req.user;
   if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
-    const clients = await ClientUser.find({ company: loggedAdmin.company });
+    const clients = await ClientUser.find({
+      company: loggedAdmin.company
+    }).populate('subscriptions');
     return res.json(clients);
   } else {
     return res.status(401).json({ status: 'Local user is not admin' });

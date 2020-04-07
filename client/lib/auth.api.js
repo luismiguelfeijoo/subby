@@ -102,6 +102,11 @@ export const getSubscriptions = async () => {
   return res.data;
 };
 
+export const getClients = async () => {
+  const res = await api.get(`/retrieve/clients`);
+  return res.data;
+};
+
 export const doLogin = async ({ username, password }) => {
   const res = await api.post('/auth/login', {
     username,
