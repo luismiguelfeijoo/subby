@@ -102,7 +102,10 @@ router.post(
   async (req, res, next) => {
     const loggedAdmin = req.user;
     const { username, date, planName, firstName, lastName } = req.body;
-    const plan = Plan.findOne({ name: planName, company: loggedAdmin.company });
+    const plan = await Plan.findOne({
+      name: planName,
+      company: loggedAdmin.company
+    });
     const parent = await ClientUser.findOne({ username });
     if (loggedAdmin.type === 'admin') {
       const newSub = await Subscription.create({
@@ -111,8 +114,10 @@ router.post(
           last: lastName
         },
         company: loggedAdmin.company, // id of the company
-        plan: [{ id: plan._id, startDate: date }] // see plan options
+        plans: [{ plan: plan._id, startDate: date }] // see plan options
       });
+      console.log(plan._id);
+      await newSub.save();
       if (parent) {
         newSub.parents = [...newSub.parents, parent._id];
         await newSub.save();

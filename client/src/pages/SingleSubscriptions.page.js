@@ -51,6 +51,24 @@ export const SingleSubscriptionPage = withProtected(
                   </Descriptions.Item>
                 );
               })}
+              {data.plans.map((plan, i) => {
+                return (
+                  <Descriptions.Item
+                    key={plan.id + i}
+                    label={`Plan ${i + 1}:`}
+                    span={2}
+                  >
+                    {`${plan.plan.name}`}
+                    <br />
+                    {`Start Date:  `}
+                    <DatePicker
+                      format='DD-MM-YYYY'
+                      defaultValue={moment(plan.startDate)}
+                      disabled
+                    />
+                  </Descriptions.Item>
+                );
+              })}
             </Descriptions>
           ) : (
             'ERROR LOADING '

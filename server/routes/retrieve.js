@@ -68,9 +68,9 @@ router.get(
     const loggedAdmin = req.user;
     try {
       if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
-        const subscription = await Subscription.findById(id).populate(
-          'parents'
-        );
+        const subscription = await Subscription.findById(id)
+          .populate('parents')
+          .populate({ path: 'plans.plan' });
         return res.json(subscription);
       } else {
         return res.status(401).json({ status: 'Local user is not admin' });

@@ -67,14 +67,6 @@ export const SubscriptionListPage = withProtected(
                         }, '')}
                       </div>
                       {sub.level && <div>Level: {sub.level}</div>}
-                      <div>
-                        Since:{'  '}
-                        <DatePicker
-                          format='DD-MM-YYYY'
-                          defaultValue={moment(sub.plan[0].startDate)}
-                          disabled
-                        />
-                      </div>
                     </>
                   }
                 />
@@ -87,3 +79,12 @@ export const SubscriptionListPage = withProtected(
     { type: 'coordinator' }
   )
 );
+
+/* <div>
+                        Since:{'  '}
+                        <DatePicker
+                          format='DD-MM-YYYY'
+                          defaultValue={moment(sub.plans[0].startDate)}
+                          disabled
+                        />
+                      </div>*/
