@@ -21,7 +21,7 @@ export const NewUserPage = withProtected(
       const [form] = Form.useForm();
       const [type, setType] = useState();
       const [plans, setPlans] = useState([]);
-
+      const [selectedPlan, setSelectedPlan] = useState([]);
       useEffect(() => {
         if (!loading) {
           fetchPlans();
@@ -64,7 +64,6 @@ export const NewUserPage = withProtected(
       };
 
       const onSubmitSub = async data => {
-        console.log(data);
         setLoading(true);
         try {
           const response = await createSubscription(data);
@@ -206,12 +205,18 @@ export const NewUserPage = withProtected(
                 </Form.Item>
                 <Form.Item
                   {...formItemLayout}
-                  validateStatus={errors.plan?.message ? 'error' : 'success'}
-                  help={errors.plan?.message && errors.plan.message}
+                  validateStatus={errors.planName?.type ? 'error' : 'success'}
+                  help={
+                    errors.planName?.type && 'Please, select at least 1 plan!'
+                  }
                 >
                   <Controller
+                    onChange={([event]) => {
+                      setSelectedPlan(event);
+                      return event;
+                    }}
                     as={
-                      <Select placeholder='Select a plan'>
+                      <Select mode='multiple' placeholder='Select a plan'>
                         {plans &&
                           plans.map((plan, i) => {
                             return (
@@ -224,25 +229,36 @@ export const NewUserPage = withProtected(
                       </Select>
                     }
                     rules={{
-                      required: 'Required'
+                      validate: value => value.length > 0
                     }}
                     name='planName'
                   />
                 </Form.Item>
-                <Form.Item
-                  {...formItemLayout}
-                  validateStatus={errors.date?.message ? 'error' : 'success'}
-                  help={errors.date?.message && errors.date.message}
-                >
-                  <Controller
-                    as={DatePicker}
-                    rules={{
-                      required: 'Please, provide a starting date for the plan'
-                    }}
-                    format='DD-MM-YYYY'
-                    name='date'
-                  />
-                </Form.Item>
+                {selectedPlan.map((plan, i) => {
+                  return (
+                    <Form.Item
+                      key={i}
+                      {...formItemLayout}
+                      validateStatus={errors.dates ? 'error' : 'success'}
+                      help={
+                        errors.dates && 'Provide the dates for all the plans!'
+                      }
+                    >
+                      <Controller
+                        style={{
+                          width: '100%'
+                        }}
+                        placeholder={`Select ${plan} date`}
+                        as={DatePicker}
+                        rules={{
+                          validate: value => value !== null
+                        }}
+                        format='DD-MM-YYYY'
+                        name={`dates[${i}]`}
+                      />
+                    </Form.Item>
+                  );
+                })}
                 <Form.Item {...formItemLayout}>
                   <Button
                     type='primary'

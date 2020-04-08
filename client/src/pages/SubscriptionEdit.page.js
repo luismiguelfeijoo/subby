@@ -10,7 +10,7 @@ import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Form, Input, Button, Select, DatePicker } from 'antd';
-const { MonthPicker } = DatePicker;
+import moment from 'moment';
 const { Option } = Select;
 
 export const SubscriptionEditPage = withProtected(
@@ -142,8 +142,10 @@ export const SubscriptionEditPage = withProtected(
                 </Form.Item>
                 <Form.Item
                   {...formItemLayout}
-                  validateStatus={errors.plan?.message ? 'error' : 'success'}
-                  help={errors.plan?.message && errors.plan.message}
+                  validateStatus={errors.planName?.type ? 'error' : 'success'}
+                  help={
+                    errors.planName?.type && 'Please, select at least 1 plan!'
+                  }
                 >
                   <Controller
                     defaultValue={sub.plans.map(plan => plan.plan.name)}
@@ -165,7 +167,7 @@ export const SubscriptionEditPage = withProtected(
                       </Select>
                     }
                     rules={{
-                      required: 'Required'
+                      validate: value => value.length > 0
                     }}
                     name='planName'
                   />
@@ -175,23 +177,25 @@ export const SubscriptionEditPage = withProtected(
                     <Form.Item
                       key={i}
                       {...formItemLayout}
-                      validateStatus={
-                        errors.date?.message ? 'error' : 'success'
-                      }
-                      help={errors.date?.message && errors.date.message}
+                      validateStatus={errors.dates ? 'error' : 'success'}
+                      help={errors.dates && 'Select the dates!'}
                     >
                       <Controller
+                        defaultValue={
+                          plan === sub.plans[i].plan.name
+                            ? moment(sub.plans[i].startDate)
+                            : ''
+                        }
                         style={{
                           width: '100%'
                         }}
                         placeholder={`Select ${plan} date`}
                         as={DatePicker}
                         rules={{
-                          required:
-                            'Please, provide a starting date for the plan'
+                          validate: value => value !== null
                         }}
                         format='DD-MM-YYYY'
-                        name={`date${i}`}
+                        name={`dates[${i}]`}
                       />
                     </Form.Item>
                   );

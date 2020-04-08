@@ -101,11 +101,18 @@ router.post(
   ensureLogin.ensureLoggedIn(),
   async (req, res, next) => {
     const loggedAdmin = req.user;
-    const { username, date, planName, firstName, lastName } = req.body;
-    const plan = await Plan.findOne({
-      name: planName,
-      company: loggedAdmin.company
+    const { username, dates, planName, firstName, lastName } = req.body;
+
+    const plansPromises = await planName.map(async plan => {
+      let result = await Plan.findOne({
+        name: plan,
+        company: loggedAdmin.company
+      });
+      return result;
     });
+
+    const plans = await Promise.all(plansPromises);
+
     const parent = await ClientUser.findOne({ username });
     if (loggedAdmin.type === 'admin') {
       const newSub = await Subscription.create({
@@ -114,10 +121,10 @@ router.post(
           last: lastName
         },
         company: loggedAdmin.company, // id of the company
-        plans: [{ plan: plan._id, startDate: date }] // see plan options
+        plans: plans.map((plan, i) => {
+          return { plan: plan._id, startDate: dates[i] };
+        }) // see plan options
       });
-      console.log(plan._id);
-      await newSub.save();
       if (parent) {
         newSub.parents = [...newSub.parents, parent._id];
         await newSub.save();

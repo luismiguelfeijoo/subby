@@ -53,14 +53,14 @@ export const doUserSignup = async (
 
 export const createSubscription = async ({
   username,
-  date,
+  dates,
   planName,
   firstName,
   lastName
 }) => {
   const res = await api.post('/auth/company/new-subscription', {
     username,
-    date: new Date(date),
+    dates,
     planName,
     firstName,
     lastName
