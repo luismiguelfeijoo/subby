@@ -82,24 +82,57 @@ router.get(
   }
 );
 
-router.get(
+router.post(
   '/subscriptions/edit/:id',
   ensureLogin.ensureLoggedIn(),
   async (req, res, next) => {
     const { id } = req.params;
     const loggedAdmin = req.user;
-    try {
-      if (loggedAdmin.type === 'admin') {
-        const subscription = await Subscription.findById(id)
-          .populate('parents')
-          .populate({ path: 'plans.plan' })
-          .populate({ path: 'extras.extra' });
-        return res.json(subscription);
-      } else {
-        return res.status(401).json({ status: 'Local user is not admin' });
+    const {
+      username,
+      planDates,
+      plansName,
+      firstName,
+      lastName,
+      extrasName,
+      extraDates
+    } = req.body;
+
+    if (loggedAdmin.type === 'admin') {
+      const updateSub = await Subscription.findById(id);
+      updateSub.name = { first: firstName, last: lastName };
+      await updateSub.save();
+      if (plansName.length > 0) {
+        const plansPromises = await plansName.map(async plan => {
+          let result = await Plan.findOne({
+            name: plan,
+            company: loggedAdmin.company
+          });
+          return result;
+        });
+        const plans = await Promise.all(plansPromises);
+        updateSub.plans = plans.map((plan, i) => {
+          return { plan: plan._id, startDate: planDates[i] };
+        }); // see plan options
+        await updateSub.save();
       }
-    } catch (error) {
-      return res.status(401).json({ error });
+      if (extrasName.length > 0) {
+        const extrasPromises = await extrasName.map(async extra => {
+          let result = await Extra.findOne({
+            name: extra,
+            company: loggedAdmin.company
+          });
+          return result;
+        });
+        const extras = await Promise.all(extrasPromises);
+        updateSub.extras = extras.map((extra, i) => {
+          return { extra: extra._id, startDate: extraDates[i] };
+        });
+        await updateSub.save();
+      }
+      return res.json({ status: 'Subscription updated' });
+    } else {
+      return res.status(401).json({ status: 'Local user is not admin' });
     }
   }
 );

@@ -3,7 +3,9 @@ import { withRouter } from 'react-router-dom';
 import {
   UserContext,
   getSingleSubscription,
-  getPlans
+  getPlans,
+  getExtras,
+  updateSubscription
 } from '../../lib/auth.api';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
@@ -18,12 +20,15 @@ export const SubscriptionEditPage = withProtected(
     withRouter(({ history, match }) => {
       const { user, loading, setLoading } = useContext(UserContext);
       const [plans, setPlans] = useState([]);
+      const [extras, setExtras] = useState([]);
       const [sub, setSub] = useState();
       const [selectedPlan, setSelectedPlan] = useState([]);
+      const [selectedExtra, setSelectedExtra] = useState([]);
 
       useEffect(() => {
         if (!loading) {
           fetchPlans();
+          fetchExtras();
           fetchSubscription(match.params.id);
         }
       }, []);
@@ -38,11 +43,22 @@ export const SubscriptionEditPage = withProtected(
           });
       };
 
+      const fetchExtras = () => {
+        getExtras()
+          .then(extras => {
+            setExtras(extras);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      };
+
       const fetchSubscription = id => {
         getSingleSubscription(id)
           .then(sub => {
             setSub(sub);
             setSelectedPlan(sub.plans.map(plan => plan.plan.name));
+            setSelectedExtra(sub.extras.map(extra => extra.extra.name));
           })
           .catch(err => {
             console.log(err);
@@ -64,16 +80,16 @@ export const SubscriptionEditPage = withProtected(
 
       const onSubmit = async data => {
         console.log(data);
-        /*
+
         setLoading(true);
         try {
-          const response = await createSubscription(data);
-          history.push('/new-user');
+          const response = await updateSubscription(match.params.id, data);
+          history.push(`${match.url}`);
         } catch (error) {
           console.log(error);
         } finally {
           setLoading(false);
-        }*/
+        }
       };
 
       return (
@@ -100,6 +116,7 @@ export const SubscriptionEditPage = withProtected(
                         message: 'invalid email address'
                       }
                     }}
+                    disabled
                   />
                 </Form.Item>
                 <Form.Item
@@ -140,13 +157,7 @@ export const SubscriptionEditPage = withProtected(
                     }}
                   />
                 </Form.Item>
-                <Form.Item
-                  {...formItemLayout}
-                  validateStatus={errors.planName?.type ? 'error' : 'success'}
-                  help={
-                    errors.planName?.type && 'Please, select at least 1 plan!'
-                  }
-                >
+                <Form.Item {...formItemLayout}>
                   <Controller
                     defaultValue={sub.plans.map(plan => plan.plan.name)}
                     onChange={([event]) => {
@@ -166,10 +177,7 @@ export const SubscriptionEditPage = withProtected(
                           })}
                       </Select>
                     }
-                    rules={{
-                      validate: value => value.length > 0
-                    }}
-                    name='planName'
+                    name='plansName'
                   />
                 </Form.Item>
                 {selectedPlan.map((plan, i) => {
@@ -177,8 +185,8 @@ export const SubscriptionEditPage = withProtected(
                     <Form.Item
                       key={i}
                       {...formItemLayout}
-                      validateStatus={errors.dates ? 'error' : 'success'}
-                      help={errors.dates && 'Select the dates!'}
+                      validateStatus={errors.planDates ? 'error' : 'success'}
+                      help={errors.planDates && 'Select the dates!'}
                     >
                       <Controller
                         defaultValue={
@@ -195,12 +203,63 @@ export const SubscriptionEditPage = withProtected(
                           validate: value => value !== null
                         }}
                         format='DD-MM-YYYY'
-                        name={`dates[${i}]`}
+                        name={`planDates[${i}]`}
                       />
                     </Form.Item>
                   );
                 })}
 
+                <Form.Item {...formItemLayout}>
+                  <Controller
+                    defaultValue={sub.extras.map(extra => extra.extra.name)}
+                    onChange={([event]) => {
+                      setSelectedExtra(event);
+                      return event;
+                    }}
+                    as={
+                      <Select mode='multiple' placeholder='Select an Extra'>
+                        {extras &&
+                          extras.map((extra, i) => {
+                            return (
+                              <Option value={extra.name} key={i}>{`${
+                                extra.name
+                              } - ${extra.price.price} ${extra.price.currency ||
+                                '$'}`}</Option>
+                            );
+                          })}
+                      </Select>
+                    }
+                    name='extrasName'
+                  />
+                </Form.Item>
+                {selectedExtra.map((extra, i) => {
+                  return (
+                    <Form.Item
+                      key={i}
+                      {...formItemLayout}
+                      validateStatus={errors.extraDates ? 'error' : 'success'}
+                      help={errors.extraDates && 'Select the dates!'}
+                    >
+                      <Controller
+                        defaultValue={
+                          extra === sub.extras[i]?.extra.name
+                            ? moment(sub.extras[i].date)
+                            : ''
+                        }
+                        style={{
+                          width: '100%'
+                        }}
+                        placeholder={`Select ${extra} date`}
+                        as={DatePicker}
+                        rules={{
+                          validate: value => value !== null
+                        }}
+                        format='DD-MM-YYYY'
+                        name={`extraDates[${i}]`}
+                      />
+                    </Form.Item>
+                  );
+                })}
                 <Form.Item {...formItemLayout}>
                   <Button
                     type='primary'

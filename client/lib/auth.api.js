@@ -97,6 +97,11 @@ export const getPlans = async () => {
   return res.data;
 };
 
+export const getExtras = async () => {
+  const res = await api.get(`/retrieve/extras`);
+  return res.data;
+};
+
 export const getSubscriptions = async () => {
   const res = await api.get(`/retrieve/subscriptions`);
   return res.data;
@@ -104,6 +109,30 @@ export const getSubscriptions = async () => {
 
 export const getSingleSubscription = async id => {
   const res = await api.get(`/retrieve/subscriptions/${id}`);
+  return res.data;
+};
+
+export const updateSubscription = async (
+  id,
+  {
+    username,
+    firstName,
+    lastName,
+    plansName,
+    planDates,
+    extrasName,
+    extraDates
+  }
+) => {
+  const res = await api.post(`retrieve/subscriptions/edit/${id}`, {
+    username,
+    firstName,
+    lastName,
+    plansName,
+    planDates,
+    extrasName,
+    extraDates
+  });
   return res.data;
 };
 
