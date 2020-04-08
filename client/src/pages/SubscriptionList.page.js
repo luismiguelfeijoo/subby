@@ -5,7 +5,7 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { getSubscriptions } from '../../lib/auth.api';
-import { List } from 'antd';
+import { List, Divider } from 'antd';
 import { DatePicker } from 'antd';
 import moment from 'moment';
 const count = 5;
