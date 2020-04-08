@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { SubscriptionListPage } from '../pages/SubscriptionList.page';
 import { ClientListPage } from '../pages/ClientList.page';
 import { SingleSubscriptionPage } from '../pages/SingleSubscriptions.page';
+import { SubscriptionEditPage } from '../pages/SubscriptionEdit.page';
 export const CompanyRouter = ({ match }) => {
   return (
     <Switch>
@@ -10,6 +11,10 @@ export const CompanyRouter = ({ match }) => {
         exact
         path={`${match.url}/subscriptions`}
         component={SubscriptionListPage}
+      />
+      <Route
+        path={`${match.url}/subscriptions/edit/:id`}
+        component={props => <SubscriptionEditPage {...props} />}
       />
       <Route
         path={`${match.url}/subscriptions/:id`}

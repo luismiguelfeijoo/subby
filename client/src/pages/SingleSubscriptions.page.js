@@ -101,7 +101,9 @@ export const SingleSubscriptionPage = withProtected(
               <Button
                 style={{ margin: '30px 0 0 ' }}
                 block
-                onClick={() => history.push(`${match.url}/edit`)}
+                onClick={() =>
+                  history.push(`/company/subscriptions/edit/${match.params.id}`)
+                }
               >
                 Edit Subscription
               </Button>
@@ -109,11 +111,7 @@ export const SingleSubscriptionPage = withProtected(
           </Row>
           <Row>
             <Col span={8} offset={8}>
-              <Button
-                style={{ margin: '30px 0 0' }}
-                block
-                onClick={() => history.push(`${match.url}/edit`)}
-              >
+              <Button style={{ margin: '30px 0 0' }} block>
                 Set Payment Info
               </Button>
             </Col>

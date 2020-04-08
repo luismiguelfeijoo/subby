@@ -70,7 +70,30 @@ router.get(
       if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
         const subscription = await Subscription.findById(id)
           .populate('parents')
-          .populate({ path: 'plans.plan' });
+          .populate({ path: 'plans.plan' })
+          .populate({ path: 'extras.extra' });
+        return res.json(subscription);
+      } else {
+        return res.status(401).json({ status: 'Local user is not admin' });
+      }
+    } catch (error) {
+      return res.status(401).json({ error });
+    }
+  }
+);
+
+router.get(
+  '/subscriptions/edit/:id',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const loggedAdmin = req.user;
+    try {
+      if (loggedAdmin.type === 'admin') {
+        const subscription = await Subscription.findById(id)
+          .populate('parents')
+          .populate({ path: 'plans.plan' })
+          .populate({ path: 'extras.extra' });
         return res.json(subscription);
       } else {
         return res.status(401).json({ status: 'Local user is not admin' });
