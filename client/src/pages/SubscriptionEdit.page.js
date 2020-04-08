@@ -182,7 +182,7 @@ export const SubscriptionEditPage = withProtected(
                     >
                       <Controller
                         defaultValue={
-                          plan === sub.plans[i].plan.name
+                          plan === sub.plans[i]?.plan.name
                             ? moment(sub.plans[i].startDate)
                             : ''
                         }

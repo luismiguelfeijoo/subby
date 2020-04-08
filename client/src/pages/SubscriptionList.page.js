@@ -38,7 +38,7 @@ export const SubscriptionListPage = withProtected(
                 actions={[
                   <Link
                     key='list-loadmore-edit'
-                    to={`/company/subscriptions/${sub._id}`}
+                    to={`/company/subscriptions/edit/${sub._id}`}
                   >
                     edit
                   </Link>,

@@ -29,7 +29,7 @@ export const SingleSubscriptionPage = withProtected(
             console.log(err);
           });
       };
-      console.log(data);
+
       return (
         <LayoutTemplate sider={true}>
           {data ? (
