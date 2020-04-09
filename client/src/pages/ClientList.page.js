@@ -3,7 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { UserContext, getClients } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { List, Input } from 'antd';
+import { List, Input, Divider, Button } from 'antd';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 
 export const ClientListPage = withProtected(
@@ -30,8 +30,21 @@ export const ClientListPage = withProtected(
           <Input.Search
             placeholder='Search by name'
             onChange={event => setFilter(event.target.value)}
-            style={{ width: '30%', margin: '10px' }}
+            style={{ width: '50%', margin: '10px' }}
           />
+          <Button
+            onClick={() => {
+              const newData = [...data];
+              newData.sort((a, b) => {
+                return a.name.first < b.name.first ? -1 : 1;
+              });
+              setData(newData);
+            }}
+          >
+            Sort by Name
+          </Button>
+
+          <Divider />
 
           <List
             itemLayout='horizontal'

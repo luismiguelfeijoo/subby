@@ -12,16 +12,17 @@ const colors = generate('#d66122');
 export const LayoutTemplate = ({ children, sider = false }) => {
   const [collapsed, setCollapsed] = useState(false);
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout style={{ height: '100vh' }} theme='light'>
       {sider ? (
         <>
           <Sider
+            theme='dark'
             width={200}
             style={{
-              backgroundColor: colors[5],
               padding: 24,
               margin: 0,
-              minHeight: 280
+              minHeight: 280,
+              background: '#2e3131'
             }}
             trigger={null}
             collapsible
@@ -32,7 +33,8 @@ export const LayoutTemplate = ({ children, sider = false }) => {
               style={{
                 padding: 24,
                 margin: 0,
-                minHeight: 280
+                minHeight: 280,
+                background: '#fff'
               }}
             >
               {children}
@@ -41,7 +43,7 @@ export const LayoutTemplate = ({ children, sider = false }) => {
         </>
       ) : (
         <>
-          <Header style={{ backgroundColor: colors[5] }}>Header</Header>
+          <Header>Header</Header>
           <Content
             style={{
               padding: 24,

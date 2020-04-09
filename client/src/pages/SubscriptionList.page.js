@@ -5,8 +5,8 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { getSubscriptions } from '../../lib/auth.api';
-import { List, Input } from 'antd';
-
+import { List, Input, Button, Space, Divider } from 'antd';
+const { Search } = Input;
 export const SubscriptionListPage = withProtected(
   withTypeUser(
     withRouter(({ history }) => {
@@ -28,11 +28,36 @@ export const SubscriptionListPage = withProtected(
 
       return (
         <LayoutTemplate sider={true}>
-          <Input.Search
-            placeholder='Search by name'
-            onChange={event => setFilter(event.target.value)}
-            style={{ width: '30%', margin: '10px' }}
-          />
+          <Space>
+            <Search
+              placeholder='Search by name'
+              onChange={event => setFilter(event.target.value)}
+              style={{ width: 200 }}
+            />
+            <Button
+              onClick={() => {
+                const newData = [...data];
+                newData.sort((a, b) => {
+                  return a.name.first < b.name.first ? -1 : 1;
+                });
+                setData(newData);
+              }}
+            >
+              Sort by Name
+            </Button>
+            <Button
+              onClick={() => {
+                const newData = [...data];
+                newData.sort((a, b) => {
+                  return a.level < b.level ? -1 : 1;
+                });
+                setData(newData);
+              }}
+            >
+              Sort by Level
+            </Button>
+          </Space>
+          <Divider />
 
           <List
             itemLayout='horizontal'
