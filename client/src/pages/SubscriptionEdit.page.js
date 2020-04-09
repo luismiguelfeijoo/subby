@@ -23,7 +23,6 @@ export const SubscriptionEditPage = withProtected(
       const [extras, setExtras] = useState([]);
       const [sub, setSub] = useState();
       const [selectedPlan, setSelectedPlan] = useState([]);
-      const [selectedExtra, setSelectedExtra] = useState([]);
 
       useEffect(() => {
         if (!loading) {
@@ -58,7 +57,6 @@ export const SubscriptionEditPage = withProtected(
           .then(sub => {
             setSub(sub);
             setSelectedPlan(sub.plans.map(plan => plan.plan.name));
-            setSelectedExtra(sub.extras.map(extra => extra.extra.name));
           })
           .catch(err => {
             console.log(err);
@@ -208,6 +206,30 @@ export const SubscriptionEditPage = withProtected(
                     </Form.Item>
                   );
                 })}
+                <Form.Item {...formItemLayout}>
+                  <Button
+                    type='primary'
+                    htmlType='submit'
+                    onClick={handleSubmit(onSubmit)}
+                  >
+                    Update Subscription!
+                  </Button>
+                </Form.Item>
+              </Form>
+            </FormContext>
+          )}
+        </LayoutTemplate>
+      );
+    }),
+    {
+      type: 'admin',
+      redirectTo: '/login'
+    }
+  )
+);
+
+/*
+
                 {selectedExtra?.length > 0 &&
                   selectedExtra.map((extra, i) => {
                     return (
@@ -281,32 +303,4 @@ export const SubscriptionEditPage = withProtected(
                         </Form.Item>
                       </Form.Item>
                     );
-                  })}
-                <Button
-                  style={{ margin: '30px 0 0 ' }}
-                  block
-                  onClick={() => setSelectedExtra([...selectedExtra, 'extra'])}
-                >
-                  Add Extra
-                </Button>
-                <Form.Item {...formItemLayout}>
-                  <Button
-                    type='primary'
-                    htmlType='submit'
-                    onClick={handleSubmit(onSubmit)}
-                  >
-                    Update Subscription!
-                  </Button>
-                </Form.Item>
-              </Form>
-            </FormContext>
-          )}
-        </LayoutTemplate>
-      );
-    }),
-    {
-      type: 'admin',
-      redirectTo: '/login'
-    }
-  )
-);
+                  })}*/
