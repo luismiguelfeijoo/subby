@@ -169,7 +169,7 @@ export const SubscriptionEditPage = withProtected(
                         {plans &&
                           plans.map((plan, i) => {
                             return (
-                              <Option value={plan.name} key={i}>{`${
+                              <Option value={plan.name} key={`${i} plan`}>{`${
                                 plan.name
                               } - ${plan.price.price} ${plan.price.currency ||
                                 '$'}`}</Option>
@@ -183,7 +183,7 @@ export const SubscriptionEditPage = withProtected(
                 {selectedPlan.map((plan, i) => {
                   return (
                     <Form.Item
-                      key={i}
+                      key={`${i} date ${plan}`}
                       {...formItemLayout}
                       validateStatus={errors.planDates ? 'error' : 'success'}
                       help={errors.planDates && 'Select the dates!'}
@@ -208,65 +208,94 @@ export const SubscriptionEditPage = withProtected(
                     </Form.Item>
                   );
                 })}
-
-                <Form.Item {...formItemLayout}>
-                  <Controller
-                    defaultValue={sub.extras.map(extra => extra.extra.name)}
-                    onChange={([event]) => {
-                      setSelectedExtra(event);
-                      return event;
-                    }}
-                    as={
-                      <Select mode='multiple' placeholder='Select an Extra'>
-                        {extras &&
-                          extras.map((extra, i) => {
-                            return (
-                              <Option value={extra.name} key={i}>{`${
-                                extra.name
-                              } - ${extra.price.price} ${extra.price.currency ||
-                                '$'}`}</Option>
-                            );
-                          })}
-                      </Select>
-                    }
-                    name='extrasName'
-                  />
-                </Form.Item>
-                {selectedExtra.map((extra, i) => {
-                  return (
-                    <Form.Item
-                      key={i}
-                      {...formItemLayout}
-                      validateStatus={errors.extraDates ? 'error' : 'success'}
-                      help={errors.extraDates && 'Select the dates!'}
-                    >
-                      <Controller
-                        defaultValue={
-                          extra === sub.extras[i]?.extra.name
-                            ? moment(sub.extras[i].date)
-                            : ''
-                        }
-                        style={{
-                          width: '100%'
-                        }}
-                        placeholder={`Select ${extra} date`}
-                        as={DatePicker}
-                        rules={{
-                          validate: value => value !== null
-                        }}
-                        format='DD-MM-YYYY'
-                        name={`extraDates[${i}]`}
-                      />
-                    </Form.Item>
-                  );
-                })}
+                {selectedExtra?.length > 0 &&
+                  selectedExtra.map((extra, i) => {
+                    return (
+                      <Form.Item style={{ marginBottom: 0 }}>
+                        <Form.Item
+                          {...formItemLayout}
+                          key={`${i + 2} extra`}
+                          style={{
+                            display: 'inline-block',
+                            width: '50%',
+                            margin: '0 -15% 0 8.25%'
+                          }}
+                        >
+                          <Controller
+                            defaultValue={sub.extras.map(subExtra => {
+                              if (extra !== 'extra') {
+                                return subExtra.extra.name;
+                              } else {
+                                return 'Select extra';
+                              }
+                            })}
+                            onChange={([event]) => {
+                              console.log(event);
+                              return event;
+                            }}
+                            as={
+                              <Select placeholder='Select an Extra'>
+                                {extras &&
+                                  extras.map((extra, i) => {
+                                    return (
+                                      <Option value={extra.name} key={i}>{`${
+                                        extra.name
+                                      } - ${extra.price.price} ${extra.price
+                                        .currency || '$'}`}</Option>
+                                    );
+                                  })}
+                              </Select>
+                            }
+                            name={`extrasName[${i}]`}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          key={`${i} date ${extra}`}
+                          {...formItemLayout}
+                          validateStatus={
+                            errors.extraDates ? 'error' : 'success'
+                          }
+                          help={errors.extraDates && 'Select the dates!'}
+                          style={{
+                            display: 'inline-block',
+                            width: '48%'
+                          }}
+                        >
+                          <Controller
+                            style={{
+                              width: '100%'
+                            }}
+                            defaultValue={
+                              extra === sub.extras[i]?.extra.name
+                                ? moment(sub.extras[i].date)
+                                : ''
+                            }
+                            placeholder={`Select ${extra} date`}
+                            as={DatePicker}
+                            rules={{
+                              validate: value => value !== ''
+                            }}
+                            format='DD-MM-YYYY'
+                            name={`extraDates[${i}]`}
+                          />
+                        </Form.Item>
+                      </Form.Item>
+                    );
+                  })}
+                <Button
+                  style={{ margin: '30px 0 0 ' }}
+                  block
+                  onClick={() => setSelectedExtra([...selectedExtra, 'extra'])}
+                >
+                  Add Extra
+                </Button>
                 <Form.Item {...formItemLayout}>
                   <Button
                     type='primary'
                     htmlType='submit'
                     onClick={handleSubmit(onSubmit)}
                   >
-                    Add Subscription!
+                    Update Subscription!
                   </Button>
                 </Form.Item>
               </Form>

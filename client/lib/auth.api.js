@@ -124,6 +124,7 @@ export const updateSubscription = async (
     extraDates
   }
 ) => {
+  console.log(extraDates);
   const res = await api.post(`retrieve/subscriptions/edit/${id}`, {
     username,
     firstName,

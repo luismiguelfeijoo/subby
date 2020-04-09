@@ -125,8 +125,9 @@ router.post(
           return result;
         });
         const extras = await Promise.all(extrasPromises);
+
         updateSub.extras = extras.map((extra, i) => {
-          return { extra: extra._id, startDate: extraDates[i] };
+          return { extra: extra._id, date: extraDates[i] };
         });
         await updateSub.save();
       }
