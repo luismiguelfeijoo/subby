@@ -10,20 +10,19 @@ const schema = new mongoose.Schema(
     },
     parents: [{ type: ObjectId, ref: 'clientUser' }],
     company: { type: ObjectId, ref: 'company' },
-    plan: [
+    plans: [
       {
-        name: { type: String },
-        price: { type: Number, default: 0 },
+        plan: { type: ObjectId, ref: 'plan' },
         startDate: { type: Date, default: Date.now }
       }
     ],
-    extra: [
+    extras: [
       {
-        name: { type: String },
-        price: { type: Number, default: 0 },
+        extra: { type: ObjectId, ref: 'extra' },
         date: { type: Date, default: Date.now }
       }
-    ]
+    ],
+    level: String
   },
   {
     timestamps: true

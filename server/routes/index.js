@@ -8,4 +8,7 @@ router.get('/', (req, res, next) => {
 const auth = require('./auth');
 router.use('/auth', auth);
 
+const company = require('./retrieve');
+router.use('/retrieve', company);
+
 module.exports = router;

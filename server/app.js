@@ -13,7 +13,8 @@ const MongoStore = require('connect-mongo')(session);
 mongoose
   .connect(process.env.DBURL, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
   })
   .then(x => {
     console.log(

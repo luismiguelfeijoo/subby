@@ -53,18 +53,27 @@ export const doUserSignup = async (
 
 export const createSubscription = async ({
   username,
-  date,
+  dates,
   planName,
-  price,
   firstName,
   lastName
 }) => {
   const res = await api.post('/auth/company/new-subscription', {
     username,
-    date: new Date(date),
+    dates,
     planName,
     firstName,
     lastName
+  });
+  return res.data;
+};
+
+export const createPlanOrExtra = async ({ name, price, currency }, type) => {
+  const res = await api.post('/auth/company/new-plan-or-extra', {
+    name,
+    price,
+    currency,
+    type
   });
   return res.data;
 };
@@ -83,13 +92,55 @@ export const doPasswordReset = async ({ password }, token, id) => {
   return res.data;
 };
 
-export const doSignup = async ({ username, password, course, campus }) => {
-  const res = await api.post('/auth/signup', {
+export const getPlans = async () => {
+  const res = await api.get(`/retrieve/plans`);
+  return res.data;
+};
+
+export const getExtras = async () => {
+  const res = await api.get(`/retrieve/extras`);
+  return res.data;
+};
+
+export const getSubscriptions = async () => {
+  const res = await api.get(`/retrieve/subscriptions`);
+  return res.data;
+};
+
+export const getSingleSubscription = async id => {
+  const res = await api.get(`/retrieve/subscriptions/${id}`);
+  return res.data;
+};
+
+export const updateSubscription = async (
+  id,
+  { username, firstName, lastName, plansName, planDates }
+) => {
+  const res = await api.post(`retrieve/subscriptions/edit/${id}`, {
     username,
-    password,
-    course,
-    campus
+    firstName,
+    lastName,
+    plansName,
+    planDates
   });
+  return res.data;
+};
+
+export const addExtraOnSubscription = async (id, { extraName, extraDate }) => {
+  const res = await api.post(`retrieve/subscriptions/addExtra/${id}`, {
+    extraName,
+    extraDate
+  });
+  return res.data;
+};
+
+export const getClients = async () => {
+  const res = await api.get(`/retrieve/clients`);
+  return res.data;
+};
+
+export const getSingleClient = async id => {
+  const res = await api.get(`/retrieve/clients/${id}`);
   return res.data;
 };
 
