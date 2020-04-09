@@ -52,7 +52,10 @@ router.get(
     const loggedAdmin = req.user;
     try {
       if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
-        const client = await ClientUser.findById(id).populate('subscriptions');
+        const client = await ClientUser.findById(id).populate({
+          path: 'subscriptions',
+          populate: ['plans.plan', 'extras.extra']
+        });
         return res.json(client);
       } else {
         return res.status(401).json({ status: 'User is not local' });

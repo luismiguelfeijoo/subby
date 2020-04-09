@@ -4,6 +4,8 @@ import { SubscriptionListPage } from '../pages/SubscriptionList.page';
 import { ClientListPage } from '../pages/ClientList.page';
 import { SingleSubscriptionPage } from '../pages/SingleSubscriptions.page';
 import { SubscriptionEditPage } from '../pages/SubscriptionEdit.page';
+import { SingleClientPage } from '../pages/SingleClient.page';
+
 export const CompanyRouter = ({ match }) => {
   return (
     <Switch>
