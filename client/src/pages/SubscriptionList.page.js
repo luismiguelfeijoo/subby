@@ -5,15 +5,12 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { getSubscriptions } from '../../lib/auth.api';
-import { List, Divider, Input } from 'antd';
-import { DatePicker } from 'antd';
-import moment from 'moment';
-const count = 5;
+import { List, Input } from 'antd';
 
 export const SubscriptionListPage = withProtected(
   withTypeUser(
     withRouter(({ history }) => {
-      const { user, loading, setLoading } = useContext(UserContext);
+      const { loading } = useContext(UserContext);
       const [data, setData] = useState([]);
       const [filter, setFilter] = useState('');
 
@@ -41,7 +38,8 @@ export const SubscriptionListPage = withProtected(
             itemLayout='horizontal'
             dataSource={data}
             renderItem={sub =>
-              sub.name.first.toLowerCase().includes(filter.toLowerCase()) ? (
+              sub.name.first.toLowerCase().includes(filter.toLowerCase()) ||
+              sub.name.last.toLowerCase().includes(filter.toLowerCase()) ? (
                 <List.Item
                   actions={[
                     <Link
