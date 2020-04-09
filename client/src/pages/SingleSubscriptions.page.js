@@ -114,6 +114,17 @@ export const SingleSubscriptionPage = withProtected(
                           defaultValue={moment(plan.startDate)}
                           disabled
                         />
+                        {plan.endDate && (
+                          <>
+                            <br />
+                            End Date:
+                            <DatePicker
+                              format='DD-MM-YYYY'
+                              defaultValue={moment(plan.endDate)}
+                              disabled
+                            />
+                          </>
+                        )}
                       </Descriptions.Item>
                     );
                   })}

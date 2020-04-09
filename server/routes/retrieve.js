@@ -126,7 +126,22 @@ router.get(
     const { id } = req.params;
     const loggedAdmin = req.user;
     if (loggedAdmin.type === 'admin') {
-      const subscriptions = await Subscription.findByIdAndDelete(id);
+      const subscription = await Subscription.findById(id);
+      subscription.plans.map(plan => {
+        plan.endDate = new Date();
+      });
+      subscription.active = false;
+      subscription.save();
+      /* Used for deletign subscription from parents
+      const parentIds = subscription.parents.map(parent => parent._id);
+      const updatedPromises = await parentIds.map(async parentID => {
+        let result = await ClientUser.findByIdAndUpdate(parentID, {
+          $pull: { subscriptions: id }
+        });
+        return result;
+      });
+      const updated = await Promise.all(updatedPromises);
+      */
       return res.json({ status: 'Subscription deleted' });
     } else {
       return res.status(401).json({ status: 'Local user is not admin' });

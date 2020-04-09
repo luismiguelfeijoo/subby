@@ -13,7 +13,8 @@ const schema = new mongoose.Schema(
     plans: [
       {
         plan: { type: ObjectId, ref: 'plan' },
-        startDate: { type: Date, default: Date.now }
+        startDate: { type: Date, default: Date.now },
+        endDate: Date
       }
     ],
     extras: [
@@ -22,7 +23,8 @@ const schema = new mongoose.Schema(
         date: { type: Date, default: Date.now }
       }
     ],
-    level: String
+    level: String,
+    active: { type: Boolean, default: true }
   },
   {
     timestamps: true
