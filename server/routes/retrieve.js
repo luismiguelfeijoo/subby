@@ -88,15 +88,7 @@ router.post(
   async (req, res, next) => {
     const { id } = req.params;
     const loggedAdmin = req.user;
-    const {
-      username,
-      planDates,
-      plansName,
-      firstName,
-      lastName,
-      extrasName,
-      extraDates
-    } = req.body;
+    const { username, planDates, plansName, firstName, lastName } = req.body;
 
     if (loggedAdmin.type === 'admin') {
       const updateSub = await Subscription.findById(id);
@@ -116,21 +108,36 @@ router.post(
         }); // see plan options
         await updateSub.save();
       }
-      if (extrasName.length > 0) {
-        const extrasPromises = await extrasName.map(async extra => {
-          let result = await Extra.findOne({
-            name: extra,
-            company: loggedAdmin.company
-          });
-          return result;
-        });
-        const extras = await Promise.all(extrasPromises);
 
-        updateSub.extras = extras.map((extra, i) => {
-          return { extra: extra._id, date: extraDates[i] };
-        });
-        await updateSub.save();
-      }
+      return res.json({ status: 'Subscription updated' });
+    } else {
+      return res.status(401).json({ status: 'Local user is not admin' });
+    }
+  }
+);
+
+router.post(
+  '/subscriptions/addExtra/:id',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const loggedAdmin = req.user;
+    const { extraName, extraDate } = req.body;
+
+    if (loggedAdmin.type === 'admin') {
+      const updateSub = await Subscription.findById(id);
+      const extra = await Extra.findOne({
+        name: extraName,
+        company: loggedAdmin.company
+      });
+      console.log(extraName);
+      updateSub.extras = [
+        ...updateSub.extras,
+        { extra: extra._id, date: extraDate }
+      ];
+
+      await updateSub.save();
+
       return res.json({ status: 'Subscription updated' });
     } else {
       return res.status(401).json({ status: 'Local user is not admin' });

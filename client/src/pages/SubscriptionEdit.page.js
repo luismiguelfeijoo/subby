@@ -27,7 +27,6 @@ export const SubscriptionEditPage = withProtected(
       useEffect(() => {
         if (!loading) {
           fetchPlans();
-          fetchExtras();
           fetchSubscription(match.params.id);
         }
       }, []);
@@ -36,16 +35,6 @@ export const SubscriptionEditPage = withProtected(
         getPlans()
           .then(plans => {
             setPlans(plans);
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      };
-
-      const fetchExtras = () => {
-        getExtras()
-          .then(extras => {
-            setExtras(extras);
           })
           .catch(error => {
             console.log(error);

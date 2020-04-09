@@ -114,25 +114,22 @@ export const getSingleSubscription = async id => {
 
 export const updateSubscription = async (
   id,
-  {
-    username,
-    firstName,
-    lastName,
-    plansName,
-    planDates,
-    extrasName,
-    extraDates
-  }
+  { username, firstName, lastName, plansName, planDates }
 ) => {
-  console.log(extraDates);
   const res = await api.post(`retrieve/subscriptions/edit/${id}`, {
     username,
     firstName,
     lastName,
     plansName,
-    planDates,
-    extrasName,
-    extraDates
+    planDates
+  });
+  return res.data;
+};
+
+export const addExtraOnSubscription = async (id, { extraName, extraDate }) => {
+  const res = await api.post(`retrieve/subscriptions/addExtra/${id}`, {
+    extraName,
+    extraDate
   });
   return res.data;
 };
