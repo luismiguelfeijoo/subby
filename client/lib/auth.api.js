@@ -139,6 +139,11 @@ export const getClients = async () => {
   return res.data;
 };
 
+export const getSingleClient = async id => {
+  const res = await api.get(`/retrieve/clients/${id}`);
+  return res.data;
+};
+
 export const doLogin = async ({ username, password }) => {
   const res = await api.post('/auth/login', {
     username,

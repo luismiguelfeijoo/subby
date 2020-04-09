@@ -21,6 +21,10 @@ export const CompanyRouter = ({ match }) => {
         component={props => <SingleSubscriptionPage {...props} />}
       />
       <Route exact path={`${match.url}/clients`} component={ClientListPage} />
+      <Route
+        path={`${match.url}/clients/:id`}
+        component={props => <SingleClientPage {...props} />}
+      />
     </Switch>
   );
 };

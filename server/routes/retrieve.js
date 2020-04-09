@@ -45,6 +45,25 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
 });
 
 router.get(
+  '/clients/:id',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const loggedAdmin = req.user;
+    try {
+      if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
+        const client = await ClientUser.findById(id).populate('subscriptions');
+        return res.json(client);
+      } else {
+        return res.status(401).json({ status: 'User is not local' });
+      }
+    } catch (error) {
+      return res.status(401).json({ error });
+    }
+  }
+);
+
+router.get(
   '/subscriptions',
   ensureLogin.ensureLoggedIn(),
   async (req, res, next) => {
@@ -74,7 +93,7 @@ router.get(
           .populate({ path: 'extras.extra' });
         return res.json(subscription);
       } else {
-        return res.status(401).json({ status: 'Local user is not admin' });
+        return res.status(401).json({ status: 'User is not local' });
       }
     } catch (error) {
       return res.status(401).json({ error });
