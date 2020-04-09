@@ -73,7 +73,7 @@ router.get(
     const { id } = req.params;
     const loggedAdmin = req.user;
     if (loggedAdmin.type === 'admin') {
-      const client = await Subscription.findByIdAndDelete(id);
+      const client = await ClientUser.findByIdAndDelete(id);
       return res.json({ status: 'Client deleted' });
     } else {
       return res.status(401).json({ status: 'Local user is not admin' });

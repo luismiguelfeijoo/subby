@@ -1,9 +1,9 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { UserContext, getClients } from '../../lib/auth.api';
+import { UserContext, getClients, deleteClient } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { List, Input, Divider, Button } from 'antd';
+import { List, Input, Divider, Button, Popover } from 'antd';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 
 export const ClientListPage = withProtected(
@@ -30,7 +30,7 @@ export const ClientListPage = withProtected(
           <Input.Search
             placeholder='Search by name'
             onChange={event => setFilter(event.target.value)}
-            style={{ width: '50%', margin: '10px' }}
+            style={{ width: '50%', marginRight: 10 }}
           />
           <Button
             onClick={() => {
@@ -60,13 +60,32 @@ export const ClientListPage = withProtected(
                     >
                       edit
                     </Link>,
-                    <Link
-                      key='list-loadmore-more'
-                      onClick={e => console.log(client._id)}
-                      to='#'
+                    <Popover
+                      key='list-loadmore-delete'
+                      title='Are you sure?'
+                      trigger='click'
+                      placement='topRight'
+                      content={
+                        <>
+                          <p>This is a change you can't undo</p>
+                          <Link
+                            to='#'
+                            onClick={async () => {
+                              try {
+                                await deleteClient(client._id);
+                                fetchSubscriptions(setData);
+                              } catch (error) {
+                                console.log(error);
+                              }
+                            }}
+                          >
+                            Delete anyways
+                          </Link>
+                        </>
+                      }
                     >
-                      delete
-                    </Link>
+                      <Link to='#'>delete</Link>
+                    </Popover>
                   ]}
                 >
                   <List.Item.Meta

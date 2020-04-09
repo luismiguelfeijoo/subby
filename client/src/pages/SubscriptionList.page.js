@@ -1,62 +1,62 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { UserContext } from '../../lib/auth.api';
+import {
+  UserContext,
+  deleteClient,
+  deleteSubscription
+} from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
-import { getSubscriptions } from '../../lib/auth.api';
-import { List, Input, Button, Space, Divider } from 'antd';
+import { fetchSubscriptions } from './utils/helpers';
+import { List, Input, Button, Space, Divider, Popover } from 'antd';
+
 const { Search } = Input;
+
 export const SubscriptionListPage = withProtected(
   withTypeUser(
-    withRouter(({ history }) => {
+    withRouter(({ match, history }) => {
       const { loading } = useContext(UserContext);
       const [data, setData] = useState([]);
       const [filter, setFilter] = useState('');
 
       useEffect(() => {
         if (!loading) {
-          fetchSubscriptions();
+          fetchSubscriptions(setData);
         }
       }, []);
 
-      const fetchSubscriptions = () => {
-        getSubscriptions().then(subs => {
-          setData(subs);
-        });
-      };
-
       return (
         <LayoutTemplate sider={true}>
-          <Space>
-            <Search
-              placeholder='Search by name'
-              onChange={event => setFilter(event.target.value)}
-              style={{ width: 200 }}
-            />
-            <Button
-              onClick={() => {
-                const newData = [...data];
-                newData.sort((a, b) => {
-                  return a.name.first < b.name.first ? -1 : 1;
-                });
-                setData(newData);
-              }}
-            >
-              Sort by Name
-            </Button>
-            <Button
-              onClick={() => {
-                const newData = [...data];
-                newData.sort((a, b) => {
-                  return a.level < b.level ? -1 : 1;
-                });
-                setData(newData);
-              }}
-            >
-              Sort by Level
-            </Button>
-          </Space>
+          <Search
+            placeholder='Search by name'
+            onChange={event => setFilter(event.target.value)}
+            style={{ width: '50%', marginRight: 10 }}
+          />
+          <Button
+            onClick={() => {
+              const newData = [...data];
+              newData.sort((a, b) => {
+                return a.name.first < b.name.first ? -1 : 1;
+              });
+              setData(newData);
+            }}
+            style={{ marginRight: 10 }}
+          >
+            Sort by Name
+          </Button>
+          <Button
+            onClick={() => {
+              const newData = [...data];
+              newData.sort((a, b) => {
+                return a.level < b.level ? -1 : 1;
+              });
+              setData(newData);
+            }}
+          >
+            Sort by Level
+          </Button>
+
           <Divider />
 
           <List
@@ -73,13 +73,32 @@ export const SubscriptionListPage = withProtected(
                     >
                       edit
                     </Link>,
-                    <Link
-                      key='list-loadmore-more'
-                      onClick={e => console.log(sub._id)}
-                      to='#'
+                    <Popover
+                      key='list-loadmore-delete'
+                      title='Are you sure?'
+                      trigger='click'
+                      placement='topRight'
+                      content={
+                        <>
+                          <p>This is a change you can't undo</p>
+                          <Link
+                            to='#'
+                            onClick={async () => {
+                              try {
+                                await deleteSubscription(sub._id);
+                                fetchSubscriptions(setData);
+                              } catch (error) {
+                                console.log(error);
+                              }
+                            }}
+                          >
+                            Delete anyways
+                          </Link>
+                        </>
+                      }
                     >
-                      delete
-                    </Link>
+                      <Link to='#'>delete</Link>
+                    </Popover>
                   ]}
                 >
                   <List.Item.Meta
