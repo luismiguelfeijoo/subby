@@ -179,7 +179,6 @@ export const doEdit = async ({ username, course, campus }) => {
 };
 
 export const doLogout = async () => {
-  console.log('Login out');
   const res = await api.post('/auth/logout');
   return res.data;
 };

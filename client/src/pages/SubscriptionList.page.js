@@ -27,7 +27,7 @@ export const SubscriptionListPage = withProtected(
       }, []);
 
       return (
-        <LayoutTemplate sider={true}>
+        <LayoutTemplate sider={true} currentPage={'subscriptions'}>
           <Search
             placeholder='Search by name'
             onChange={event => setFilter(event.target.value)}

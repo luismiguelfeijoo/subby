@@ -7,7 +7,7 @@ import {
 
 export const fetchSubscriptions = setter => {
   getSubscriptions().then(subs => {
-    setter(subs);
+    setter(subs.filter(sub => sub.active));
   });
 };
 

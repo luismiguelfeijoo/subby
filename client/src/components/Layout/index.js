@@ -1,33 +1,38 @@
-import React, { useState } from 'react';
-import { Layout } from 'antd';
+import React, { useState, useContext } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+
+import { Layout, Menu } from 'antd';
+const { SubMenu } = Menu;
 const { Header, Footer, Sider, Content } = Layout;
+
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import { gold } from '@ant-design/colors';
 
 import { generate, presetPalettes } from '@ant-design/colors';
+import { doLogout, UserContext } from '../../../lib/auth.api';
 
 // Generate color palettes by a given color
 const colors = generate('#d66122');
 
-export const LayoutTemplate = ({ children, sider = false }) => {
+export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
   const [collapsed, setCollapsed] = useState(false);
   return (
     <Layout style={{ minHeight: '100vh' }} theme='light'>
       {sider ? (
         <>
           <Sider
-            theme='dark'
             width={200}
             style={{
-              padding: 24,
               margin: 0,
               minHeight: '100vh',
-              background: '#000'
+              background: '#ccc'
             }}
             trigger={null}
             collapsible
             collapsed={collapsed}
-          ></Sider>
+          >
+            <SiderMenu selection={currentPage} history={history} />
+          </Sider>
           <Layout style={{ minHeight: '100vh' }}>
             <Content
               style={{
@@ -59,3 +64,43 @@ export const LayoutTemplate = ({ children, sider = false }) => {
     </Layout>
   );
 };
+
+const SiderMenu = withRouter(({ selection, history }) => {
+  const { user, setUser } = useContext(UserContext);
+  const color = {
+    background: '#ccc'
+  };
+
+  return (
+    <Menu
+      mode='inline'
+      style={{ height: '100%', borderRight: 0, background: '#ccc' }}
+      theme='light'
+      defaultSelectedKeys={[selection]}
+    >
+      <SubMenu key='User' title='User' style={color}>
+        <Menu.Item key='Profile' onSelect={() => <Redirect to='profile' />}>
+          Profile
+        </Menu.Item>
+        <Menu.Item
+          key='Logout'
+          onClick={async () => {
+            setUser();
+            await doLogout();
+            history.push('/');
+          }}
+        >
+          Log Out
+        </Menu.Item>
+      </SubMenu>
+      <SubMenu key='/company' title='Company'>
+        <Menu.Item key='subscriptionsList'>
+          <Link to='/company/subscriptions'>Subscriptions</Link>
+        </Menu.Item>
+        <Menu.Item key='clientsList'>
+          <Link to='/company/clients'>Clients</Link>
+        </Menu.Item>
+      </SubMenu>
+    </Menu>
+  );
+});
