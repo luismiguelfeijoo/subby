@@ -36,8 +36,7 @@ export const SingleSubscriptionPage = withProtected(
           })
           .catch(err => {
             console.log(err);
-          })
-          .finally(setLoading(false));
+          });
       };
 
       const showModal = () => {
@@ -93,6 +92,11 @@ export const SingleSubscriptionPage = withProtected(
                     </Descriptions.Item>
                   );
                 })}
+                {data.level && (
+                  <Descriptions.Item label={`Level:`} span={2}>
+                    {`${data.level}`}
+                  </Descriptions.Item>
+                )}
                 {data.plans &&
                   data.plans.map((plan, i) => {
                     return (
@@ -114,24 +118,26 @@ export const SingleSubscriptionPage = withProtected(
                     );
                   })}
                 {data.extras &&
-                  data.extras.map((extra, i) => {
-                    return (
-                      <Descriptions.Item
-                        key={extra.id + i}
-                        label={`Extra ${i + 1}:`}
-                        span={1}
-                      >
-                        {`${extra.extra.name} - ${extra.extra.price.price} ${extra.extra.price.currency}`}
-                        <br />
-                        {`Date:  `}
-                        <DatePicker
-                          format='DD-MM-YYYY'
-                          defaultValue={moment(extra.date)}
-                          disabled
-                        />
-                      </Descriptions.Item>
-                    );
-                  })}
+                  data.extras
+                    .sort((a, b) => (a.date < b.date ? -1 : 1))
+                    .map((extra, i) => {
+                      return (
+                        <Descriptions.Item
+                          key={extra.id + i}
+                          label={`Extra ${i + 1}:`}
+                          span={1}
+                        >
+                          {`${extra.extra.name} - ${extra.extra.price.price} ${extra.extra.price.currency}`}
+                          <br />
+                          {`Date:  `}
+                          <DatePicker
+                            format='DD-MM-YYYY'
+                            defaultValue={moment(extra.date)}
+                            disabled
+                          />
+                        </Descriptions.Item>
+                      );
+                    })}
               </Descriptions>
             </>
           ) : (
@@ -182,7 +188,7 @@ export const SingleSubscriptionPage = withProtected(
           </Row>
           <Row>
             <Col span={8} offset={8}>
-              <Button style={{ margin: '30px 0 0' }} block>
+              <Button style={{ margin: '30px 0 ' }} block>
                 Set Payment Info
               </Button>
             </Col>
