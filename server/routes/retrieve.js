@@ -67,6 +67,21 @@ router.get(
 );
 
 router.get(
+  '/clients/delete/:id',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const loggedAdmin = req.user;
+    if (loggedAdmin.type === 'admin') {
+      const client = await ClientUser.findByIdAndDelete(id);
+      return res.json({ status: 'Client deleted' });
+    } else {
+      return res.status(401).json({ status: 'Local user is not admin' });
+    }
+  }
+);
+
+router.get(
   '/subscriptions',
   ensureLogin.ensureLoggedIn(),
   async (req, res, next) => {
@@ -100,6 +115,21 @@ router.get(
       }
     } catch (error) {
       return res.status(401).json({ error });
+    }
+  }
+);
+
+router.get(
+  '/subscriptions/delete/:id',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const loggedAdmin = req.user;
+    if (loggedAdmin.type === 'admin') {
+      const subscriptions = await Subscription.findByIdAndDelete(id);
+      return res.json({ status: 'Subscription deleted' });
+    } else {
+      return res.status(401).json({ status: 'Local user is not admin' });
     }
   }
 );

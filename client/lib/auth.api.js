@@ -112,6 +112,11 @@ export const getSingleSubscription = async id => {
   return res.data;
 };
 
+export const deleteSubscription = async id => {
+  const res = await api.get(`/retrieve/subscriptions/delete/${id}`);
+  return res.data;
+};
+
 export const updateSubscription = async (
   id,
   { username, firstName, lastName, plansName, planDates }
@@ -141,6 +146,11 @@ export const getClients = async () => {
 
 export const getSingleClient = async id => {
   const res = await api.get(`/retrieve/clients/${id}`);
+  return res.data;
+};
+
+export const deleteClient = async id => {
+  const res = await api.post(`/retrieve/clients/delete/${id}`);
   return res.data;
 };
 
