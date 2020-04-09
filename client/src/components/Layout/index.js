@@ -25,7 +25,7 @@ export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
             style={{
               margin: 0,
               minHeight: '100vh',
-              background: '#000'
+              background: '#ccc'
             }}
             trigger={null}
             collapsible
@@ -67,15 +67,18 @@ export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
 
 const SiderMenu = withRouter(({ selection, history }) => {
   const { user, setUser } = useContext(UserContext);
+  const color = {
+    background: '#ccc'
+  };
 
   return (
     <Menu
       mode='inline'
-      style={{ height: '100%', borderRight: 0, background: '#000' }}
-      theme='dark'
+      style={{ height: '100%', borderRight: 0, background: '#ccc' }}
+      theme='light'
       defaultSelectedKeys={[selection]}
     >
-      <SubMenu key='User' title='User'>
+      <SubMenu key='User' title='User' style={color}>
         <Menu.Item key='Profile' onSelect={() => <Redirect to='profile' />}>
           Profile
         </Menu.Item>
