@@ -9,7 +9,7 @@ const Subscription = require('../models/Subscription');
 const Plan = require('../models/Plan');
 const Extra = require('../models/Extra');
 const owasp = require('owasp-password-strength-test');
-
+const moment = require('moment');
 // Retrieve all the plans
 
 router.get('/plans', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
@@ -37,7 +37,60 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
     const clients = await ClientUser.find({
       company: loggedAdmin.company
-    }).populate('subscriptions');
+    }).populate({
+      path: 'subscriptions',
+      populate: ['plans.plan', 'extras.extra']
+    });
+    clients.map(async client => {
+      client.subscriptions.map(async sub => {
+        sub.extras.map(async extra => {
+          if (!extra.charged) {
+            client.debts = [
+              ...client.debts,
+              { type: 'extra', date: extra.date, amount: extra.extra.price }
+            ];
+            const updatedSub = await Subscription.findById(sub._id);
+            updatedSub.extras.map(extraInSub => {
+              extraInSub.charged = true;
+            });
+            await updatedSub.save();
+          }
+        });
+        sub.plans.map(async plan => {
+          if (!plan.charged) {
+            const days = moment().diff(moment(plan.startDate), 'days');
+            console.log(days);
+            if (days % 30 === 0) {
+              client.debts = [
+                ...client.debts,
+                { type: 'plan', date: moment(), amount: plan.plan.price }
+              ];
+
+              let updatedSub = await Subscription.findById(sub._id);
+              updatedSub.plans.map(planInSub => {
+                if (String(planInSub.plan) == String(plan.plan._id)) {
+                  console.log('Hola, updating sub');
+                  planInSub.charged = true;
+                }
+              });
+              await updatedSub.save();
+            } else {
+              if (days % 30 != 0) {
+                let updatedSub = await Subscription.findById(sub._id);
+                updatedSub.plans.map(planInSub => {
+                  if (String(planInSub.plan) == String(plan.plan._id)) {
+                    planInSub.charged = false;
+                  }
+                });
+                await updatedSub.save();
+              }
+            }
+          }
+        });
+      });
+      await client.save();
+    });
+
     return res.json(clients);
   } else {
     return res.status(401).json({ status: 'Local user is not admin' });
@@ -197,7 +250,7 @@ router.post(
         name: extraName,
         company: loggedAdmin.company
       });
-      console.log(extraName);
+
       updateSub.extras = [
         ...updateSub.extras,
         { extra: extra._id, date: extraDate }
