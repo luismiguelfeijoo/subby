@@ -60,17 +60,22 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
           if (!plan.charged) {
             const days = moment().diff(moment(plan.startDate), 'days');
             console.log(days);
-            if (days % 30 === 0) {
-              client.debts = [
-                ...client.debts,
-                { type: 'plan', date: moment(), amount: plan.plan.price }
-              ];
+            if (days % 30 === 0 && days != 0) {
+              let monthsPassed = plan.timesCharged;
+              do {
+                client.debts = [
+                  ...client.debts,
+                  { type: 'plan', date: moment(), amount: plan.plan.price }
+                ];
+                monthsPassed++;
+              } while (monthsPassed < Math.floor(days / 30));
 
               let updatedSub = await Subscription.findById(sub._id);
               updatedSub.plans.map(planInSub => {
                 if (String(planInSub.plan) == String(plan.plan._id)) {
-                  console.log('Hola, updating sub');
                   planInSub.charged = true;
+                  planInSub.timesCharged =
+                    planInSub.timesCharged + monthsPassed;
                 }
               });
               await updatedSub.save();

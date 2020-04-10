@@ -15,7 +15,8 @@ const schema = new mongoose.Schema(
         plan: { type: ObjectId, ref: 'plan' },
         startDate: { type: Date, default: Date.now },
         endDate: Date,
-        charged: { type: Boolean, default: false }
+        charged: { type: Boolean, default: false },
+        timesCharged: { type: Number, default: 0 }
       }
     ],
     extras: [
