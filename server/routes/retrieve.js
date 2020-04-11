@@ -47,7 +47,12 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
           if (!extra.charged) {
             client.debts = [
               ...client.debts,
-              { type: 'extra', date: extra.date, amount: extra.extra.price }
+              {
+                type: 'extra',
+                date: extra.date,
+                amount: extra.extra.price,
+                name: extra.extra.name
+              }
             ];
             const updatedSub = await Subscription.findById(sub._id);
             updatedSub.extras.map(extraInSub => {
@@ -65,7 +70,12 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
               do {
                 client.debts = [
                   ...client.debts,
-                  { type: 'plan', date: moment(), amount: plan.plan.price }
+                  {
+                    type: 'plan',
+                    date: moment(),
+                    amount: plan.plan.price,
+                    name: plan.plan.name
+                  }
                 ];
                 monthsPassed++;
               } while (monthsPassed < Math.floor(days / 30));
@@ -112,7 +122,7 @@ router.get(
       if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
         const client = await ClientUser.findById(id).populate({
           path: 'subscriptions',
-          populate: ['plans.plan', 'extras.extra']
+          populate: ['plans.plan', 'extras.extra', 'debts.data']
         });
         return res.json(client);
       } else {

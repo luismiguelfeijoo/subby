@@ -18,7 +18,8 @@ const schema = new mongoose.Schema(
       {
         date: Date,
         amount: { type: Object, required: true },
-        type: { type: String, enum: ['extra', 'plan'] }
+        type: { type: String, enum: ['extra', 'plan'] },
+        name: String
       }
     ]
   },

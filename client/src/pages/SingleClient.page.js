@@ -1,17 +1,11 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import {
-  UserContext,
-  getSingleSubscription,
-  getExtras,
-  addExtraOnSubscription,
-  getSingleClient
-} from '../../lib/auth.api';
+import { UserContext, getSingleClient } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { Descriptions } from 'antd';
-import { useForm, FormContext, Controller } from 'react-hook-form';
+import _ from 'lodash';
 import {
   DatePicker,
   Button,
@@ -20,7 +14,7 @@ import {
   Divider,
   List,
   Select,
-  Space
+  Card
 } from 'antd';
 const { Option } = Select;
 import moment from 'moment';
@@ -33,6 +27,9 @@ export const SingleClientPage = withProtected(
       const [data, setData] = useState();
       const [visible, setVisible] = useState(false);
       const [confirmLoading, setConfirmLoading] = useState(false);
+      const [month, setMonth] = useState();
+      const [debtTotal, setDebtTotal] = useState(0);
+      const [payedTotal, setPayedTotal] = useState(0);
 
       useEffect(() => {
         if (!loading) {
@@ -44,12 +41,26 @@ export const SingleClientPage = withProtected(
         getSingleClient(id)
           .then(sub => {
             setData(sub);
+            calculateTotal(sub.debts, null, setDebtTotal);
           })
           .catch(err => {
             console.log(err);
           });
       };
-      console.log(data && data.subscriptions.map(sub => console.log(sub)));
+
+      const calculateTotal = (data, month, setter) => {
+        setter(
+          data
+            .filter(element =>
+              month
+                ? moment(element.date).format('MM-YYYY') ===
+                  month.format('MM-YYYY')
+                : true
+            )
+            .reduce((acc, element) => acc + parseInt(element.amount.price), 0)
+        );
+      };
+
       return (
         <LayoutTemplate sider={true}>
           {data ? (
@@ -99,7 +110,128 @@ export const SingleClientPage = withProtected(
                     )}
                   />
                 </Descriptions.Item>
-                <Descriptions.Item label='Balance'></Descriptions.Item>
+                <Descriptions.Item label='Services & Payments'>
+                  <DatePicker
+                    picker='month'
+                    format='MM-YYYY'
+                    style={{ width: '100%', marginBottom: '20px' }}
+                    allowClear
+                    onChange={e => {
+                      setDebtTotal(0);
+                      setMonth(() => (e ? e.format('MM-YYYY') : e));
+                      calculateTotal(data.debts, e, setDebtTotal);
+                    }}
+                  />
+                  <Row>
+                    <Col span={12}>
+                      <List
+                        style={{
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between'
+                        }}
+                        header={<div>Services Adquired</div>}
+                        footer={
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between'
+                            }}
+                          >
+                            <div>Total:</div>
+                            <div>{`${debtTotal} $`}</div>
+                          </div>
+                        }
+                        size='small'
+                        bordered
+                        dataSource={data.debts.filter(debt =>
+                          month
+                            ? moment(debt.date).format('MM-YYYY') === month
+                            : true
+                        )}
+                        renderItem={(debt, i) => {
+                          return (
+                            <List.Item
+                              actions={[
+                                <p key='list-price'>{`${debt.amount.price} ${debt.amount.currency}`}</p>
+                              ]}
+                            >
+                              <List.Item.Meta
+                                title={`${
+                                  debt.type === 'extra' ? 'Extra:' : 'Plan:'
+                                }  ${debt.name}`}
+                              />
+                              <DatePicker
+                                format='DD-MM-YYYY'
+                                defaultValue={moment(debt.date)}
+                                disabled
+                              />
+                            </List.Item>
+                          );
+                        }}
+                      ></List>
+                    </Col>
+                    <Col span={12}>
+                      <List
+                        style={{
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between'
+                        }}
+                        header={<div>Payments Recieved</div>}
+                        footer={
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between'
+                            }}
+                          >
+                            <div>Total:</div>
+                            <div>{`${payedTotal} $`}</div>
+                          </div>
+                        }
+                        size='small'
+                        bordered
+                        dataSource={data.payments.filter(payment =>
+                          month
+                            ? moment(payment.date).format('MM-YYYY') === month
+                            : true
+                        )}
+                        renderItem={(payment, i) => {
+                          return (
+                            <List.Item
+                              actions={[
+                                <p key='list-price'>{`${payment.amount.price} ${payment.amount.currency}`}</p>
+                              ]}
+                            >
+                              <List.Item.Meta title={` ${payment.name}`} />
+                              <DatePicker
+                                format='DD-MM-YYYY'
+                                defaultValue={moment(payment.date)}
+                                disabled
+                              />
+                            </List.Item>
+                          );
+                        }}
+                      ></List>
+                    </Col>
+                  </Row>
+                </Descriptions.Item>
+                <Descriptions.Item label='Balance'>
+                  <DatePicker
+                    picker='month'
+                    format='MM-YYYY'
+                    style={{ width: '100%' }}
+                    allowClear
+                    onChange={e => {
+                      setPayedTotal(0);
+                      setMonth(() => (e ? e.format('MM-YYYY') : e));
+                      calculateTotal(data.payments, month, setPayedTotal);
+                    }}
+                  />
+                </Descriptions.Item>
               </Descriptions>
             </>
           ) : (
