@@ -60,7 +60,7 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
           if (!plan.charged) {
             const days = moment().diff(moment(plan.startDate), 'days');
             console.log(days);
-            if (days % 30 === 0 && days != 0) {
+            if (days % 30 === 0 && days > 0) {
               let monthsPassed = plan.timesCharged;
               do {
                 client.debts = [
@@ -213,7 +213,8 @@ router.post(
   async (req, res, next) => {
     const { id } = req.params;
     const loggedAdmin = req.user;
-    const { username, planDates, plansName, firstName, lastName } = req.body;
+    const { username, plansName, firstName, lastName } = req.body;
+    let { planDates } = req.body;
 
     if (loggedAdmin.type === 'admin') {
       const updateSub = await Subscription.findById(id);
@@ -227,10 +228,84 @@ router.post(
           });
           return result;
         });
-        const plans = await Promise.all(plansPromises);
-        updateSub.plans = plans.map((plan, i) => {
-          return { plan: plan._id, startDate: planDates[i] };
-        }); // see plan options
+
+        let plans = await Promise.all(plansPromises);
+
+        // To update existing plans
+        let prevAddedPlans = [];
+        let datesToChange = [];
+        // To delete plans from the existing array
+        let indexesToRemove = [];
+        // To remove new plans sent
+        let datesToRemove = [];
+        let newPlansToRemove = [];
+
+        updateSub.plans.map((existingPlan, existingPlanIndex) => {
+          const newDupPlan = _.find(
+            plans,
+            element => String(element._id) === String(existingPlan.plan)
+          );
+          if (newDupPlan) {
+            const newDupPlanIndex = _.findIndex(
+              plans,
+              element => String(element._id) === String(existingPlan.plan)
+            );
+            if (
+              !moment(existingPlan.startDate).isSame(
+                planDates[newDupPlanIndex],
+                'day'
+              )
+            ) {
+              prevAddedPlans.push(newDupPlan);
+              datesToChange.push(planDates[newDupPlanIndex]);
+              newPlansToRemove.push(newDupPlanIndex);
+              datesToRemove.push(newDupPlanIndex);
+              indexesToRemove.push(existingPlanIndex);
+            } else {
+              newPlansToRemove.push(newDupPlanIndex);
+              datesToRemove.push(newDupPlanIndex);
+            }
+          } else {
+            indexesToRemove.push(existingPlanIndex);
+          }
+        });
+
+        updateSub.plans = updateSub.plans.filter(
+          (plan, i) => !indexesToRemove.includes(i)
+        );
+        await updateSub.save();
+
+        plans =
+          plans.length > 0
+            ? plans.filter((plan, i) => !newPlansToRemove.includes(i))
+            : [...plans];
+        console.log('planDates', planDates);
+        planDates =
+          datesToRemove.length > 0
+            ? (planDates = planDates.filter(
+                (date, i) => !datesToRemove.includes(i)
+              ))
+            : [...planDates];
+
+        console.log('new plans', plans);
+        updateSub.plans = [
+          ...updateSub.plans,
+          ...plans.map((plan, i) => {
+            return { plan: plan._id, startDate: planDates[i] };
+          })
+        ];
+
+        await updateSub.save();
+        console.log('prevaddedplans', prevAddedPlans);
+        updateSub.plans = [
+          ...updateSub.plans,
+          ...prevAddedPlans.map((plan, i) => {
+            return { plan: plan._id, startDate: datesToChange[i] };
+          })
+        ];
+        await updateSub.save();
+      } else {
+        updateSub.plans = [];
         await updateSub.save();
       }
 
