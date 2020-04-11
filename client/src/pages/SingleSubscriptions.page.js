@@ -41,12 +41,10 @@ export const SingleSubscriptionPage = withProtected(
 
       const showModal = () => {
         setVisible(true);
-        reset();
       };
 
       const handleCancel = () => {
         setVisible(false);
-        reset();
       };
 
       const methods = useForm({
