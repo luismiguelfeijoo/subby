@@ -12,6 +12,7 @@ import { useForm, FormContext, Controller } from 'react-hook-form';
 import _ from 'lodash';
 import {
   DatePicker,
+  message,
   Button,
   Row,
   Col,
@@ -103,9 +104,9 @@ export const SingleClientPage = withProtected(
         try {
           const response = await addPaymentOnClient(match.params.id, data);
           fetchClient(match.params.id);
-          console.log(response);
+          message.success(response.status);
         } catch (error) {
-          console.log(error);
+          message.error('Error on the conection');
         } finally {
           setConfirmLoading(false);
           setVisible(false);

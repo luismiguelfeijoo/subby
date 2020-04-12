@@ -24,6 +24,7 @@ export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
   const onCollapse = collapsed => {
     setCollapsed(collapsed);
   };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {sider ? (
