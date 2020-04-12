@@ -13,7 +13,7 @@ const schema = new mongoose.Schema(
     subscriptions: [{ type: ObjectId, ref: 'subscription' }],
     company: { type: ObjectId, ref: 'company' },
     phone: { prefix: Number, phone: Number },
-    payments: [{ date: Date, amount: Number }],
+    payments: [{ date: Date, amount: { type: Object, required: true } }],
     debts: [
       {
         date: Date,

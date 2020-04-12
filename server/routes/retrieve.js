@@ -112,6 +112,34 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   }
 });
 
+router.post(
+  '/clients/add-payment/:id',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const loggedAdmin = req.user;
+    const { paymentAmount, paymentDate, currency } = req.body;
+
+    if (loggedAdmin.type === 'admin') {
+      const updateClient = await ClientUser.findById(id);
+
+      updateClient.payments = [
+        ...updateClient.payments,
+        {
+          date: paymentDate,
+          amount: { price: paymentAmount, currency: currency }
+        }
+      ];
+
+      await updateClient.save();
+
+      return res.json({ status: 'Payment Added' });
+    } else {
+      return res.status(401).json({ status: 'Local user is not admin' });
+    }
+  }
+);
+
 router.get(
   '/clients/:id',
   ensureLogin.ensureLoggedIn(),
