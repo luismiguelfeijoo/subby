@@ -31,6 +31,20 @@ export const SingleClientPage = withProtected(
       const [debtTotal, setDebtTotal] = useState(0);
       const [payedTotal, setPayedTotal] = useState(0);
 
+      const monthNames = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ];
       useEffect(() => {
         if (!loading) {
           fetchClient(match.params.id);
@@ -118,7 +132,7 @@ export const SingleClientPage = withProtected(
                     allowClear
                     onChange={e => {
                       setDebtTotal(0);
-                      setMonth(() => (e ? e.format('MM-YYYY') : e));
+                      setMonth(() => (e ? e : e));
                       calculateTotal(data.debts, e, setDebtTotal);
                     }}
                   />
@@ -147,7 +161,8 @@ export const SingleClientPage = withProtected(
                         bordered
                         dataSource={data.debts.filter(debt =>
                           month
-                            ? moment(debt.date).format('MM-YYYY') === month
+                            ? moment(debt.date).format('MM-YYYY') ===
+                              month.format('MM-YYYY')
                             : true
                         )}
                         renderItem={(debt, i) => {
@@ -196,7 +211,8 @@ export const SingleClientPage = withProtected(
                         bordered
                         dataSource={data.payments.filter(payment =>
                           month
-                            ? moment(payment.date).format('MM-YYYY') === month
+                            ? moment(payment.date).format('MM-YYYY') ===
+                              month.format('MM-YYYY')
                             : true
                         )}
                         renderItem={(payment, i) => {
@@ -206,7 +222,7 @@ export const SingleClientPage = withProtected(
                                 <p key='list-price'>{`${payment.amount.price} ${payment.amount.currency}`}</p>
                               ]}
                             >
-                              <List.Item.Meta title={` ${payment.name}`} />
+                              <List.Item.Meta title={`${payment.name}`} />
                               <DatePicker
                                 format='DD-MM-YYYY'
                                 defaultValue={moment(payment.date)}
@@ -219,18 +235,31 @@ export const SingleClientPage = withProtected(
                     </Col>
                   </Row>
                 </Descriptions.Item>
-                <Descriptions.Item label='Balance'>
-                  <DatePicker
-                    picker='month'
-                    format='MM-YYYY'
-                    style={{ width: '100%' }}
-                    allowClear
-                    onChange={e => {
-                      setPayedTotal(0);
-                      setMonth(() => (e ? e.format('MM-YYYY') : e));
-                      calculateTotal(data.payments, month, setPayedTotal);
-                    }}
-                  />
+                <Descriptions.Item
+                  label={`${
+                    month ? month.format('MMMM YYYY') : 'Total'
+                  } Balance`}
+                >
+                  <List>
+                    <List.Item
+                      actions={[<p key='total-debt'>{`${debtTotal} $`}</p>]}
+                    >
+                      <List.Item.Meta title={`Debt Month`} />
+                    </List.Item>
+                    <List.Item
+                      actions={[<p key='total-payed'>{`${payedTotal} $`}</p>]}
+                    >
+                      <List.Item.Meta title={`Payed Month`} />
+                    </List.Item>
+                    <List.Item
+                      actions={[
+                        <p key='total-balance'>{`${payedTotal -
+                          debtTotal} $`}</p>
+                      ]}
+                    >
+                      <List.Item.Meta title={`Total:`} />
+                    </List.Item>
+                  </List>
                 </Descriptions.Item>
               </Descriptions>
             </>
