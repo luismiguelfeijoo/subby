@@ -4,17 +4,19 @@ import { UserContext, getSingleClient } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
-import { Descriptions } from 'antd';
+import { useForm, FormContext, Controller } from 'react-hook-form';
 import _ from 'lodash';
 import {
   DatePicker,
   Button,
   Row,
   Col,
-  Divider,
   List,
   Select,
-  Card
+  Descriptions,
+  Modal,
+  Form,
+  Input
 } from 'antd';
 const { Option } = Select;
 import moment from 'moment';
@@ -73,6 +75,33 @@ export const SingleClientPage = withProtected(
             )
             .reduce((acc, element) => acc + parseInt(element.amount.price), 0)
         );
+      };
+
+      const showModal = () => {
+        setVisible(true);
+      };
+
+      const handleCancel = () => {
+        setVisible(false);
+      };
+
+      const methods = useForm({
+        mode: 'onBlur'
+      });
+
+      const { register, handleSubmit, errors, reset } = methods;
+
+      const onSubmit = async data => {
+        console.log(data);
+        setConfirmLoading(true);
+        try {
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setConfirmLoading(false);
+          setVisible(false);
+          reset();
+        }
       };
 
       return (
@@ -281,9 +310,32 @@ export const SingleClientPage = withProtected(
           </Row>
           <Row>
             <Col span={8} offset={8}>
-              <Button style={{ margin: '30px 0 ' }} block>
-                Set Payment Info
+              <Button
+                style={{ margin: '30px 0 0 ' }}
+                block
+                onClick={() => showModal()}
+              >
+                Add Payment Info
               </Button>
+              <Modal
+                centered
+                title='Add Payment'
+                visible={visible}
+                confirmLoading={confirmLoading}
+                onCancel={() => handleCancel()}
+                footer={[
+                  <Button key='back' onClick={() => handleCancel()}>
+                    Cancel
+                  </Button>
+                ]}
+              >
+                <PaymentForm
+                  onSubmit={onSubmit}
+                  handleSubmit={handleSubmit}
+                  errors={errors}
+                  methods={methods}
+                />
+              </Modal>
             </Col>
           </Row>
         </LayoutTemplate>
@@ -293,11 +345,86 @@ export const SingleClientPage = withProtected(
   )
 );
 
-/*
-Use datepicker to show information depending on month
-<DatePicker
-  format='MM-YYYY'
-  onChange={(date, dateS) => console.log(date, dateS)}
-  picker='month'
-/>;
-*/
+const PaymentForm = ({ onSubmit, handleSubmit, errors, methods }) => {
+  const { loading, setLoading } = useContext(UserContext);
+
+  const formItemLayout = {
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16, offset: 4 }
+    }
+  };
+
+  const currencySelector = (
+    <Form.Item noStyle>
+      <Controller
+        as={
+          <Select>
+            <Option value='€'>€</Option>
+            <Option value='$'>$</Option>
+          </Select>
+        }
+        defaultValue='€'
+        style={{
+          width: 70
+        }}
+        name='currency'
+      />
+    </Form.Item>
+  );
+  return (
+    <FormContext {...methods}>
+      <Form>
+        <Form.Item
+          {...formItemLayout}
+          validateStatus={errors.paymentAmount?.message ? 'error' : 'success'}
+          help={errors.paymentAmount?.message && errors.paymentAmount.message}
+        >
+          <Controller
+            name='paymentAmount'
+            type='number'
+            step={0.01}
+            as={Input}
+            placeholder='Amount'
+            addonAfter={currencySelector}
+            style={{
+              width: '100%'
+            }}
+            rules={{
+              required: 'Please input the payment amount!',
+              min: { value: 0.01, message: 'Input a valid amount!' }
+            }}
+          />
+        </Form.Item>
+        <Form.Item
+          {...formItemLayout}
+          validateStatus={errors.paymentDate ? 'error' : 'success'}
+          help={errors.paymentDate && 'Select the date of payment!'}
+        >
+          <Controller
+            style={{
+              width: '100%'
+            }}
+            placeholder={`Select date`}
+            as={DatePicker}
+            rules={{
+              required: 'Select the date!'
+            }}
+            format='DD-MM-YYYY'
+            name={`paymentDate`}
+          />
+        </Form.Item>
+
+        <Form.Item {...formItemLayout}>
+          <Button
+            type='primary'
+            htmlType='submit'
+            onClick={handleSubmit(onSubmit)}
+          >
+            Add Payment!
+          </Button>
+        </Form.Item>
+      </Form>
+    </FormContext>
+  );
+};
