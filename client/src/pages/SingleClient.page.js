@@ -123,7 +123,7 @@ export const SingleClientPage = withProtected(
                     }}
                   />
                   <Row>
-                    <Col span={12}>
+                    <Col md={24} lg={12}>
                       <List
                         style={{
                           height: '100%',
@@ -172,7 +172,7 @@ export const SingleClientPage = withProtected(
                         }}
                       ></List>
                     </Col>
-                    <Col span={12}>
+                    <Col md={24} lg={12}>
                       <List
                         style={{
                           height: '100%',
