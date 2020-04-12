@@ -58,10 +58,12 @@ export const SingleClientPage = withProtected(
       }, []);
 
       const fetchClient = id => {
+        console.log('fetching');
         getSingleClient(id)
-          .then(sub => {
-            setData(sub);
-            calculateTotal(sub.debts, null, setDebtTotal);
+          .then(client => {
+            setData(client);
+            calculateTotal(client.debts, null, setDebtTotal);
+            calculateTotal(client.payments, null, setPayedTotal);
           })
           .catch(err => {
             console.log(err);
@@ -100,6 +102,7 @@ export const SingleClientPage = withProtected(
         setConfirmLoading(true);
         try {
           const response = await addPaymentOnClient(match.params.id, data);
+          fetchClient(match.params.id);
           console.log(response);
         } catch (error) {
           console.log(error);
@@ -167,8 +170,10 @@ export const SingleClientPage = withProtected(
                     allowClear
                     onChange={e => {
                       setDebtTotal(0);
+                      setPayedTotal(0);
                       setMonth(() => (e ? e : e));
                       calculateTotal(data.debts, e, setDebtTotal);
+                      calculateTotal(data.payments, e, setPayedTotal);
                     }}
                   />
                   <Row>
@@ -261,7 +266,9 @@ export const SingleClientPage = withProtected(
                                 <p key='list-price'>{`${payment.amount.price} ${payment.amount.currency}`}</p>
                               ]}
                             >
-                              <List.Item.Meta title={`${payment.name}`} />
+                              <List.Item.Meta
+                                title={`${payment.description}`}
+                              />
                               <DatePicker
                                 format='DD-MM-YYYY'
                                 defaultValue={moment(payment.date)}
@@ -385,6 +392,20 @@ const PaymentForm = ({ onSubmit, handleSubmit, errors, methods }) => {
   return (
     <FormContext {...methods}>
       <Form>
+        <Form.Item
+          {...formItemLayout}
+          validateStatus={errors.description?.message ? 'error' : 'success'}
+          help={errors.description?.message && errors.description.message}
+        >
+          <Controller
+            as={Input}
+            name='description'
+            placeholder={`Provide a description for the payment`}
+            rules={{
+              required: 'Please, input the description'
+            }}
+          />
+        </Form.Item>
         <Form.Item
           {...formItemLayout}
           validateStatus={errors.paymentAmount?.message ? 'error' : 'success'}

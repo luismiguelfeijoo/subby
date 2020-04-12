@@ -118,7 +118,7 @@ router.post(
   async (req, res, next) => {
     const { id } = req.params;
     const loggedAdmin = req.user;
-    const { paymentAmount, paymentDate, currency } = req.body;
+    const { paymentAmount, paymentDate, currency, description } = req.body;
 
     if (loggedAdmin.type === 'admin') {
       const updateClient = await ClientUser.findById(id);
@@ -127,7 +127,8 @@ router.post(
         ...updateClient.payments,
         {
           date: paymentDate,
-          amount: { price: paymentAmount, currency: currency }
+          amount: { price: paymentAmount, currency: currency },
+          description
         }
       ];
 

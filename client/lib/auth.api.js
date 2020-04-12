@@ -156,14 +156,14 @@ export const deleteClient = async id => {
 
 export const addPaymentOnClient = async (
   id,
-  { paymentDate, paymentAmount, currency }
+  { paymentDate, paymentAmount, currency, description }
 ) => {
   const res = await api.post(`retrieve/clients/add-payment/${id}`, {
     paymentDate,
     paymentAmount,
-    currency
+    currency,
+    description
   });
-  console.log(res);
   return res.data;
 };
 
