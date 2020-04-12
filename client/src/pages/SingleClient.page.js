@@ -188,12 +188,14 @@ export const SingleClientPage = withProtected(
                         }
                         size='small'
                         bordered
-                        dataSource={data.debts.filter(debt =>
-                          month
-                            ? moment(debt.date).format('MM-YYYY') ===
-                              month.format('MM-YYYY')
-                            : true
-                        )}
+                        dataSource={data.debts
+                          .sort((a, b) => (a.date < b.date ? -1 : 1))
+                          .filter(debt =>
+                            month
+                              ? moment(debt.date).format('MM-YYYY') ===
+                                month.format('MM-YYYY')
+                              : true
+                          )}
                         renderItem={(debt, i) => {
                           return (
                             <List.Item
@@ -238,12 +240,14 @@ export const SingleClientPage = withProtected(
                         }
                         size='small'
                         bordered
-                        dataSource={data.payments.filter(payment =>
-                          month
-                            ? moment(payment.date).format('MM-YYYY') ===
-                              month.format('MM-YYYY')
-                            : true
-                        )}
+                        dataSource={data.payments
+                          .sort((a, b) => (a.date < b.date ? -1 : 1))
+                          .filter(payment =>
+                            month
+                              ? moment(payment.date).format('MM-YYYY') ===
+                                month.format('MM-YYYY')
+                              : true
+                          )}
                         renderItem={(payment, i) => {
                           return (
                             <List.Item
