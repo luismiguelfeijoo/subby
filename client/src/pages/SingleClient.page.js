@@ -288,14 +288,14 @@ export const SingleClientPage = withProtected(
                 >
                   <List>
                     <List.Item
-                      actions={[<p key='total-debt'>{`${debtTotal} $`}</p>]}
+                      actions={[<p key='total-debt'>{`- ${debtTotal} $`}</p>]}
                     >
-                      <List.Item.Meta title={`Debt Month`} />
+                      <List.Item.Meta title={`Consumed by Client`} />
                     </List.Item>
                     <List.Item
-                      actions={[<p key='total-payed'>{`${payedTotal} $`}</p>]}
+                      actions={[<p key='total-payed'>{`+ ${payedTotal} $`}</p>]}
                     >
-                      <List.Item.Meta title={`Payed Month`} />
+                      <List.Item.Meta title={`Payed by Client`} />
                     </List.Item>
                     <List.Item
                       actions={[
