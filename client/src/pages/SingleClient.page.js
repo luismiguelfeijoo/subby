@@ -1,6 +1,10 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { UserContext, getSingleClient } from '../../lib/auth.api';
+import {
+  UserContext,
+  getSingleClient,
+  addPaymentOnClient
+} from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
@@ -95,6 +99,8 @@ export const SingleClientPage = withProtected(
         console.log(data);
         setConfirmLoading(true);
         try {
+          const response = await addPaymentOnClient(match.params.id, data);
+          console.log(response);
         } catch (error) {
           console.log(error);
         } finally {
