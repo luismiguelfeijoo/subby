@@ -11,35 +11,20 @@ import { gold } from '@ant-design/colors';
 import { generate, presetPalettes } from '@ant-design/colors';
 import { doLogout, UserContext } from '../../../lib/auth.api';
 
-// Generate color palettes by a given color
-const colors = generate('#d66122');
-
 export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
   const [collapsed, setCollapsed] = useState(false);
   return (
-    <Layout style={{ minHeight: '100vh' }} theme='light'>
+    <Layout style={{ minHeight: '100vh' }}>
       {sider ? (
         <>
-          <Sider
-            width={200}
-            style={{
-              margin: 0,
-              minHeight: '100vh',
-              background: '#ccc'
-            }}
-            trigger={null}
-            collapsible
-            collapsed={collapsed}
-          >
+          <Sider width={200} collapsible collapsed={collapsed}>
             <SiderMenu selection={currentPage} history={history} />
           </Sider>
           <Layout style={{ minHeight: '100vh' }}>
             <Content
               style={{
                 padding: 24,
-                margin: 0,
-                minHeight: 280,
-                background: '#fff'
+                margin: 0
               }}
             >
               {children}
@@ -52,8 +37,7 @@ export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
           <Content
             style={{
               padding: 24,
-              margin: 0,
-              minHeight: 280
+              margin: 0
             }}
           >
             {children}
@@ -67,18 +51,10 @@ export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
 
 const SiderMenu = withRouter(({ selection, history }) => {
   const { user, setUser } = useContext(UserContext);
-  const color = {
-    background: '#ccc'
-  };
 
   return (
-    <Menu
-      mode='inline'
-      style={{ height: '100%', borderRight: 0, background: '#ccc' }}
-      theme='light'
-      defaultSelectedKeys={[selection]}
-    >
-      <SubMenu key='User' title='User' style={color}>
+    <Menu mode='inline' defaultSelectedKeys={[selection]}>
+      <SubMenu key='User' title='User'>
         <Menu.Item key='Profile' onSelect={() => <Redirect to='profile' />}>
           Profile
         </Menu.Item>
