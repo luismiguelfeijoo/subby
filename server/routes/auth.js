@@ -127,7 +127,7 @@ router.post('/logout', ensureLogin.ensureLoggedIn(), (req, res, next) => {
 router.get('/loggedin', (req, res, next) => {
   if (req.user)
     return res.json(
-      _.pick(req.user, ['username', '_id', 'type', 'company', 'name'])
+      _.pick(req.user, ['username', '_id', 'type', 'company', 'name', 'phone'])
     );
   else return res.status(401).json({ status: 'No user session present' });
 });
