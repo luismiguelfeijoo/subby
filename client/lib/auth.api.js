@@ -139,6 +139,11 @@ export const addExtraOnSubscription = async (id, { extraName, extraDate }) => {
   return res.data;
 };
 
+export const getCompany = async () => {
+  const res = await api.get(`/retrieve/company`);
+  return res.data;
+};
+
 export const getClients = async () => {
   const res = await api.get(`/retrieve/clients`);
   return res.data;

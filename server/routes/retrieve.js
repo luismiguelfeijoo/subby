@@ -384,4 +384,86 @@ router.post(
   }
 );
 
+router.get('/company', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
+  const loggedAdmin = req.user;
+  if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
+    const company = await Company.findById(loggedAdmin.company)
+      .populate('plans')
+      .populate('extras');
+    return res.json(company);
+  } else {
+    return res.status(401).json({ status: 'Local user is not admin' });
+  }
+});
+
+router.post(
+  '/new-plan',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const loggedAdmin = req.user;
+    const { price, name, currency } = req.body;
+    if (loggedAdmin.type === 'admin') {
+      const newPlan = await Plan.create({
+        name,
+        price: { price, currency },
+        company: loggedAdmin.company // id of the company
+      });
+      const company = await Company.findByIdAndUpdate(loggedAdmin.company, {
+        plans: [...plans, newPlan]
+      });
+      return res.json({ status: 'Plan created' });
+    }
+  }
+);
+
+router.post(
+  '/new-extra',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const loggedAdmin = req.user;
+    const { price, name, currency } = req.body;
+    if (loggedAdmin.type === 'admin') {
+      const newExtra = await Extra.create({
+        name,
+        price: { price, currency },
+        company: loggedAdmin.company // id of the company
+      });
+      const company = await Company.findByIdAndUpdate(loggedAdmin.company, {
+        extras: [...extras, newExtra]
+      });
+      return res.json({ status: 'Extra created' });
+    }
+  }
+);
+
+router.post(
+  '/new-plan-or-extra',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const loggedAdmin = req.user;
+    const { price, name, currency, type } = req.body;
+    if (loggedAdmin.type === 'admin') {
+      if (type === 'plan') {
+        const newPlan = await Plan.create({
+          name,
+          price: { price, currency },
+          company: loggedAdmin.company // id of the company
+        });
+        return res.json({ status: 'Plan created' });
+      } else if (type === 'extra') {
+        const newExtra = await Extra.create({
+          name,
+          price: { price, currency },
+          company: loggedAdmin.company // id of the company
+        });
+        return res.json({ status: 'Extra created' });
+      } else {
+        res.status(401).json({ status: 'Type error' });
+      }
+    } else {
+      return res.status(401).json({ status: 'Local user is not admin' });
+    }
+  }
+);
+
 module.exports = router;

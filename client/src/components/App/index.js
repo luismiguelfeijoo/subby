@@ -6,7 +6,6 @@ import { LoginPage } from '../../pages/Login.page';
 import { NewCompanyRouter } from '../../routes/NewCompany.router';
 import { ResetPasswordRouter } from '../../routes/ResetPassword.router';
 import { NewUserRouter } from '../../routes/NewUser.router';
-import { NewPlanRouter } from '../../routes/NewPlan.router';
 import { CompanyRouter } from '../../routes/Company.router';
 
 export const App = withUser(() => {

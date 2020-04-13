@@ -40,20 +40,6 @@ export const SingleClientPage = withProtected(
       const [debtTotal, setDebtTotal] = useState(0);
       const [payedTotal, setPayedTotal] = useState(0);
 
-      const monthNames = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ];
       useEffect(() => {
         if (!loading) {
           fetchClient(match.params.id);
