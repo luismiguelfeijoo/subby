@@ -5,10 +5,20 @@ import { ClientListPage } from '../pages/ClientList.page';
 import { SingleSubscriptionPage } from '../pages/SingleSubscriptions.page';
 import { SubscriptionEditPage } from '../pages/SubscriptionEdit.page';
 import { SingleClientPage } from '../pages/SingleClient.page';
+import { NewPlanPage } from '../pages/NewPlan.page';
+import { NewUserPage } from '../pages/NewUser.page';
+import { CompanyProfilePage } from '../pages/CompanyProfile.page';
 
 export const CompanyRouter = ({ match }) => {
   return (
     <Switch>
+      <Route
+        path={`${match.url}/profile`}
+        exact
+        component={CompanyProfilePage}
+      />
+      <Route path={`${match.url}/new-plan`} exact component={NewPlanPage} />
+      <Route path={`${match.url}/new-user`} exact component={NewUserPage} />
       <Route
         exact
         path={`${match.url}/subscriptions`}

@@ -40,20 +40,6 @@ export const SingleClientPage = withProtected(
       const [debtTotal, setDebtTotal] = useState(0);
       const [payedTotal, setPayedTotal] = useState(0);
 
-      const monthNames = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ];
       useEffect(() => {
         if (!loading) {
           fetchClient(match.params.id);
@@ -152,7 +138,7 @@ export const SingleClientPage = withProtected(
                         <List.Item.Meta
                           title={
                             <Link to={`/company/subscriptions/${sub._id}`}>
-                              {`${sub.name.first} ${sub.name.last} ${
+                              {`${sub.name} ${
                                 sub.active ? ' | Active' : ' | Inactive'
                               }`}
                             </Link>

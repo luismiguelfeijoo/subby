@@ -68,7 +68,7 @@ export const NewUserPage = withProtected(
         try {
           const response = await createSubscription(data);
           message.success(response.status);
-          history.push('/new-user');
+          history.push('/company/new-user');
         } catch (error) {
           console.log(error);
         } finally {
@@ -77,7 +77,11 @@ export const NewUserPage = withProtected(
       };
 
       return (
-        <LayoutTemplate sider={true}>
+        <LayoutTemplate
+          sider={true}
+          currentPage='addUserOrPlan'
+          currentMenuTab='company'
+        >
           <Form onFinish={value => console.log(value)} form={form}>
             <Form.Item {...formItemLayout}>
               <Select
@@ -171,39 +175,20 @@ export const NewUserPage = withProtected(
                 <Form.Item
                   {...formItemLayout}
                   required={true}
-                  validateStatus={
-                    errors.firstName?.message ? 'error' : 'success'
-                  }
-                  help={errors.firstName?.message && errors.firstName.message}
+                  validateStatus={errors.name?.message ? 'error' : 'success'}
+                  help={errors.name?.message && errors.name.message}
                 >
                   <Controller
                     as={Input}
                     type='text'
-                    placeholder='First Name'
-                    name='firstName'
+                    placeholder='Name'
+                    name='name'
                     rules={{
                       required: 'Required'
                     }}
                   />
                 </Form.Item>
-                <Form.Item
-                  {...formItemLayout}
-                  required={true}
-                  validateStatus={
-                    errors.lastName?.message ? 'error' : 'success'
-                  }
-                  help={errors.lastName?.message && errors.lastName.message}
-                >
-                  <Controller
-                    as={Input}
-                    type='text'
-                    placeholder='Last Name'
-                    name='lastName'
-                    rules={{
-                      required: 'Required'
-                    }}
-                  />
-                </Form.Item>
+
                 <Form.Item
                   {...formItemLayout}
                   validateStatus={errors.planName?.type ? 'error' : 'success'}

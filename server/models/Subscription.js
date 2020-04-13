@@ -4,10 +4,7 @@ const { ObjectId } = mongoose.Schema.Types;
 
 const schema = new mongoose.Schema(
   {
-    name: {
-      first: { type: String },
-      last: { type: String }
-    },
+    name: String,
     parents: [{ type: ObjectId, ref: 'clientUser' }],
     company: { type: ObjectId, ref: 'company' },
     plans: [

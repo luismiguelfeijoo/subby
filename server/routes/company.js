@@ -101,7 +101,7 @@ router.post(
   ensureLogin.ensureLoggedIn(),
   async (req, res, next) => {
     const loggedAdmin = req.user;
-    const { username, dates, planName, firstName, lastName } = req.body;
+    const { username, dates, name, planName } = req.body;
 
     const plansPromises = await planName.map(async plan => {
       let result = await Plan.findOne({
@@ -116,10 +116,7 @@ router.post(
     const parent = await ClientUser.findOne({ username });
     if (loggedAdmin.type === 'admin') {
       const newSub = await Subscription.create({
-        name: {
-          first: firstName,
-          last: lastName
-        },
+        name,
         company: loggedAdmin.company, // id of the company
         plans: plans.map((plan, i) => {
           return { plan: plan._id, startDate: dates[i] };
@@ -261,36 +258,6 @@ router.post(
     } catch (error) {
       // if it get's here the token is invalid
       return res.status(401).json({ errors: error });
-    }
-  }
-);
-
-router.post(
-  '/new-plan-or-extra',
-  ensureLogin.ensureLoggedIn(),
-  async (req, res, next) => {
-    const loggedAdmin = req.user;
-    const { price, name, currency, type } = req.body;
-    if (loggedAdmin.type === 'admin') {
-      if (type === 'plan') {
-        const newPlan = await Plan.create({
-          name,
-          price: { price, currency },
-          company: loggedAdmin.company // id of the company
-        });
-        return res.json({ status: 'Plan created' });
-      } else if (type === 'extra') {
-        const newExtra = await Extra.create({
-          name,
-          price: { price, currency },
-          company: loggedAdmin.company // id of the company
-        });
-        return res.json({ status: 'Extra created' });
-      } else {
-        res.status(401).json({ status: 'Type error' });
-      }
-    } else {
-      return res.status(401).json({ status: 'Local user is not admin' });
     }
   }
 );

@@ -4,7 +4,7 @@ import { UserContext, doLogin } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Input, Form, Button } from 'antd';
+import { Input, Form, Button, Card } from 'antd';
 
 export const LoginPage = withProtected(
   withRouter(({ history }) => {
@@ -33,7 +33,7 @@ export const LoginPage = withProtected(
       try {
         const newUser = await doLogin(data);
         setUser(newUser);
-        history.push('/profile');
+        history.push('/company/clients');
       } catch (error) {
         // do modal
         console.log(error);

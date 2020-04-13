@@ -83,7 +83,7 @@ export const SingleSubscriptionPage = withProtected(
           {data ? (
             <>
               <Descriptions
-                title={`Subscription: ${data.name.first} ${data.name.last}`}
+                title={`Subscription: ${data.name}`}
                 bordered
                 column={2}
               >
@@ -203,13 +203,6 @@ export const SingleSubscriptionPage = withProtected(
                   methods={methods}
                 />
               </Modal>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8} offset={8}>
-              <Button style={{ margin: '30px 0 ' }} block>
-                Set Payment Info
-              </Button>
             </Col>
           </Row>
         </LayoutTemplate>
