@@ -9,7 +9,7 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { fetchSubscriptions } from './utils/helpers';
-import { List, Input, Button, Space, Divider, Popover } from 'antd';
+import { List, Input, Button, Space, Divider, Popover, message } from 'antd';
 
 const { Search } = Input;
 

@@ -5,7 +5,7 @@ import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, Select } from 'antd';
+import { Form, Input, Button, Select, message } from 'antd';
 import { formItemLayout } from './utils/styles';
 const { Option } = Select;
 
@@ -45,6 +45,7 @@ export const NewPlanPage = withProtected(
         try {
           const response = await createPlanOrExtra(data, type);
           history.push('/new-plan');
+          message.success(response.status);
         } catch (error) {
           console.log(error);
         } finally {
