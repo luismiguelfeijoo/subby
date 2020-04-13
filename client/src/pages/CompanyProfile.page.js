@@ -17,7 +17,8 @@ import {
   Descriptions,
   List
 } from 'antd';
-import moment from 'moment';
+
+import { formItemLayout } from './utils/styles';
 const { Option } = Select;
 
 export const CompanyProfilePage = withProtected(
@@ -50,7 +51,21 @@ export const CompanyProfilePage = withProtected(
 
       const { register, handleSubmit, errors } = methods;
 
-      const onSubmit = async data => {
+      const onSubmitPlan = async data => {
+        console.log(data);
+        /*
+        setLoading(true);
+        
+        try {
+          const response = await updateSubscription(match.params.id, data);
+          history.push(`${match.url}`);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }*/
+      };
+      const onSubmitExtra = async data => {
         console.log(data);
         /*
         setLoading(true);
@@ -139,7 +154,7 @@ export const CompanyProfilePage = withProtected(
                 block
                 onClick={() => setVisiblePlan(true)}
               >
-                Add Payment Info
+                Add Plan
               </Button>
               <Modal
                 centered
@@ -151,7 +166,15 @@ export const CompanyProfilePage = withProtected(
                     Cancel
                   </Button>
                 ]}
-              ></Modal>
+              >
+                <TemplateForm
+                  methods={methods}
+                  handleSubmit={handleSubmit}
+                  onSubmit={onSubmitPlan}
+                  type={'plan'}
+                  errors={errors}
+                />
+              </Modal>
             </Col>
           </Row>
           <Row>
@@ -161,7 +184,7 @@ export const CompanyProfilePage = withProtected(
                 block
                 onClick={() => setVisibleExtra(true)}
               >
-                Add Payment Info
+                Add Extra
               </Button>
               <Modal
                 centered
@@ -173,7 +196,15 @@ export const CompanyProfilePage = withProtected(
                     Cancel
                   </Button>
                 ]}
-              ></Modal>
+              >
+                <TemplateForm
+                  methods={methods}
+                  handleSubmit={handleSubmit}
+                  onSubmit={onSubmitExtra}
+                  type={'extra'}
+                  errors={errors}
+                />
+              </Modal>
             </Col>
           </Row>
         </LayoutTemplate>
@@ -185,3 +216,84 @@ export const CompanyProfilePage = withProtected(
     }
   )
 );
+
+const TemplateForm = ({ onSubmit, handleSubmit, errors, methods, type }) => {
+  const { loading, setLoading } = useContext(UserContext);
+
+  const formItemLayout = {
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16, offset: 4 }
+    }
+  };
+
+  const currencySelector = (
+    <Form.Item noStyle>
+      <Controller
+        as={
+          <Select>
+            <Option value='€'>€</Option>
+            <Option value='$'>$</Option>
+          </Select>
+        }
+        defaultValue='€'
+        style={{
+          width: 70
+        }}
+        name='currency'
+      />
+    </Form.Item>
+  );
+
+  return (
+    <FormContext {...methods}>
+      <Form>
+        <Form.Item
+          {...formItemLayout}
+          validateStatus={errors.name?.message ? 'error' : 'success'}
+          help={errors.name?.message && errors.name.message}
+        >
+          <Controller
+            as={Input}
+            name='name'
+            placeholder={`Provide a description for the ${type}`}
+            rules={{
+              required: 'Please, input the name'
+            }}
+          />
+        </Form.Item>
+        <Form.Item
+          {...formItemLayout}
+          validateStatus={errors.price?.message ? 'error' : 'success'}
+          help={errors.price?.message && errors.price.message}
+        >
+          <Controller
+            name='price'
+            type='number'
+            step={0.01}
+            as={Input}
+            placeholder='Price'
+            addonAfter={currencySelector}
+            style={{
+              width: '100%'
+            }}
+            rules={{
+              required: `Please input the price of the ${type}!`,
+              min: { value: 0.01, message: 'Input a valid amount!' }
+            }}
+          />
+        </Form.Item>
+
+        <Form.Item {...formItemLayout}>
+          <Button
+            type='primary'
+            htmlType='submit'
+            onClick={handleSubmit(onSubmit)}
+          >
+            Add {`${type}`}!
+          </Button>
+        </Form.Item>
+      </Form>
+    </FormContext>
+  );
+};
