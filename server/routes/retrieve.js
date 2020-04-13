@@ -252,12 +252,12 @@ router.post(
   async (req, res, next) => {
     const { id } = req.params;
     const loggedAdmin = req.user;
-    const { username, plansName, firstName, lastName } = req.body;
+    const { username, plansName, name } = req.body;
     let { planDates } = req.body;
 
     if (loggedAdmin.type === 'admin') {
       const updateSub = await Subscription.findById(id);
-      updateSub.name = { first: firstName, last: lastName };
+      updateSub.name = name;
       await updateSub.save();
       if (plansName.length > 0) {
         const plansPromises = await plansName.map(async plan => {
@@ -408,9 +408,9 @@ router.post(
         price: { price, currency },
         company: loggedAdmin.company // id of the company
       });
-      const company = await Company.findByIdAndUpdate(loggedAdmin.company, {
-        plans: [...plans, newPlan]
-      });
+      const company = await Company.findById(loggedAdmin.company);
+      company.plans = [...company.plans, newPlan._id];
+      company.save();
       return res.json({ status: 'Plan created' });
     }
   }
@@ -428,40 +428,10 @@ router.post(
         price: { price, currency },
         company: loggedAdmin.company // id of the company
       });
-      const company = await Company.findByIdAndUpdate(loggedAdmin.company, {
-        extras: [...extras, newExtra]
-      });
+      const company = await Company.findById(loggedAdmin.company);
+      company.extras = [...company.extras, newExtra._id];
+      company.save();
       return res.json({ status: 'Extra created' });
-    }
-  }
-);
-
-router.post(
-  '/new-plan-or-extra',
-  ensureLogin.ensureLoggedIn(),
-  async (req, res, next) => {
-    const loggedAdmin = req.user;
-    const { price, name, currency, type } = req.body;
-    if (loggedAdmin.type === 'admin') {
-      if (type === 'plan') {
-        const newPlan = await Plan.create({
-          name,
-          price: { price, currency },
-          company: loggedAdmin.company // id of the company
-        });
-        return res.json({ status: 'Plan created' });
-      } else if (type === 'extra') {
-        const newExtra = await Extra.create({
-          name,
-          price: { price, currency },
-          company: loggedAdmin.company // id of the company
-        });
-        return res.json({ status: 'Extra created' });
-      } else {
-        res.status(401).json({ status: 'Type error' });
-      }
-    } else {
-      return res.status(401).json({ status: 'Local user is not admin' });
     }
   }
 );

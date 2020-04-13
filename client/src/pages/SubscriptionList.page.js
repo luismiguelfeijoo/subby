@@ -27,7 +27,7 @@ export const SubscriptionListPage = withProtected(
       }, []);
 
       return (
-        <LayoutTemplate sider={true} currentPage={'subscriptions'}>
+        <LayoutTemplate sider={true} currentPage={'subscriptionsList'}>
           <Search
             placeholder='Search by name'
             onChange={event => setFilter(event.target.value)}
@@ -37,7 +37,7 @@ export const SubscriptionListPage = withProtected(
             onClick={() => {
               const newData = [...data];
               newData.sort((a, b) => {
-                return a.name.first < b.name.first ? -1 : 1;
+                return a.name < b.name ? -1 : 1;
               });
               setData(newData);
             }}
@@ -63,8 +63,7 @@ export const SubscriptionListPage = withProtected(
             itemLayout='horizontal'
             dataSource={data}
             renderItem={sub =>
-              sub.name.first.toLowerCase().includes(filter.toLowerCase()) ||
-              sub.name.last.toLowerCase().includes(filter.toLowerCase()) ? (
+              sub.name.toLowerCase().includes(filter.toLowerCase()) ? (
                 <List.Item
                   actions={[
                     <Link
@@ -104,7 +103,7 @@ export const SubscriptionListPage = withProtected(
                   <List.Item.Meta
                     title={
                       <Link to={`/company/subscriptions/${sub._id}`}>
-                        {`${sub.name.first} ${sub.name.last}`}
+                        {`${sub.name}`}
                       </Link>
                     }
                     description={

@@ -1,6 +1,11 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { withRouter } from 'react-router-dom';
-import { UserContext, getCompany } from '../../lib/auth.api';
+import { withRouter, Link } from 'react-router-dom';
+import {
+  UserContext,
+  getCompany,
+  createExtra,
+  createPlan
+} from '../../lib/auth.api';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
@@ -13,7 +18,7 @@ import {
   Input,
   Button,
   Select,
-  DatePicker,
+  message,
   Descriptions,
   List
 } from 'antd';
@@ -49,39 +54,42 @@ export const CompanyProfilePage = withProtected(
         mode: 'onBlur'
       });
 
-      const { register, handleSubmit, errors } = methods;
+      const { register, handleSubmit, errors, reset } = methods;
 
       const onSubmitPlan = async data => {
         console.log(data);
-        /*
-        setLoading(true);
-        
         try {
-          const response = await updateSubscription(match.params.id, data);
-          history.push(`${match.url}`);
+          const response = await createPlan(data);
+          message.success(response.status);
+          fetchCompany();
         } catch (error) {
           console.log(error);
         } finally {
-          setLoading(false);
-        }*/
+          reset();
+          setVisiblePlan(false);
+        }
       };
       const onSubmitExtra = async data => {
         console.log(data);
-        /*
-        setLoading(true);
-        
+
         try {
-          const response = await updateSubscription(match.params.id, data);
-          history.push(`${match.url}`);
+          const response = await createExtra(data);
+          message.success(response.status);
+          fetchCompany();
         } catch (error) {
           console.log(error);
         } finally {
-          setLoading(false);
-        }*/
+          reset();
+          setVisibleExtra(false);
+        }
       };
 
       return (
-        <LayoutTemplate sider>
+        <LayoutTemplate
+          sider
+          currentPage='companyProfile'
+          currentMenuTab='company'
+        >
           <Descriptions
             title={<div style={{ textAlign: 'center' }}>{company.name}</div>}
             bordered
@@ -112,6 +120,7 @@ export const CompanyProfilePage = withProtected(
                       title={`
                      ${plan.name}
                     `}
+                      description={`${plan.price.price} ${plan.price.currency}`}
                     />
                   </List.Item>
                 )}
@@ -141,6 +150,7 @@ export const CompanyProfilePage = withProtected(
                       title={`
                      ${extra.name}
                     `}
+                      description={`${extra.price.price} ${extra.price.currency}`}
                     />
                   </List.Item>
                 )}

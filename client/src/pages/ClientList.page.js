@@ -98,8 +98,8 @@ export const ClientListPage = withProtected(
                       client.subscriptions.length > 0 &&
                       client.subscriptions.reduce((acc, sub) => {
                         return acc !== ''
-                          ? `${acc},  ${sub.name.first} ${sub.name.last}`
-                          : `Subs: ${sub.name.first} ${sub.name.last}`;
+                          ? `${acc},  ${sub.name}`
+                          : `Subs: ${sub.name}`;
                       }, '')
                     }
                   />

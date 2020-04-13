@@ -55,25 +55,13 @@ export const createSubscription = async ({
   username,
   dates,
   planName,
-  firstName,
-  lastName
+  name
 }) => {
   const res = await api.post('/auth/company/new-subscription', {
     username,
     dates,
     planName,
-    firstName,
-    lastName
-  });
-  return res.data;
-};
-
-export const createPlanOrExtra = async ({ name, price, currency }, type) => {
-  const res = await api.post('/auth/company/new-plan-or-extra', {
-    name,
-    price,
-    currency,
-    type
+    name
   });
   return res.data;
 };
@@ -88,6 +76,24 @@ export const askPasswordToken = async ({ username }) => {
 export const doPasswordReset = async ({ password }, token, id) => {
   const res = await api.post(`/auth/reset-password/${id}/${token}`, {
     password
+  });
+  return res.data;
+};
+
+export const createPlan = async ({ name, price, currency }) => {
+  const res = await api.post('/retrieve/new-plan', {
+    name,
+    price,
+    currency
+  });
+  return res.data;
+};
+
+export const createExtra = async ({ name, price, currency }) => {
+  const res = await api.post('/retrieve/new-extra', {
+    name,
+    price,
+    currency
   });
   return res.data;
 };
@@ -119,12 +125,11 @@ export const deleteSubscription = async id => {
 
 export const updateSubscription = async (
   id,
-  { username, firstName, lastName, plansName, planDates }
+  { username, name, plansName, planDates }
 ) => {
   const res = await api.post(`retrieve/subscriptions/edit/${id}`, {
     username,
-    firstName,
-    lastName,
+    name,
     plansName,
     planDates
   });

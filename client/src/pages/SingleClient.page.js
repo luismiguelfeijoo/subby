@@ -138,7 +138,7 @@ export const SingleClientPage = withProtected(
                         <List.Item.Meta
                           title={
                             <Link to={`/company/subscriptions/${sub._id}`}>
-                              {`${sub.name.first} ${sub.name.last} ${
+                              {`${sub.name} ${
                                 sub.active ? ' | Active' : ' | Inactive'
                               }`}
                             </Link>

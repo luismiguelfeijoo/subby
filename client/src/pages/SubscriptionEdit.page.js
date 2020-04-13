@@ -109,41 +109,21 @@ export const SubscriptionEditPage = withProtected(
                 <Form.Item
                   {...formItemLayout}
                   required={true}
-                  validateStatus={
-                    errors.firstName?.message ? 'error' : 'success'
-                  }
-                  help={errors.firstName?.message && errors.firstName.message}
+                  validateStatus={errors.name?.message ? 'error' : 'success'}
+                  help={errors.name?.message && errors.name.message}
                 >
                   <Controller
-                    defaultValue={sub.name.first}
+                    defaultValue={sub.name}
                     as={Input}
                     type='text'
                     placeholder='First Name'
-                    name='firstName'
+                    name='name'
                     rules={{
                       required: 'Required'
                     }}
                   />
                 </Form.Item>
-                <Form.Item
-                  {...formItemLayout}
-                  required={true}
-                  validateStatus={
-                    errors.lastName?.message ? 'error' : 'success'
-                  }
-                  help={errors.lastName?.message && errors.lastName.message}
-                >
-                  <Controller
-                    defaultValue={sub.name.last}
-                    as={Input}
-                    type='text'
-                    placeholder='Last Name'
-                    name='lastName'
-                    rules={{
-                      required: 'Required'
-                    }}
-                  />
-                </Form.Item>
+
                 <Form.Item {...formItemLayout}>
                   <Controller
                     defaultValue={sub.plans.map(plan => plan.plan.name)}
