@@ -21,9 +21,11 @@ import {
   Descriptions,
   Modal,
   Form,
-  Input
+  Input,
+  Typography
 } from 'antd';
 const { Option } = Select;
+const { Text } = Typography;
 import moment from 'moment';
 import { SingleSubscriptionPage } from './SingleSubscriptions.page';
 
@@ -139,7 +141,7 @@ export const SingleClientPage = withProtected(
                             edit
                           </Link>,
                           <Link
-                            key='list-loadmore-more'
+                            key='list-loadmore-delete'
                             onClick={e => console.log(sub._id)}
                             to='#'
                           >
@@ -177,7 +179,7 @@ export const SingleClientPage = withProtected(
                       calculateTotal(data.payments, e, setPayedTotal);
                     }}
                   />
-                  <Row>
+                  <Row gutter={[16, { md: 16, lg: 24 }]}>
                     <Col md={24} lg={12}>
                       <List
                         style={{
@@ -289,19 +291,31 @@ export const SingleClientPage = withProtected(
                 >
                   <List>
                     <List.Item
-                      actions={[<p key='total-debt'>{`- ${debtTotal} $`}</p>]}
+                      actions={[
+                        <Text
+                          key='total-debt'
+                          type='danger'
+                        >{`- ${debtTotal} $`}</Text>
+                      ]}
                     >
                       <List.Item.Meta title={`Consumed by Client`} />
                     </List.Item>
                     <List.Item
-                      actions={[<p key='total-payed'>{`+ ${payedTotal} $`}</p>]}
+                      actions={[
+                        <Text
+                          key='total-payed'
+                          type={payedTotal ? '' : 'warning'}
+                        >{`+ ${payedTotal} $`}</Text>
+                      ]}
                     >
                       <List.Item.Meta title={`Payed by Client`} />
                     </List.Item>
                     <List.Item
                       actions={[
-                        <p key='total-balance'>{`${payedTotal -
-                          debtTotal} $`}</p>
+                        <Text
+                          key='total-balance'
+                          type={payedTotal - debtTotal > 0 ? '' : 'danger'}
+                        >{`${payedTotal - debtTotal} $`}</Text>
                       ]}
                     >
                       <List.Item.Meta title={`Total:`} />
