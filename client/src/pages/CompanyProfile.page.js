@@ -104,9 +104,6 @@ export const CompanyProfilePage = withProtected(
                 renderItem={plan => (
                   <List.Item
                     actions={[
-                      <Link key='list-loadmore-edit' to={`#`}>
-                        edit
-                      </Link>,
                       <Link
                         key='list-loadmore-delete'
                         onClick={e => console.log(plan._id)}
@@ -134,9 +131,6 @@ export const CompanyProfilePage = withProtected(
                 renderItem={extra => (
                   <List.Item
                     actions={[
-                      <Link key='list-loadmore-edit' to={`#`}>
-                        edit
-                      </Link>,
                       <Link
                         key='list-loadmore-delete'
                         onClick={e => console.log(extra._id)}

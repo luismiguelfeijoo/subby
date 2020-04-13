@@ -93,7 +93,7 @@ const SiderMenu = withRouter(({ selection, history, open }) => {
         <Menu
           mode='inline'
           defaultSelectedKeys={[selection]}
-          defaultOpenKeys={open}
+          defaultOpenKeys={[open]}
         >
           <SubMenu
             key='user'
