@@ -28,10 +28,6 @@ export const App = withUser(() => {
           component={props => <NewUserRouter {...props} />}
         />
         <Route
-          path='/new-plan'
-          component={props => <NewPlanRouter {...props} />}
-        />
-        <Route
           path='/company'
           component={props => <CompanyRouter {...props} />}
         />

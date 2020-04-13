@@ -123,13 +123,13 @@ const SiderMenu = withRouter(({ selection, history }) => {
         }
       >
         <Menu.Item key='new-user'>
-          <Link to='/new-user' className='nav-text'>
+          <Link to='/company/new-user' className='nav-text'>
             <PlusOutlined />
             <span className='nav-text'>Add User or Sub</span>
           </Link>
         </Menu.Item>
         <Menu.Item key='new-plan'>
-          <Link to='/new-plan' className='nav-text'>
+          <Link to='/company/new-plan' className='nav-text'>
             <PlusOutlined />
             <span className='nav-text'>Add Plan or Extra</span>
           </Link>

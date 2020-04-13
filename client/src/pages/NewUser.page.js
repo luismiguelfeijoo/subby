@@ -68,7 +68,7 @@ export const NewUserPage = withProtected(
         try {
           const response = await createSubscription(data);
           message.success(response.status);
-          history.push('/new-user');
+          history.push('/company/new-user');
         } catch (error) {
           console.log(error);
         } finally {
