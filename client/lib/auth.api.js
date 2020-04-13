@@ -154,6 +154,19 @@ export const deleteClient = async id => {
   return res.data;
 };
 
+export const addPaymentOnClient = async (
+  id,
+  { paymentDate, paymentAmount, currency, description }
+) => {
+  const res = await api.post(`retrieve/clients/add-payment/${id}`, {
+    paymentDate,
+    paymentAmount,
+    currency,
+    description
+  });
+  return res.data;
+};
+
 export const doLogin = async ({ username, password }) => {
   const res = await api.post('/auth/login', {
     username,

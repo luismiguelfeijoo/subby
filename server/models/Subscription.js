@@ -14,13 +14,16 @@ const schema = new mongoose.Schema(
       {
         plan: { type: ObjectId, ref: 'plan' },
         startDate: { type: Date, default: Date.now },
-        endDate: Date
+        endDate: Date,
+        charged: { type: Boolean, default: false },
+        timesCharged: { type: Number, default: 0 }
       }
     ],
     extras: [
       {
         extra: { type: ObjectId, ref: 'extra' },
-        date: { type: Date, default: Date.now }
+        date: { type: Date, default: Date.now },
+        charged: { type: Boolean, default: false }
       }
     ],
     level: String,

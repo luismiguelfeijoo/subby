@@ -1,6 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-
+import {
+  DesktopOutlined,
+  LogoutOutlined,
+  FileSearchOutlined,
+  FileOutlined,
+  AuditOutlined,
+  TeamOutlined,
+  UserOutlined,
+  ProfileOutlined,
+  PlusOutlined
+} from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 const { SubMenu } = Menu;
 const { Header, Footer, Sider, Content } = Layout;
@@ -11,35 +21,34 @@ import { gold } from '@ant-design/colors';
 import { generate, presetPalettes } from '@ant-design/colors';
 import { doLogout, UserContext } from '../../../lib/auth.api';
 
-// Generate color palettes by a given color
-const colors = generate('#d66122');
-
 export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [broken, setBroken] = useState(false);
+  const onCollapse = collapsed => {
+    setCollapsed(collapsed);
+  };
+
   return (
-    <Layout style={{ minHeight: '100vh' }} theme='light'>
+    <Layout style={{ minHeight: '100vh' }}>
       {sider ? (
         <>
           <Sider
-            width={200}
-            style={{
-              margin: 0,
-              minHeight: '100vh',
-              background: '#ccc'
-            }}
-            trigger={null}
             collapsible
             collapsed={collapsed}
+            onCollapse={onCollapse}
+            breakpoint='lg'
+            onBreakpoint={broken => {
+              setBroken(broken);
+            }}
           >
+            <div style={{ height: '50px' }}></div>
             <SiderMenu selection={currentPage} history={history} />
           </Sider>
           <Layout style={{ minHeight: '100vh' }}>
             <Content
               style={{
                 padding: 24,
-                margin: 0,
-                minHeight: 280,
-                background: '#fff'
+                margin: 0
               }}
             >
               {children}
@@ -48,12 +57,13 @@ export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
         </>
       ) : (
         <>
-          <Header>Header</Header>
+          <Header>
+            <div style={{ width: '100px' }}></div>
+          </Header>
           <Content
             style={{
               padding: 24,
-              margin: 0,
-              minHeight: 280
+              margin: 0
             }}
           >
             {children}
@@ -67,20 +77,29 @@ export const LayoutTemplate = ({ children, sider = false, currentPage }) => {
 
 const SiderMenu = withRouter(({ selection, history }) => {
   const { user, setUser } = useContext(UserContext);
-  const color = {
-    background: '#ccc'
-  };
 
   return (
-    <Menu
-      mode='inline'
-      style={{ height: '100%', borderRight: 0, background: '#ccc' }}
-      theme='light'
-      defaultSelectedKeys={[selection]}
-    >
-      <SubMenu key='User' title='User' style={color}>
-        <Menu.Item key='Profile' onSelect={() => <Redirect to='profile' />}>
-          Profile
+    <Menu mode='inline' defaultSelectedKeys={[selection]}>
+      <SubMenu
+        key='User'
+        title={
+          <>
+            <UserOutlined />
+            <span className='nav-text'>
+              {user.type
+                ? user.type === 'admin'
+                  ? 'Admin'
+                  : 'Coordinator'
+                : 'Client'}
+            </span>
+          </>
+        }
+      >
+        <Menu.Item key='Profile'>
+          <span className='nav-text'>
+            <ProfileOutlined />
+            <span>Profile</span>
+          </span>
         </Menu.Item>
         <Menu.Item
           key='Logout'
@@ -90,17 +109,49 @@ const SiderMenu = withRouter(({ selection, history }) => {
             history.push('/');
           }}
         >
-          Log Out
+          <LogoutOutlined />
+          <span>Logout</span>
         </Menu.Item>
       </SubMenu>
-      <SubMenu key='/company' title='Company'>
-        <Menu.Item key='subscriptionsList'>
-          <Link to='/company/subscriptions'>Subscriptions</Link>
+      <SubMenu
+        key='/company'
+        title={
+          <>
+            <DesktopOutlined />
+            <span className='nav-text'>Company</span>
+          </>
+        }
+      >
+        <Menu.Item key='new-user'>
+          <Link to='/new-user' className='nav-text'>
+            <PlusOutlined />
+            <span className='nav-text'>Add User or Sub</span>
+          </Link>
         </Menu.Item>
-        <Menu.Item key='clientsList'>
-          <Link to='/company/clients'>Clients</Link>
+        <Menu.Item key='new-plan'>
+          <Link to='/new-plan' className='nav-text'>
+            <PlusOutlined />
+            <span className='nav-text'>Add Plan or Extra</span>
+          </Link>
         </Menu.Item>
       </SubMenu>
+      <Menu.Item key='subscriptionsList'>
+        <Link to='/company/subscriptions' className='nav-text'>
+          <FileSearchOutlined />
+          <span className='nav-text'>Subscriptions</span>
+        </Link>
+      </Menu.Item>
+      <Menu.Item key='clientsList'>
+        <Link to='/company/clients' className='nav-text'>
+          <AuditOutlined />
+          <span className='nav-text'>Clients</span>
+        </Link>
+      </Menu.Item>
+      <Menu.Item key='Chat'>
+        <span className='nav-text'>
+          <span>Chat</span>
+        </span>
+      </Menu.Item>{' '}
     </Menu>
   );
 });

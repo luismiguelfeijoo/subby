@@ -10,8 +10,7 @@ import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, Select, DatePicker } from 'antd';
-const { MonthPicker } = DatePicker;
+import { Form, Input, Button, Select, DatePicker, message } from 'antd';
 const { Option } = Select;
 
 export const NewUserPage = withProtected(
@@ -55,6 +54,7 @@ export const NewUserPage = withProtected(
         setLoading(true);
         try {
           const response = await askUserToken(data);
+          message.success(response.status);
           history.push('/new-user');
         } catch (error) {
           console.log(error);
@@ -67,6 +67,7 @@ export const NewUserPage = withProtected(
         setLoading(true);
         try {
           const response = await createSubscription(data);
+          message.success(response.status);
           history.push('/new-user');
         } catch (error) {
           console.log(error);

@@ -11,7 +11,16 @@ import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { Descriptions } from 'antd';
 import { useForm, FormContext, Controller } from 'react-hook-form';
-import { DatePicker, Button, Row, Col, Modal, Form, Select } from 'antd';
+import {
+  DatePicker,
+  Button,
+  Row,
+  Col,
+  Modal,
+  Form,
+  Select,
+  message
+} from 'antd';
 const { Option } = Select;
 import moment from 'moment';
 
@@ -41,12 +50,10 @@ export const SingleSubscriptionPage = withProtected(
 
       const showModal = () => {
         setVisible(true);
-        reset();
       };
 
       const handleCancel = () => {
         setVisible(false);
-        reset();
       };
 
       const methods = useForm({
@@ -61,6 +68,7 @@ export const SingleSubscriptionPage = withProtected(
         try {
           const response = await addExtraOnSubscription(match.params.id, data);
           fetchSubscription(match.params.id);
+          message.success(response.status);
         } catch (error) {
           console.log(error);
         } finally {

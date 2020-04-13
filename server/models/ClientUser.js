@@ -12,7 +12,22 @@ const schema = new mongoose.Schema(
     },
     subscriptions: [{ type: ObjectId, ref: 'subscription' }],
     company: { type: ObjectId, ref: 'company' },
-    phone: { prefix: Number, phone: Number }
+    phone: { prefix: Number, phone: Number },
+    payments: [
+      {
+        date: Date,
+        amount: { type: Object, required: true },
+        description: String
+      }
+    ],
+    debts: [
+      {
+        date: Date,
+        amount: { type: Object, required: true },
+        type: { type: String, enum: ['extra', 'plan'] },
+        name: String
+      }
+    ]
   },
   {
     timestamps: true
