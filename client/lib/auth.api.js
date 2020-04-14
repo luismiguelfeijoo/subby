@@ -120,8 +120,18 @@ export const getPlans = async () => {
   return res.data;
 };
 
+export const deletePlan = async id => {
+  const res = await api.get(`/retrieve/plans/delete/${id}`);
+  return res.data;
+};
+
 export const getExtras = async () => {
   const res = await api.get(`/retrieve/extras`);
+  return res.data;
+};
+
+export const deleteExtra = async id => {
+  const res = await api.get(`/retrieve/extras/delete/${id}`);
   return res.data;
 };
 
