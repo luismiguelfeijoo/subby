@@ -23,12 +23,13 @@ import {
   message,
   Descriptions,
   List,
-  Popover
+  Popover,
+  Typography
 } from 'antd';
 
 import { formItemLayout } from './utils/styles';
 const { Option } = Select;
-
+const { Text } = Typography;
 export const CompanyProfilePage = withProtected(
   withTypeUser(
     withRouter(({ history, match }) => {
@@ -110,14 +111,17 @@ export const CompanyProfilePage = withProtected(
                         actions={[
                           <Popover
                             key='list-loadmore-delete'
-                            title='Are you sure?'
+                            title='Are you sure you want to delete?'
                             trigger='click'
                             placement='topRight'
                             content={
                               <>
-                                <p>This is a change you can't undo</p>
-                                <Link
-                                  to='#'
+                                <p>
+                                  This is a change you can't undo, but it will
+                                  not affect the charged plans
+                                </p>
+                                <Text
+                                  type='danger'
                                   onClick={async () => {
                                     try {
                                       const response = await deletePlan(
@@ -131,7 +135,7 @@ export const CompanyProfilePage = withProtected(
                                   }}
                                 >
                                   Delete anyways
-                                </Link>
+                                </Text>
                               </>
                             }
                           >
@@ -159,14 +163,17 @@ export const CompanyProfilePage = withProtected(
                         actions={[
                           <Popover
                             key='list-loadmore-delete'
-                            title='Are you sure?'
+                            title='Are you sure you want to delete?'
                             trigger='click'
                             placement='topRight'
                             content={
                               <>
-                                <p>This is a change you can't undo</p>
-                                <Link
-                                  to='#'
+                                <p>
+                                  This is a change you can't undo, but it will
+                                  not affect the charged extras
+                                </p>
+                                <Text
+                                  type='danger'
                                   onClick={async () => {
                                     try {
                                       const response = await deleteExtra(
@@ -179,8 +186,8 @@ export const CompanyProfilePage = withProtected(
                                     }
                                   }}
                                 >
-                                  Delete anyways
-                                </Link>
+                                  Delete Extra
+                                </Text>
                               </>
                             }
                           >
