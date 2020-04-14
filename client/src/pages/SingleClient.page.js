@@ -3,7 +3,8 @@ import { Link, withRouter } from 'react-router-dom';
 import {
   UserContext,
   getSingleClient,
-  addPaymentOnClient
+  addPaymentOnClient,
+  deleteSubscription
 } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
@@ -22,7 +23,8 @@ import {
   Modal,
   Form,
   Input,
-  Typography
+  Typography,
+  Popover
 } from 'antd';
 const { Option } = Select;
 const { Text } = Typography;
@@ -126,13 +128,41 @@ export const SingleClientPage = withProtected(
                           >
                             edit
                           </Link>,
-                          <Link
+                          <Popover
                             key='list-loadmore-delete'
-                            onClick={e => console.log(sub._id)}
-                            to='#'
+                            title='Are you sure?'
+                            trigger='click'
+                            placement='topRight'
+                            content={
+                              <>
+                                <p>This is a change you can't undo</p>
+                                <Text
+                                  type='danger'
+                                  onClick={async () => {
+                                    if (sub.active) {
+                                      try {
+                                        const response = await deleteSubscription(
+                                          sub._id
+                                        );
+                                        message.success(response.status);
+                                        fetchClient(match.params.id);
+                                      } catch (error) {
+                                        console.log(error);
+                                      }
+                                    } else {
+                                      message.error(
+                                        'This subscriptions is already inactive'
+                                      );
+                                    }
+                                  }}
+                                >
+                                  Delete anyways
+                                </Text>
+                              </>
+                            }
                           >
-                            delete
-                          </Link>
+                            <Link to='#'>delete</Link>
+                          </Popover>
                         ]}
                       >
                         <List.Item.Meta

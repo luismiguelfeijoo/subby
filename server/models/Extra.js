@@ -6,7 +6,8 @@ const schema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     company: { type: ObjectId, ref: 'company' },
-    price: { price: { type: String, required: true }, currency: String }
+    price: { price: { type: String, required: true }, currency: String },
+    active: { type: Boolean, default: true }
   },
   {
     timestamps: true
