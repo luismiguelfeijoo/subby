@@ -21,25 +21,25 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
 
   if (!existingCompany) {
     const token = jwt.sign({ company, email }, process.env.JWTSECRET, {
-      expiresIn: 3600
+      expiresIn: 3600,
     });
 
     const transporter = nodemailer.createTransport({
       service: process.env.MAILER_SERVICE_PROVIDER || 'gmail',
       auth: {
         user: process.env.MAILER_EMAIL_ID,
-        pass: process.env.MAILER_PASSWORD
-      }
+        pass: process.env.MAILER_PASSWORD,
+      },
     });
 
     const mailOptions = {
       from: process.env.MAILER_EMAIL_ID,
       to: email,
       subject: 'Subby Link to register your company',
-      text: `Hi! welcome to subby, click on this link to set up your account: http://localhost:1234/new-company/${token}` //change this for HTML template
+      text: `Hi! welcome to subby, click on this link to set up your account: http://localhost:1234/new-company/${token}`, //change this for HTML template
     };
 
-    transporter.sendMail(mailOptions, function(error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
         return res.status(500).json({ status: 'mail not sent', errors: error });
@@ -74,10 +74,10 @@ router.post(
               password: hashPassword(password),
               name: {
                 first: firstName,
-                last: lastName
+                last: lastName,
               },
               type: 'admin',
-              company: newCompany._id
+              company: newCompany._id,
             });
             //newUser.populate('company');
             return res.json({ status: 'Company & admin user created' });
@@ -103,10 +103,10 @@ router.post(
     const loggedAdmin = req.user;
     const { username, dates, name, planName } = req.body;
 
-    const plansPromises = await planName.map(async plan => {
+    const plansPromises = await planName.map(async (plan) => {
       let result = await Plan.findOne({
         name: plan,
-        company: loggedAdmin.company
+        company: loggedAdmin.company,
       });
       return result;
     });
@@ -120,7 +120,7 @@ router.post(
         company: loggedAdmin.company, // id of the company
         plans: plans.map((plan, i) => {
           return { plan: plan._id, startDate: dates[i] };
-        }) // see plan options
+        }), // see plan options
       });
       if (parent) {
         newSub.parents = [...newSub.parents, parent._id];
@@ -155,7 +155,7 @@ router.post(
           { id: company._id, username, type },
           process.env.JWTSECRET,
           {
-            expiresIn: 3600
+            expiresIn: 3600,
           }
         );
         //console.log('token', token);
@@ -163,18 +163,18 @@ router.post(
           service: process.env.MAILER_SERVICE_PROVIDER || 'gmail',
           auth: {
             user: process.env.MAILER_EMAIL_ID,
-            pass: process.env.MAILER_PASSWORD
-          }
+            pass: process.env.MAILER_PASSWORD,
+          },
         });
 
         const mailOptions = {
           from: process.env.MAILER_EMAIL_ID,
           to: username,
-          subject: `${loggedAdmin.company.name} invited you to join SUBBY!`,
-          text: `Hi! welcome to subby. ${loggedAdmin.company.name} has invited you to our platform. Click this link to register http://localhost:1234/new-user/${token}` //change this for HTML template
+          subject: `${company.name} invited you to join SUBBY!`,
+          text: `Hi! welcome to subby. ${loggedAdmin.company.name} has invited you to our platform. Click this link to register http://localhost:1234/new-user/${token}`, //change this for HTML template
         };
 
-        transporter.sendMail(mailOptions, function(error, info) {
+        transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
             console.log(error);
             return res
@@ -218,10 +218,10 @@ router.post(
               password: hashPassword(password),
               name: {
                 first: firstName,
-                last: lastName
+                last: lastName,
               },
               type: 'admin',
-              company: decodedToken.id
+              company: decodedToken.id,
             });
             return res.json({ status: 'New Admin User Created' });
           } else if (decodedToken.type === 'coordinator') {
@@ -230,10 +230,10 @@ router.post(
               password: hashPassword(password),
               name: {
                 first: firstName,
-                last: lastName
+                last: lastName,
               },
               type: 'coordinator',
-              company: decodedToken.id
+              company: decodedToken.id,
             });
             return res.json({ status: 'New Coordinator User Created' });
           } else if (decodedToken.type === 'client') {
@@ -242,10 +242,10 @@ router.post(
               password: hashPassword(password),
               name: {
                 first: firstName,
-                last: lastName
+                last: lastName,
               },
               phone,
-              company: decodedToken.id
+              company: decodedToken.id,
             });
             return res.json({ status: 'New Client User Created' });
           }

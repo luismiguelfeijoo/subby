@@ -4,7 +4,9 @@ import {
   UserContext,
   getSingleClient,
   addPaymentOnClient,
-  deleteSubscription
+  deleteSubscription,
+  createSubscription,
+  getPlans,
 } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
@@ -24,19 +26,20 @@ import {
   Form,
   Input,
   Typography,
-  Popover
+  Popover,
 } from 'antd';
 const { Option } = Select;
 const { Text } = Typography;
 import moment from 'moment';
 import { SingleSubscriptionPage } from './SingleSubscriptions.page';
-
+import { formItemLayout } from './utils/styles';
 export const SingleClientPage = withProtected(
   withTypeUser(
     withRouter(({ history, match }) => {
       const { loading, setLoading } = useContext(UserContext);
-      const [data, setData] = useState();
-      const [visible, setVisible] = useState(false);
+      const [client, setClient] = useState();
+      const [visiblePaymentForm, setVisiblePaymentForm] = useState(false);
+      const [visibleSubForm, setVisibleSubForm] = useState(false);
       const [confirmLoading, setConfirmLoading] = useState(false);
       const [month, setMonth] = useState();
       const [debtTotal, setDebtTotal] = useState(0);
@@ -48,15 +51,15 @@ export const SingleClientPage = withProtected(
         }
       }, []);
 
-      const fetchClient = id => {
+      const fetchClient = (id) => {
         console.log('fetching');
         getSingleClient(id)
-          .then(client => {
-            setData(client);
+          .then((client) => {
+            setClient(client);
             calculateTotal(client.debts, null, setDebtTotal);
             calculateTotal(client.payments, null, setPayedTotal);
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
           });
       };
@@ -64,7 +67,7 @@ export const SingleClientPage = withProtected(
       const calculateTotal = (data, month, setter) => {
         setter(
           data
-            .filter(element =>
+            .filter((element) =>
               month
                 ? moment(element.date).format('MM-YYYY') ===
                   month.format('MM-YYYY')
@@ -74,21 +77,21 @@ export const SingleClientPage = withProtected(
         );
       };
 
-      const showModal = () => {
-        setVisible(true);
+      const showModal = (setter) => {
+        setter(true);
       };
 
-      const handleCancel = () => {
-        setVisible(false);
+      const handleCancel = (setter) => {
+        setter(false);
       };
 
       const methods = useForm({
-        mode: 'onBlur'
+        mode: 'onBlur',
       });
 
       const { register, handleSubmit, errors, reset } = methods;
 
-      const onSubmit = async data => {
+      const onSubmit = async (data) => {
         console.log(data);
         setConfirmLoading(true);
         try {
@@ -99,17 +102,32 @@ export const SingleClientPage = withProtected(
           message.error('Error on the conection');
         } finally {
           setConfirmLoading(false);
-          setVisible(false);
+          setVisiblePaymentForm(false);
+          reset();
+        }
+      };
+
+      const onSubmitSub = async (data) => {
+        setConfirmLoading(true);
+        try {
+          const response = await createSubscription(client.username, data);
+          fetchClient(match.params.id);
+          message.success(response.status);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setConfirmLoading(false);
+          setVisibleSubForm(false);
           reset();
         }
       };
 
       return (
         <LayoutTemplate sider={true}>
-          {data ? (
+          {client ? (
             <>
               <Descriptions
-                title={`Client: ${data.name.first} ${data.name.last}`}
+                title={`Client: ${client.name.first} ${client.name.last}`}
                 bordered
                 column={1}
                 layout='vertical'
@@ -118,8 +136,8 @@ export const SingleClientPage = withProtected(
                   <List
                     size='small'
                     bordered
-                    dataSource={data.subscriptions}
-                    renderItem={sub => (
+                    dataSource={client.subscriptions}
+                    renderItem={(sub) => (
                       <List.Item
                         actions={[
                           <Link
@@ -162,7 +180,7 @@ export const SingleClientPage = withProtected(
                             }
                           >
                             <Link to='#'>delete</Link>
-                          </Popover>
+                          </Popover>,
                         ]}
                       >
                         <List.Item.Meta
@@ -187,12 +205,12 @@ export const SingleClientPage = withProtected(
                     format='MM-YYYY'
                     style={{ width: '100%', marginBottom: '20px' }}
                     allowClear
-                    onChange={e => {
+                    onChange={(e) => {
                       setDebtTotal(0);
                       setPayedTotal(0);
                       setMonth(() => (e ? e : e));
-                      calculateTotal(data.debts, e, setDebtTotal);
-                      calculateTotal(data.payments, e, setPayedTotal);
+                      calculateTotal(client.debts, e, setDebtTotal);
+                      calculateTotal(client.payments, e, setPayedTotal);
                     }}
                   />
                   <Row gutter={[16, { md: 16, lg: 24 }]}>
@@ -202,14 +220,14 @@ export const SingleClientPage = withProtected(
                           height: '100%',
                           display: 'flex',
                           flexDirection: 'column',
-                          justifyContent: 'space-between'
+                          justifyContent: 'space-between',
                         }}
                         header={<div>Services Adquired</div>}
                         footer={
                           <div
                             style={{
                               display: 'flex',
-                              justifyContent: 'space-between'
+                              justifyContent: 'space-between',
                             }}
                           >
                             <div>Total:</div>
@@ -218,9 +236,9 @@ export const SingleClientPage = withProtected(
                         }
                         size='small'
                         bordered
-                        dataSource={data.debts
+                        dataSource={client.debts
                           .sort((a, b) => (a.date < b.date ? -1 : 1))
-                          .filter(debt =>
+                          .filter((debt) =>
                             month
                               ? moment(debt.date).format('MM-YYYY') ===
                                 month.format('MM-YYYY')
@@ -230,7 +248,7 @@ export const SingleClientPage = withProtected(
                           return (
                             <List.Item
                               actions={[
-                                <p key='list-price'>{`${debt.amount.price} ${debt.amount.currency}`}</p>
+                                <p key='list-price'>{`${debt.amount.price} ${debt.amount.currency}`}</p>,
                               ]}
                             >
                               <List.Item.Meta
@@ -254,14 +272,14 @@ export const SingleClientPage = withProtected(
                           height: '100%',
                           display: 'flex',
                           flexDirection: 'column',
-                          justifyContent: 'space-between'
+                          justifyContent: 'space-between',
                         }}
                         header={<div>Payments Recieved</div>}
                         footer={
                           <div
                             style={{
                               display: 'flex',
-                              justifyContent: 'space-between'
+                              justifyContent: 'space-between',
                             }}
                           >
                             <div>Total:</div>
@@ -270,9 +288,9 @@ export const SingleClientPage = withProtected(
                         }
                         size='small'
                         bordered
-                        dataSource={data.payments
+                        dataSource={client.payments
                           .sort((a, b) => (a.date < b.date ? -1 : 1))
-                          .filter(payment =>
+                          .filter((payment) =>
                             month
                               ? moment(payment.date).format('MM-YYYY') ===
                                 month.format('MM-YYYY')
@@ -282,7 +300,7 @@ export const SingleClientPage = withProtected(
                           return (
                             <List.Item
                               actions={[
-                                <p key='list-price'>{`${payment.amount.price} ${payment.amount.currency}`}</p>
+                                <p key='list-price'>{`${payment.amount.price} ${payment.amount.currency}`}</p>,
                               ]}
                             >
                               <List.Item.Meta
@@ -311,7 +329,7 @@ export const SingleClientPage = withProtected(
                         <Text
                           key='total-debt'
                           type='danger'
-                        >{`- ${debtTotal} $`}</Text>
+                        >{`- ${debtTotal} $`}</Text>,
                       ]}
                     >
                       <List.Item.Meta title={`Consumed by Client`} />
@@ -321,7 +339,7 @@ export const SingleClientPage = withProtected(
                         <Text
                           key='total-payed'
                           type={payedTotal ? '' : 'warning'}
-                        >{`+ ${payedTotal} $`}</Text>
+                        >{`+ ${payedTotal} $`}</Text>,
                       ]}
                     >
                       <List.Item.Meta title={`Payed by Client`} />
@@ -331,7 +349,7 @@ export const SingleClientPage = withProtected(
                         <Text
                           key='total-balance'
                           type={payedTotal - debtTotal > 0 ? '' : 'danger'}
-                        >{`${payedTotal - debtTotal} $`}</Text>
+                        >{`${payedTotal - debtTotal} $`}</Text>,
                       ]}
                     >
                       <List.Item.Meta title={`Total:`} />
@@ -348,12 +366,32 @@ export const SingleClientPage = withProtected(
               <Button
                 style={{ margin: '30px 0 0 ' }}
                 block
-                onClick={() =>
-                  history.push(`/company/clients/edit/${match.params.id}`)
-                }
+                onClick={() => showModal(setVisibleSubForm)}
               >
-                Edit Client
+                Add Subscription
               </Button>
+              <Modal
+                centered
+                title='Add Subscription'
+                visible={visibleSubForm}
+                confirmLoading={confirmLoading}
+                onCancel={() => handleCancel(setVisibleSubForm)}
+                footer={[
+                  <Button
+                    key='back'
+                    onClick={() => handleCancel(setVisibleSubForm)}
+                  >
+                    Cancel
+                  </Button>,
+                ]}
+              >
+                <SubscriptionForm
+                  onSubmit={onSubmitSub}
+                  handleSubmit={handleSubmit}
+                  errors={errors}
+                  methods={methods}
+                />
+              </Modal>
             </Col>
           </Row>
           <Row>
@@ -361,20 +399,23 @@ export const SingleClientPage = withProtected(
               <Button
                 style={{ margin: '30px 0 0 ' }}
                 block
-                onClick={() => showModal()}
+                onClick={() => showModal(setVisiblePaymentForm)}
               >
                 Add Payment Info
               </Button>
               <Modal
                 centered
                 title='Add Payment'
-                visible={visible}
+                visible={visiblePaymentForm}
                 confirmLoading={confirmLoading}
-                onCancel={() => handleCancel()}
+                onCancel={() => handleCancel(setVisiblePaymentForm)}
                 footer={[
-                  <Button key='back' onClick={() => handleCancel()}>
+                  <Button
+                    key='back'
+                    onClick={() => handleCancel(setVisiblePaymentForm)}
+                  >
                     Cancel
-                  </Button>
+                  </Button>,
                 ]}
               >
                 <PaymentForm
@@ -394,15 +435,6 @@ export const SingleClientPage = withProtected(
 );
 
 const PaymentForm = ({ onSubmit, handleSubmit, errors, methods }) => {
-  const { loading, setLoading } = useContext(UserContext);
-
-  const formItemLayout = {
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16, offset: 4 }
-    }
-  };
-
   const currencySelector = (
     <Form.Item noStyle>
       <Controller
@@ -414,7 +446,7 @@ const PaymentForm = ({ onSubmit, handleSubmit, errors, methods }) => {
         }
         defaultValue='€'
         style={{
-          width: 70
+          width: 70,
         }}
         name='currency'
       />
@@ -433,7 +465,7 @@ const PaymentForm = ({ onSubmit, handleSubmit, errors, methods }) => {
             name='description'
             placeholder={`Provide a description for the payment`}
             rules={{
-              required: 'Please, input the description'
+              required: 'Please, input the description',
             }}
           />
         </Form.Item>
@@ -450,11 +482,11 @@ const PaymentForm = ({ onSubmit, handleSubmit, errors, methods }) => {
             placeholder='Amount'
             addonAfter={currencySelector}
             style={{
-              width: '100%'
+              width: '100%',
             }}
             rules={{
               required: 'Please input the payment amount!',
-              min: { value: 0.01, message: 'Input a valid amount!' }
+              min: { value: 0.01, message: 'Input a valid amount!' },
             }}
           />
         </Form.Item>
@@ -465,12 +497,12 @@ const PaymentForm = ({ onSubmit, handleSubmit, errors, methods }) => {
         >
           <Controller
             style={{
-              width: '100%'
+              width: '100%',
             }}
             placeholder={`Select date`}
             as={DatePicker}
             rules={{
-              required: 'Select the date!'
+              required: 'Select the date!',
             }}
             format='DD-MM-YYYY'
             name={`paymentDate`}
@@ -484,6 +516,112 @@ const PaymentForm = ({ onSubmit, handleSubmit, errors, methods }) => {
             onClick={handleSubmit(onSubmit)}
           >
             Add Payment!
+          </Button>
+        </Form.Item>
+      </Form>
+    </FormContext>
+  );
+};
+
+const SubscriptionForm = ({ onSubmit, handleSubmit, errors, methods }) => {
+  const { loading } = useContext(UserContext);
+  const [plans, setPlans] = useState([]);
+  const [selectedPlan, setSelectedPlan] = useState([]);
+
+  useEffect(() => {
+    if (!loading) {
+      fetchPlans();
+    }
+  }, []);
+
+  const fetchPlans = () => {
+    getPlans()
+      .then((plans) => {
+        setPlans(plans);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  return (
+    <FormContext {...methods}>
+      <Form>
+        <Form.Item
+          {...formItemLayout}
+          required={true}
+          validateStatus={errors.name?.message ? 'error' : 'success'}
+          help={errors.name?.message && errors.name.message}
+        >
+          <Controller
+            as={Input}
+            type='text'
+            placeholder='Name'
+            name='name'
+            rules={{
+              required: 'Required',
+            }}
+          />
+        </Form.Item>
+
+        <Form.Item
+          {...formItemLayout}
+          validateStatus={errors.planName?.type ? 'error' : 'success'}
+          help={errors.planName?.type && 'Please, select at least 1 plan!'}
+        >
+          <Controller
+            onChange={([event]) => {
+              setSelectedPlan(event);
+              return event;
+            }}
+            as={
+              <Select mode='multiple' placeholder='Select a plan'>
+                {plans &&
+                  plans.map((plan, i) => {
+                    return (
+                      <Option value={plan.name} key={i}>{`${plan.name} - ${
+                        plan.price.price
+                      } ${plan.price.currency || '$'}`}</Option>
+                    );
+                  })}
+              </Select>
+            }
+            rules={{
+              validate: (value) => value.length > 0,
+            }}
+            name='planName'
+          />
+        </Form.Item>
+        {selectedPlan.map((plan, i) => {
+          return (
+            <Form.Item
+              key={i}
+              {...formItemLayout}
+              validateStatus={errors.dates ? 'error' : 'success'}
+              help={errors.dates && 'Provide the dates for all the plans!'}
+            >
+              <Controller
+                style={{
+                  width: '100%',
+                }}
+                placeholder={`Select ${plan} date`}
+                as={DatePicker}
+                rules={{
+                  validate: (value) => value !== null,
+                }}
+                format='DD-MM-YYYY'
+                name={`dates[${i}]`}
+              />
+            </Form.Item>
+          );
+        })}
+        <Form.Item {...formItemLayout}>
+          <Button
+            type='primary'
+            htmlType='submit'
+            onClick={handleSubmit(onSubmit)}
+          >
+            Add Subscription!
           </Button>
         </Form.Item>
       </Form>
