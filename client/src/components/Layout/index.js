@@ -4,12 +4,13 @@ import {
   DesktopOutlined,
   LogoutOutlined,
   FileSearchOutlined,
-  FileOutlined,
+  MessageOutlined,
   AuditOutlined,
   EditOutlined,
   UserOutlined,
   ProfileOutlined,
   PlusOutlined,
+  LoginOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 const { SubMenu } = Menu;
@@ -30,7 +31,7 @@ export const LayoutTemplate = ({
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {sider ? (
+      {sider && !broken ? (
         <>
           <Sider
             collapsible
@@ -40,6 +41,7 @@ export const LayoutTemplate = ({
             onBreakpoint={(broken) => {
               setBroken(broken);
             }}
+            broken
           >
             <div style={{ height: '50px' }}></div>
             <SiderMenu
@@ -62,7 +64,12 @@ export const LayoutTemplate = ({
       ) : (
         <>
           <Header>
-            <div style={{ width: '100px' }}></div>
+            <SiderMenu
+              selection={currentPage}
+              history={history}
+              option={currentMenuTab}
+              broken
+            />
           </Header>
           <Content
             style={{
@@ -79,93 +86,161 @@ export const LayoutTemplate = ({
   );
 };
 
-const SiderMenu = withRouter(({ selection, history, open }) => {
+const SiderMenu = withRouter(({ selection, history, open, broken }) => {
   const { user, setUser } = useContext(UserContext);
 
   return (
     <>
       {user ? (
-        <Menu
-          mode='inline'
-          defaultSelectedKeys={[selection]}
-          defaultOpenKeys={[open]}
-          theme='dark'
-        >
-          <SubMenu
-            key='User'
-            title={
-              <>
-                <UserOutlined />
-                <span className='nav-text'>
-                  {user.type
-                    ? user.type === 'admin'
-                      ? 'Admin'
-                      : 'Coordinator'
-                    : 'Client'}
-                </span>
-              </>
-            }
+        user.type ? (
+          <Menu
+            mode={broken ? 'horizontal' : 'inline'}
+            defaultSelectedKeys={[selection]}
+            defaultOpenKeys={[open]}
+            theme='dark'
           >
-            <Menu.Item key='profile'>
-              <Link to='/profile'>
-                <ProfileOutlined />
-                <span>Profile</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item
-              key='Logout'
-              onClick={async () => {
-                setUser();
-                await doLogout();
-                history.push('/');
-              }}
+            <SubMenu
+              key='User'
+              title={
+                <>
+                  <UserOutlined />
+                  <span className='nav-text'>
+                    {user.type
+                      ? user.type === 'admin'
+                        ? 'Admin'
+                        : 'Coordinator'
+                      : 'Client'}
+                  </span>
+                </>
+              }
             >
-              <LogoutOutlined />
-              <span>Logout</span>
+              <Menu.Item key='profile'>
+                <Link to='/profile'>
+                  <ProfileOutlined />
+                  <span>Profile</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item
+                key='Logout'
+                onClick={async () => {
+                  setUser();
+                  await doLogout();
+                  history.push('/');
+                }}
+              >
+                <LogoutOutlined />
+                <span>Logout</span>
+              </Menu.Item>
+            </SubMenu>
+            <SubMenu
+              key='company'
+              title={
+                <>
+                  <DesktopOutlined />
+                  <span className='nav-text'>Company</span>
+                </>
+              }
+            >
+              <Menu.Item key='addUserOrPlan'>
+                <Link to='/company/new-user' className='nav-text'>
+                  <PlusOutlined />
+                  <span className='nav-text'>Add User</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item key='companyProfile'>
+                <Link to='/company/profile' className='nav-text'>
+                  <EditOutlined />
+                  <span className='nav-text'>Edit Company</span>
+                </Link>
+              </Menu.Item>
+            </SubMenu>
+            <Menu.Item key='subscriptionsList'>
+              <Link to='/company/subscriptions' className='nav-text'>
+                <FileSearchOutlined />
+                <span className='nav-text'>Subscriptions</span>
+              </Link>
             </Menu.Item>
-          </SubMenu>
-          <SubMenu
-            key='company'
-            title={
-              <>
-                <DesktopOutlined />
-                <span className='nav-text'>Company</span>
-              </>
-            }
+            <Menu.Item key='clientsList'>
+              <Link to='/company/clients' className='nav-text'>
+                <AuditOutlined />
+                <span className='nav-text'>Clients</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key='Chat'>
+              <MessageOutlined />
+              <span className='nav-text'>Chat</span>
+            </Menu.Item>
+          </Menu>
+        ) : (
+          <Menu
+            mode={broken ? 'horizontal' : 'inline'}
+            defaultSelectedKeys={[selection]}
+            defaultOpenKeys={[open]}
+            theme='dark'
           >
-            <Menu.Item key='addUserOrPlan'>
-              <Link to='/company/new-user' className='nav-text'>
-                <PlusOutlined />
-                <span className='nav-text'>Add User</span>
+            <SubMenu
+              key='User'
+              title={
+                <>
+                  <UserOutlined />
+                  <span className='nav-text'>
+                    {user.type
+                      ? user.type === 'admin'
+                        ? 'Admin'
+                        : 'Coordinator'
+                      : 'Client'}
+                  </span>
+                </>
+              }
+            >
+              <Menu.Item key='profile'>
+                <Link to='/profile'>
+                  <ProfileOutlined />
+                  <span>Profile</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item
+                key='Logout'
+                onClick={async () => {
+                  setUser();
+                  await doLogout();
+                  history.push('/');
+                }}
+              >
+                <LogoutOutlined />
+                <span>Logout</span>
+              </Menu.Item>
+            </SubMenu>
+            <Menu.Item key='subscriptionsList'>
+              <Link to='/client/subscriptions' className='nav-text'>
+                <FileSearchOutlined />
+                <span className='nav-text'>Subscriptions</span>
               </Link>
             </Menu.Item>
-            <Menu.Item key='companyProfile'>
-              <Link to='/company/profile' className='nav-text'>
-                <EditOutlined />
-                <span className='nav-text'>Edit Company</span>
-              </Link>
+            <Menu.Item key='Chat'>
+              <MessageOutlined />
+              <span className='nav-text'>Chat</span>
             </Menu.Item>
-          </SubMenu>
-          <Menu.Item key='subscriptionsList'>
-            <Link to='/company/subscriptions' className='nav-text'>
-              <FileSearchOutlined />
-              <span className='nav-text'>Subscriptions</span>
+          </Menu>
+        )
+      ) : (
+        <Menu mode='horizontal' theme='dark'>
+          <Menu.Item key='home'>
+            <Link to='/' className='nav-text'>
+              <span className='nav-text'>S U B B Y</span>
             </Link>
           </Menu.Item>
-          <Menu.Item key='clientsList'>
-            <Link to='/company/clients' className='nav-text'>
-              <AuditOutlined />
-              <span className='nav-text'>Clients</span>
+          <Menu.Item key='login'>
+            <Link to='/login' className='nav-text'>
+              <span className='nav-text'>Login</span>
             </Link>
           </Menu.Item>
-          <Menu.Item key='Chat'>
-            <span className='nav-text'>
-              <span>Chat</span>
-            </span>
+          <Menu.Item key='register'>
+            <Link to='/new-company' className='nav-text'>
+              <span className='nav-text'>Join</span>
+            </Link>
           </Menu.Item>
         </Menu>
-      ) : (
-        <></>
       )}
     </>
   );
