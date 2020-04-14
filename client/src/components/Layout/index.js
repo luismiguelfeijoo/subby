@@ -9,27 +9,22 @@ import {
   EditOutlined,
   UserOutlined,
   ProfileOutlined,
-  PlusOutlined
+  PlusOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 const { SubMenu } = Menu;
 const { Header, Footer, Sider, Content } = Layout;
-
-import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
-import { gold } from '@ant-design/colors';
-
-import { generate, presetPalettes } from '@ant-design/colors';
 import { doLogout, UserContext } from '../../../lib/auth.api';
 
 export const LayoutTemplate = ({
   children,
   sider = false,
   currentPage,
-  currentMenuTab
+  currentMenuTab,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [broken, setBroken] = useState(false);
-  const onCollapse = collapsed => {
+  const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
 
@@ -42,7 +37,7 @@ export const LayoutTemplate = ({
             collapsed={collapsed}
             onCollapse={onCollapse}
             breakpoint='lg'
-            onBreakpoint={broken => {
+            onBreakpoint={(broken) => {
               setBroken(broken);
             }}
           >
@@ -57,7 +52,7 @@ export const LayoutTemplate = ({
             <Content
               style={{
                 padding: 24,
-                margin: 0
+                margin: 0,
               }}
             >
               {children}
@@ -72,7 +67,7 @@ export const LayoutTemplate = ({
           <Content
             style={{
               padding: 24,
-              margin: 0
+              margin: 0,
             }}
           >
             {children}
@@ -140,7 +135,7 @@ const SiderMenu = withRouter(({ selection, history, open }) => {
             <Menu.Item key='addUserOrPlan'>
               <Link to='/company/new-user' className='nav-text'>
                 <PlusOutlined />
-                <span className='nav-text'>Add User or Sub</span>
+                <span className='nav-text'>Add User</span>
               </Link>
             </Menu.Item>
             <Menu.Item key='companyProfile'>
@@ -174,3 +169,11 @@ const SiderMenu = withRouter(({ selection, history, open }) => {
     </>
   );
 });
+
+/* 
+
+import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
+import { gold } from '@ant-design/colors';
+
+import { generate, presetPalettes } from '@ant-design/colors';
+*/
