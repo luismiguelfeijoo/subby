@@ -22,6 +22,23 @@ router.get('/plans', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   }
 });
 
+router.get(
+  '/plans/delete/:id',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const loggedAdmin = req.user;
+    if (loggedAdmin.type === 'admin') {
+      const plan = await Plan.findByIdAndUpdate(id, { active: false });
+      return res.json({
+        status: 'Plan deleted, this will not affect charged plans'
+      });
+    } else {
+      return res.status(401).json({ status: 'Local user is not admin' });
+    }
+  }
+);
+
 router.get('/extras', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   const loggedAdmin = req.user;
   if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
@@ -31,6 +48,23 @@ router.get('/extras', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
     return res.status(401).json({ status: 'Local user is not admin' });
   }
 });
+
+router.get(
+  '/extras/delete/:id',
+  ensureLogin.ensureLoggedIn(),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const loggedAdmin = req.user;
+    if (loggedAdmin.type === 'admin') {
+      const extra = await Extra.findByIdAndUpdate(id, { active: false });
+      return res.json({
+        status: 'Extra deleted, this will not affect charged extras'
+      });
+    } else {
+      return res.status(401).json({ status: 'Local user is not admin' });
+    }
+  }
+);
 
 router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   const loggedAdmin = req.user;
