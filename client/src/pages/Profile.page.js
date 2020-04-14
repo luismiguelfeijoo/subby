@@ -60,97 +60,109 @@ export const ProfilePage = withProtected(
     console.log(user);
     return (
       <LayoutTemplate sider={true}>
-        <FormContext {...methods}>
-          <Form>
-            <Form.Item
-              {...formItemLayout}
-              validateStatus={errors.username?.message ? 'error' : 'success'}
-              help={errors.username?.message && errors.username.message}
-            >
-              <Controller
-                defaultValue={user.username}
-                as={Input}
-                name='username'
-                placeholder='Username'
-                rules={{
-                  required: 'Required',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                    message: 'invalid email address'
-                  }
-                }}
-                disabled
-              />
-            </Form.Item>
-            <Form.Item
-              {...formItemLayout}
-              validateStatus={errors.firstName?.message ? 'error' : 'success'}
-              help={errors.firstName?.message && errors.firstName.message}
-            >
-              <Controller
-                defaultValue={user.name.first}
-                as={Input}
-                type='text'
-                placeholder='First Name'
-                name='firstName'
-                rules={{
-                  required: 'Required'
-                }}
-              />
-            </Form.Item>
-
-            <Form.Item
-              {...formItemLayout}
-              required={true}
-              validateStatus={errors.lastName?.message ? 'error' : 'success'}
-              help={errors.lastName?.message && errors.lastName.message}
-            >
-              <Controller
-                defaultValue={user.name.last}
-                as={Input}
-                type='text'
-                placeholder='Last Name'
-                name='lastName'
-                rules={{
-                  required: 'Required'
-                }}
-              />
-            </Form.Item>
-            {!user.type && (
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <FormContext {...methods}>
+            <Form style={{ width: '100%' }}>
               <Form.Item
-                validateStatus={errors.lastName?.message ? 'error' : 'success'}
-                help={errors.lastName?.message && errors.lastName.message}
                 {...formItemLayout}
+                validateStatus={errors.username?.message ? 'error' : 'success'}
+                help={errors.username?.message && errors.username.message}
               >
                 <Controller
-                  name='phone'
-                  defaultValue={user.phone.phone}
+                  defaultValue={user.username}
                   as={Input}
-                  placeholder='Phone Number'
-                  addonBefore={prefixSelector}
-                  style={{
-                    width: '100%'
-                  }}
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please input your phone number!'
+                  name='username'
+                  placeholder='Username'
+                  rules={{
+                    required: 'Required',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                      message: 'invalid email address'
                     }
-                  ]}
+                  }}
+                  disabled
                 />
               </Form.Item>
-            )}
-            <Form.Item {...formItemLayout}>
-              <Button
-                type='primary'
-                htmlType='submit'
-                onClick={handleSubmit(onSubmit)}
+              <Form.Item
+                {...formItemLayout}
+                validateStatus={errors.firstName?.message ? 'error' : 'success'}
+                help={errors.firstName?.message && errors.firstName.message}
               >
-                Update User!
-              </Button>
-            </Form.Item>
-          </Form>
-        </FormContext>
+                <Controller
+                  defaultValue={user.name.first}
+                  as={Input}
+                  type='text'
+                  placeholder='First Name'
+                  name='firstName'
+                  rules={{
+                    required: 'Required'
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                {...formItemLayout}
+                required={true}
+                validateStatus={errors.lastName?.message ? 'error' : 'success'}
+                help={errors.lastName?.message && errors.lastName.message}
+              >
+                <Controller
+                  defaultValue={user.name.last}
+                  as={Input}
+                  type='text'
+                  placeholder='Last Name'
+                  name='lastName'
+                  rules={{
+                    required: 'Required'
+                  }}
+                />
+              </Form.Item>
+              {!user.type && (
+                <Form.Item
+                  validateStatus={
+                    errors.lastName?.message ? 'error' : 'success'
+                  }
+                  help={errors.lastName?.message && errors.lastName.message}
+                  {...formItemLayout}
+                >
+                  <Controller
+                    name='phone'
+                    defaultValue={user.phone.phone}
+                    as={Input}
+                    placeholder='Phone Number'
+                    addonBefore={prefixSelector}
+                    style={{
+                      width: '100%'
+                    }}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please input your phone number!'
+                      }
+                    ]}
+                  />
+                </Form.Item>
+              )}
+              <Form.Item {...formItemLayout}>
+                <Button
+                  type='primary'
+                  htmlType='submit'
+                  onClick={handleSubmit(onSubmit)}
+                >
+                  Update User!
+                </Button>
+              </Form.Item>
+            </Form>
+          </FormContext>
+        </div>
       </LayoutTemplate>
     );
   })
