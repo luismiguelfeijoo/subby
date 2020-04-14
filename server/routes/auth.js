@@ -107,8 +107,33 @@ router.post(
 router.post('/edit', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   // const { ...fields } = req.body;
   const loggedUser = req.user;
-
-  // do comprobations add edit user
+  const { username, firstName, lastName, phone, prefix } = req.body;
+  try {
+    const localUser = await LocalUser.findOne({ username });
+    const clientUser = await ClientUser.findOne({ username });
+    const existingUser = localUser ? localUser : clientUser;
+    if (!existingUser || existingUser.username === loggedUser.username) {
+      loggedUser.username = username;
+      loggedUser.name = { first: firstName, last: lastName };
+      if (loggedUser.type) loggedUser.phone = { phone, prefix };
+      loggedUser.save();
+      return res.json({
+        status: 'User updated',
+        user: _.pick(req.user, [
+          'username',
+          '_id',
+          'company',
+          'name',
+          'type',
+          'phone'
+        ])
+      });
+    } else {
+      res.status(401).json({ status: `You can't use that username` });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // Logout
@@ -127,7 +152,7 @@ router.post('/logout', ensureLogin.ensureLoggedIn(), (req, res, next) => {
 router.get('/loggedin', (req, res, next) => {
   if (req.user)
     return res.json(
-      _.pick(req.user, ['username', '_id', 'type', 'company', 'name'])
+      _.pick(req.user, ['username', '_id', 'type', 'company', 'name', 'phone'])
     );
   else return res.status(401).json({ status: 'No user session present' });
 });
