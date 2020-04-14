@@ -5,7 +5,7 @@ export const UserContext = React.createContext();
 
 const api = axios.create({
   baseURL: 'http://localhost:3000',
-  withCredentials: true
+  withCredentials: true,
 });
 
 //Review every api
@@ -13,7 +13,7 @@ const api = axios.create({
 export const askCompanyToken = async ({ company, email }) => {
   const res = await api.post('/auth/company', {
     email,
-    company
+    company,
   });
   return res.data;
 };
@@ -25,7 +25,7 @@ export const doCompanySignup = async (
   const res = await api.post(`/auth/company/signup/${token}`, {
     firstName,
     lastName,
-    password
+    password,
   });
   return res.data;
 };
@@ -33,7 +33,7 @@ export const doCompanySignup = async (
 export const askUserToken = async ({ username, type }) => {
   const res = await api.post('/auth/company/new-user', {
     username,
-    type
+    type,
   });
   return res.data;
 };
@@ -46,36 +46,34 @@ export const doUserSignup = async (
     password,
     firstName,
     lastName,
-    phone: { prefix, phone }
+    phone: { prefix, phone },
   });
   return res.data;
 };
 
-export const createSubscription = async ({
+export const createSubscription = async (
   username,
-  dates,
-  planName,
-  name
-}) => {
+  { dates, planName, name }
+) => {
   const res = await api.post('/auth/company/new-subscription', {
     username,
     dates,
     planName,
-    name
+    name,
   });
   return res.data;
 };
 
 export const askPasswordToken = async ({ username }) => {
   const res = await api.post('/auth/reset-password', {
-    username
+    username,
   });
   return res.data;
 };
 
 export const doPasswordReset = async ({ password }, token, id) => {
   const res = await api.post(`/auth/reset-password/${id}/${token}`, {
-    password
+    password,
   });
   return res.data;
 };
@@ -85,14 +83,14 @@ export const updateUser = async ({
   firstName,
   lastName,
   prefix,
-  phone
+  phone,
 }) => {
   const res = await api.post('/auth/edit', {
     username,
     firstName,
     lastName,
     prefix,
-    phone
+    phone,
   });
   return res.data;
 };
@@ -101,7 +99,7 @@ export const createPlan = async ({ name, price, currency }) => {
   const res = await api.post('/retrieve/new-plan', {
     name,
     price,
-    currency
+    currency,
   });
   return res.data;
 };
@@ -110,7 +108,7 @@ export const createExtra = async ({ name, price, currency }) => {
   const res = await api.post('/retrieve/new-extra', {
     name,
     price,
-    currency
+    currency,
   });
   return res.data;
 };
@@ -120,7 +118,7 @@ export const getPlans = async () => {
   return res.data;
 };
 
-export const deletePlan = async id => {
+export const deletePlan = async (id) => {
   const res = await api.get(`/retrieve/plans/delete/${id}`);
   return res.data;
 };
@@ -130,7 +128,7 @@ export const getExtras = async () => {
   return res.data;
 };
 
-export const deleteExtra = async id => {
+export const deleteExtra = async (id) => {
   const res = await api.get(`/retrieve/extras/delete/${id}`);
   return res.data;
 };
@@ -140,12 +138,12 @@ export const getSubscriptions = async () => {
   return res.data;
 };
 
-export const getSingleSubscription = async id => {
+export const getSingleSubscription = async (id) => {
   const res = await api.get(`/retrieve/subscriptions/${id}`);
   return res.data;
 };
 
-export const deleteSubscription = async id => {
+export const deleteSubscription = async (id) => {
   const res = await api.get(`/retrieve/subscriptions/delete/${id}`);
   return res.data;
 };
@@ -158,7 +156,7 @@ export const updateSubscription = async (
     username,
     name,
     plansName,
-    planDates
+    planDates,
   });
   return res.data;
 };
@@ -166,7 +164,7 @@ export const updateSubscription = async (
 export const addExtraOnSubscription = async (id, { extraName, extraDate }) => {
   const res = await api.post(`retrieve/subscriptions/addExtra/${id}`, {
     extraName,
-    extraDate
+    extraDate,
   });
   return res.data;
 };
@@ -181,12 +179,12 @@ export const getClients = async () => {
   return res.data;
 };
 
-export const getSingleClient = async id => {
+export const getSingleClient = async (id) => {
   const res = await api.get(`/retrieve/clients/${id}`);
   return res.data;
 };
 
-export const deleteClient = async id => {
+export const deleteClient = async (id) => {
   const res = await api.get(`/retrieve/clients/delete/${id}`);
   return res.data;
 };
@@ -199,7 +197,7 @@ export const addPaymentOnClient = async (
     paymentDate,
     paymentAmount,
     currency,
-    description
+    description,
   });
   return res.data;
 };
@@ -207,12 +205,12 @@ export const addPaymentOnClient = async (
 export const doLogin = async ({ username, password }) => {
   const res = await api.post('/auth/login', {
     username,
-    password
+    password,
   });
   return res.data;
 };
 
-export const doUpload = async file => {
+export const doUpload = async (file) => {
   const data = new FormData();
   data.append('image', file);
   const res = await api.post('/auth/upload', data);
@@ -223,7 +221,7 @@ export const doEdit = async ({ username, course, campus }) => {
   const res = await api.post('/auth/edit', {
     username,
     course,
-    campus
+    campus,
   });
   return res.data;
 };
