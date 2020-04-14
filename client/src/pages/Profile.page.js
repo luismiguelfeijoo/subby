@@ -52,7 +52,11 @@ export const ProfilePage = withProtected(
     };
 
     return (
-      <LayoutTemplate sider={true}>
+      <LayoutTemplate
+        sider={true}
+        currentMenuTab={'User'}
+        currentPage='profile'
+      >
         <div
           style={{
             width: '100%',

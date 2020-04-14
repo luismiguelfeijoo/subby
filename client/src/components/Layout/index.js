@@ -96,7 +96,7 @@ const SiderMenu = withRouter(({ selection, history, open }) => {
           defaultOpenKeys={[open]}
         >
           <SubMenu
-            key='user'
+            key='User'
             title={
               <>
                 <UserOutlined />
@@ -110,11 +110,11 @@ const SiderMenu = withRouter(({ selection, history, open }) => {
               </>
             }
           >
-            <Menu.Item key='Profile'>
-              <span className='nav-text'>
+            <Menu.Item key='profile'>
+              <Link to='/profile'>
                 <ProfileOutlined />
                 <span>Profile</span>
-              </span>
+              </Link>
             </Menu.Item>
             <Menu.Item
               key='Logout'
