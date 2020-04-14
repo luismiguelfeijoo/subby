@@ -80,6 +80,23 @@ export const doPasswordReset = async ({ password }, token, id) => {
   return res.data;
 };
 
+export const updateUser = async ({
+  username,
+  firstName,
+  lastName,
+  prefix,
+  phone
+}) => {
+  const res = await api.post('/auth/edit', {
+    username,
+    firstName,
+    lastName,
+    prefix,
+    phone
+  });
+  return res.data;
+};
+
 export const createPlan = async ({ name, price, currency }) => {
   const res = await api.post('/retrieve/new-plan', {
     name,

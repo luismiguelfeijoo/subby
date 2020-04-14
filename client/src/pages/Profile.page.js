@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { withRouter } from 'react-router-dom';
-import { UserContext } from '../../lib/auth.api';
+import { UserContext, updateUser } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
@@ -9,7 +9,7 @@ import { formItemLayout } from './utils/styles';
 const { Option } = Select;
 export const ProfilePage = withProtected(
   withRouter(({ history, match }) => {
-    const { user, loading, setLoading } = useContext(UserContext);
+    const { user, setUser, setLoading } = useContext(UserContext);
 
     const prefixSelector = (
       <Form.Item noStyle>
@@ -34,30 +34,23 @@ export const ProfilePage = withProtected(
       mode: 'onBlur'
     });
 
-    const { register, handleSubmit, errors, getValues } = methods;
+    const { register, handleSubmit, errors, reset } = methods;
 
     const onSubmit = async data => {
       console.log(data);
-      let submitter;
-      if (user.type) {
-        submitter = 'updateLocalUser';
-      } else {
-        submitter = 'updateClientUser';
-      }
-      console.log(submitter);
-      /*
       setLoading(true);
       try {
-        const response = await submitter(data);
+        const response = await updateUser(data);
         message.success(response.status);
+        setUser(response.user);
       } catch (error) {
         console.log(error);
       } finally {
         setLoading(false);
+        reset();
       }
-      */
     };
-    console.log(user);
+
     return (
       <LayoutTemplate sider={true}>
         <div
