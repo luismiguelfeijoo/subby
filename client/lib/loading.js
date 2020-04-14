@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import gif from '../public/images/infinity.gif';
+import { Spin } from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
 
 const LoadingWrapper = styled.div`
   display: flex;
@@ -11,14 +12,11 @@ const LoadingWrapper = styled.div`
   position: absolute;
   top: 0%;
   z-index: 10000;
-  background: rgba(255, 255, 255, 1);
-  img {
-    width: 400px;
-  }
+  background: rgba(255, 255, 255, 0.5);
 `;
-
+const Icon = <SyncOutlined spin style={{ fontSize: 50 }} spin />;
 export const Loading = () => (
   <LoadingWrapper>
-    <img src={gif} alt='beer gif for loading' />
+    <Spin size='large' indicator={Icon} />
   </LoadingWrapper>
 );
