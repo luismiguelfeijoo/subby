@@ -9,8 +9,16 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { fetchSubscriptions } from './utils/helpers';
-import { List, Input, Button, Space, Divider, Popover, message } from 'antd';
-
+import {
+  List,
+  Input,
+  Button,
+  Divider,
+  Popover,
+  message,
+  Typography
+} from 'antd';
+const { Text } = Typography;
 const { Search } = Input;
 
 export const SubscriptionListPage = withProtected(
@@ -80,11 +88,14 @@ export const SubscriptionListPage = withProtected(
                       content={
                         <>
                           <p>This is a change you can't undo</p>
-                          <Link
-                            to='#'
+                          <Text
+                            type='danger'
                             onClick={async () => {
                               try {
-                                await deleteSubscription(sub._id);
+                                const response = await deleteSubscription(
+                                  sub._id
+                                );
+                                message.success(response.status);
                                 fetchSubscriptions(setData);
                               } catch (error) {
                                 console.log(error);
@@ -92,7 +103,7 @@ export const SubscriptionListPage = withProtected(
                             }}
                           >
                             Delete anyways
-                          </Link>
+                          </Text>
                         </>
                       }
                     >

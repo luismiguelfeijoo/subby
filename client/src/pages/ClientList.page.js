@@ -3,8 +3,9 @@ import { Link, withRouter } from 'react-router-dom';
 import { UserContext, getClients, deleteClient } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { List, Input, Divider, Button, Popover } from 'antd';
+import { List, Input, Divider, Button, Popover, Typography } from 'antd';
 import { withTypeUser } from '../../lib/protectedTypeUser';
+const { Text } = Typography;
 
 export const ClientListPage = withProtected(
   withTypeUser(
@@ -68,19 +69,19 @@ export const ClientListPage = withProtected(
                       content={
                         <>
                           <p>This is a change you can't undo</p>
-                          <Link
-                            to='#'
+                          <Text
+                            type='danger'
                             onClick={async () => {
                               try {
                                 await deleteClient(client._id);
-                                fetchSubscriptions(setData);
+                                fetchClients();
                               } catch (error) {
                                 console.log(error);
                               }
                             }}
                           >
                             Delete anyways
-                          </Link>
+                          </Text>
                         </>
                       }
                     >

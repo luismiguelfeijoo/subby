@@ -187,7 +187,7 @@ export const getSingleClient = async id => {
 };
 
 export const deleteClient = async id => {
-  const res = await api.post(`/retrieve/clients/delete/${id}`);
+  const res = await api.get(`/retrieve/clients/delete/${id}`);
   return res.data;
 };
 
