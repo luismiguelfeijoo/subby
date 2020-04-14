@@ -60,7 +60,6 @@ export const CompanyProfilePage = withProtected(
       const { register, handleSubmit, errors, reset } = methods;
 
       const onSubmitPlan = async data => {
-        console.log(data);
         try {
           const response = await createPlan(data);
           message.success(response.status);
@@ -73,8 +72,6 @@ export const CompanyProfilePage = withProtected(
         }
       };
       const onSubmitExtra = async data => {
-        console.log(data);
-
         try {
           const response = await createExtra(data);
           message.success(response.status);

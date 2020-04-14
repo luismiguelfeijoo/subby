@@ -15,7 +15,10 @@ const moment = require('moment');
 router.get('/plans', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   const loggedAdmin = req.user;
   if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
-    const plans = await Plan.find({ company: loggedAdmin.company });
+    const plans = await Plan.find({
+      company: loggedAdmin.company,
+      active: true
+    });
     return res.json(plans);
   } else {
     return res.status(401).json({ status: 'Local user is not admin' });
@@ -42,7 +45,10 @@ router.get(
 router.get('/extras', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   const loggedAdmin = req.user;
   if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
-    const extras = await Extra.find({ company: loggedAdmin.company });
+    const extras = await Extra.find({
+      company: loggedAdmin.company,
+      active: true
+    });
     return res.json(extras);
   } else {
     return res.status(401).json({ status: 'Local user is not admin' });
