@@ -25,7 +25,7 @@ const newPasswordTemplate = (context) => {
       <mj-section full-width="full-width" background-color="#391085" padding-bottom="0">
         <mj-column width="100%">
 
-          <mj-image src="https://res.cloudinary.com/luismifeijoo/image/upload/v1586966339/emailBackgroundSmall_tl7vjr.png" width="600px" alt="" padding="0" href="https://google.com" />
+          <mj-image src="https://res.cloudinary.com/luismifeijoo/image/upload/v1586968430/emailTemplateSmall_graivg.png" width="600px" alt="" padding="0" href="https://google.com" />
         </mj-column>
       </mj-section>
       <mj-wrapper padding-top="0" padding-bottom="0" css-class="body-section">

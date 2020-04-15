@@ -20,13 +20,11 @@ const newUserTemplate = (context) => {
       <mj-style inline="inline">
         .footer-link { color: #888888 }
       </mj-style>
-
     </mj-head>
     <mj-body background-color="#E7E7E7" width="600px">
       <mj-section full-width="full-width" background-color="#391085" padding-bottom="0">
         <mj-column width="100%">
-
-          <mj-image src="https://res.cloudinary.com/luismifeijoo/image/upload/v1586966339/emailBackgroundSmall_tl7vjr.png" width="600px" alt="" padding="0" />
+          <mj-image src="https://res.cloudinary.com/luismifeijoo/image/upload/v1586968430/emailTemplateSmall_graivg.png" width="600px" alt="" padding="0" />
         </mj-column>
       </mj-section>
       <mj-wrapper padding-top="0" padding-bottom="0" css-class="body-section">

@@ -20,17 +20,14 @@ const newCompanyTemplate = (context) => {
       <mj-style inline="inline">
         .footer-link { color: #888888 }
       </mj-style>
-  
     </mj-head>
     <mj-body background-color="#E7E7E7" width="600px">
       <mj-section full-width="full-width" background-color="#391085" padding-bottom="0">
         <mj-column width="100%">
-          
-          <mj-image src="https://res.cloudinary.com/luismifeijoo/image/upload/v1586965997/emailBackground_arr3qt.png" width="600px" alt="" padding="0" />
+          <mj-image src="https://res.cloudinary.com/luismifeijoo/image/upload/v1586969036/emailTemplate_dknieq.png" width="600px" alt="" padding="0" />
         </mj-column>
       </mj-section>
       <mj-section background-color="#ffffff">
-        
       </mj-section>
       <mj-wrapper padding-top="0" padding-bottom="0" css-class="body-section">
         <mj-section background-color="#ffffff" padding-left="15px" padding-right="15px">

@@ -37,7 +37,7 @@ router.post(
     if (user) {
       const secret = user.password + user.createdAt;
       const token = jwt.sign({ username }, secret, {
-        expiresIn: 3600,
+        expiresIn: 600,
       });
 
       const transporter = nodemailer.createTransport({
