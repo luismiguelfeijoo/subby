@@ -68,7 +68,7 @@ export const CompanyProfilePage = withProtected(
           message.success(response.status);
           fetchCompany();
         } catch (error) {
-          console.log(error);
+          message.error(error.response.data.status);
         } finally {
           reset();
           setVisiblePlan(false);

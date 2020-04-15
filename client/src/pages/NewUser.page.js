@@ -31,10 +31,10 @@ export const NewUserPage = withProtected(
           const response = await askUserToken(data);
           message.success(response.status);
           reset();
+          setButtonLoading(false);
         } catch (error) {
           message.error(error.response.data.status);
-        } finally {
-          setButtonLoading(false);
+          setTimeout(() => setButtonLoading(false), 1000);
         }
       };
 

@@ -27,8 +27,7 @@ export const NewCompanyPage = withProtected(
         const response = await askCompanyToken(data);
         message.success(response.status);
       } catch (error) {
-        console.log(error.status);
-        message.error("We can't process your request at this moment");
+        message.error(error.response.data.status);
       } finally {
         setButtonLoading(false);
       }

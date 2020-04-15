@@ -37,10 +37,7 @@ export const ResetPasswordForm = withProtected(
         );
         message.success(response.status);
       } catch (error) {
-        console.log(error);
-        message.error(
-          'Remember to create a secure password, at least 1 upper case and 1 lower case with numbers & special characters'
-        );
+        message.error(error.response.data.status);
       } finally {
         setButtonDisable(false);
       }

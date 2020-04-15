@@ -26,8 +26,8 @@ export const CompanyRegisterPage = withProtected(
     const formItemLayout = {
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 16, offset: 4 }
-      }
+        sm: { span: 16, offset: 4 },
+      },
     };
 
     const methods = useForm({
@@ -35,15 +35,15 @@ export const CompanyRegisterPage = withProtected(
       defaultValue: {
         password: '',
         firstName: '',
-        lastName: ''
-      }
+        lastName: '',
+      },
     });
 
     const { register, handleSubmit, errors, watch } = methods;
     const password = useRef({});
     password.current = watch('password', '');
 
-    const onSubmit = async data => {
+    const onSubmit = async (data) => {
       //console.log(data);
       setLoading(true);
       try {
@@ -51,7 +51,7 @@ export const CompanyRegisterPage = withProtected(
         history.push('/login');
       } catch (error) {
         // Add modal to show error
-        console.log(error);
+        message.error(error.response.data.status);
       } finally {
         setLoading(false);
       }
@@ -76,8 +76,8 @@ export const CompanyRegisterPage = withProtected(
                   required: 'Required',
                   minLength: {
                     value: 10,
-                    message: 'Password must have at least 10 characters'
-                  }
+                    message: 'Password must have at least 10 characters',
+                  },
                 }}
               />
             </Form.Item>
@@ -100,8 +100,8 @@ export const CompanyRegisterPage = withProtected(
                 name='password_repeat'
                 rules={{
                   required: 'Required',
-                  validate: value =>
-                    value === password.current || 'The passwords do not match'
+                  validate: (value) =>
+                    value === password.current || 'The passwords do not match',
                 }}
               />
             </Form.Item>
@@ -117,7 +117,7 @@ export const CompanyRegisterPage = withProtected(
                 placeholder='First Name'
                 name='firstName'
                 rules={{
-                  required: 'Required'
+                  required: 'Required',
                 }}
               />
             </Form.Item>
@@ -133,7 +133,7 @@ export const CompanyRegisterPage = withProtected(
                 placeholder='Last Name'
                 name='lastName'
                 rules={{
-                  required: 'Required'
+                  required: 'Required',
                 }}
               />
             </Form.Item>
@@ -154,6 +154,6 @@ export const CompanyRegisterPage = withProtected(
   {
     redirect: true,
     redirectTo: 'profile',
-    inverted: true
+    inverted: true,
   }
 );

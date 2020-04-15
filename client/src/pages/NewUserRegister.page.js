@@ -7,6 +7,7 @@ import { LayoutTemplate } from '../components/Layout';
 import { Form, Input, Button, Select } from 'antd';
 const { Option } = Select;
 import jwt from 'jsonwebtoken';
+import { formItemLayout } from './utils/styles';
 
 export const UserRegisterPage = withProtected(
   withRouter(({ history, match }) => {
@@ -39,19 +40,12 @@ export const UserRegisterPage = withProtected(
           }
           placeholder='+00'
           style={{
-            width: 70
+            width: 70,
           }}
           name='prefix'
         />
       </Form.Item>
     );
-
-    const formItemLayout = {
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16, offset: 4 }
-      }
-    };
 
     const methods = useForm({
       mode: 'onBlur',
@@ -59,15 +53,15 @@ export const UserRegisterPage = withProtected(
         password: '',
         firstName: '',
         lastName: '',
-        phone: ''
-      }
+        phone: '',
+      },
     });
 
     const { register, handleSubmit, errors, watch } = methods;
     const password = useRef({});
     password.current = watch('password', '');
 
-    const onSubmit = async data => {
+    const onSubmit = async (data) => {
       console.log(data);
 
       setLoading(true);
@@ -76,7 +70,7 @@ export const UserRegisterPage = withProtected(
         history.push('/login');
       } catch (error) {
         // Add modal to show error
-        console.log(error);
+        message.error(error.response.data.status);
       } finally {
         setLoading(false);
       }
@@ -101,8 +95,8 @@ export const UserRegisterPage = withProtected(
                   required: 'Required',
                   minLength: {
                     value: 10,
-                    message: 'Password must have at least 10 characters'
-                  }
+                    message: 'Password must have at least 10 characters',
+                  },
                 }}
               />
             </Form.Item>
@@ -124,8 +118,8 @@ export const UserRegisterPage = withProtected(
                 name='password_repeat'
                 rules={{
                   required: 'Required',
-                  validate: value =>
-                    value === password.current || 'The passwords do not match'
+                  validate: (value) =>
+                    value === password.current || 'The passwords do not match',
                 }}
               />
             </Form.Item>
@@ -140,7 +134,7 @@ export const UserRegisterPage = withProtected(
                 placeholder='First Name'
                 name='firstName'
                 rules={{
-                  required: 'Required'
+                  required: 'Required',
                 }}
               />
             </Form.Item>
@@ -155,7 +149,7 @@ export const UserRegisterPage = withProtected(
                 placeholder='Last Name'
                 name='lastName'
                 rules={{
-                  required: 'Required'
+                  required: 'Required',
                 }}
               />
             </Form.Item>
@@ -171,13 +165,13 @@ export const UserRegisterPage = withProtected(
                   placeholder='Phone Number'
                   addonBefore={prefixSelector}
                   style={{
-                    width: '100%'
+                    width: '100%',
                   }}
                   rules={[
                     {
                       required: true,
-                      message: 'Please input your phone number!'
-                    }
+                      message: 'Please input your phone number!',
+                    },
                   ]}
                 />
               </Form.Item>
@@ -200,6 +194,6 @@ export const UserRegisterPage = withProtected(
   {
     redirect: true,
     redirectTo: 'profile',
-    inverted: true
+    inverted: true,
   }
 );

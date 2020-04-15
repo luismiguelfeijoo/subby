@@ -27,10 +27,7 @@ export const ResetPasswordReq = withProtected(
         const response = await askPasswordToken(data);
         message.success(response.status);
       } catch (error) {
-        console.log(error);
-        message.error(
-          "We can't process your request at the time, try again later!"
-        );
+        message.error(error.response.data.status);
       } finally {
         setButtonLoading(false);
       }

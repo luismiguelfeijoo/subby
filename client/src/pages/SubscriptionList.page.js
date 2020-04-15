@@ -3,7 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import {
   UserContext,
   deleteClient,
-  deleteSubscription
+  deleteSubscription,
 } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
@@ -16,7 +16,7 @@ import {
   Divider,
   Popover,
   message,
-  Typography
+  Typography,
 } from 'antd';
 const { Text } = Typography;
 const { Search } = Input;
@@ -38,7 +38,7 @@ export const SubscriptionListPage = withProtected(
         <LayoutTemplate sider={true} currentPage={'subscriptionsList'}>
           <Search
             placeholder='Search by name'
-            onChange={event => setFilter(event.target.value)}
+            onChange={(event) => setFilter(event.target.value)}
             style={{ width: '50%', marginRight: 10 }}
           />
           <Button
@@ -70,7 +70,7 @@ export const SubscriptionListPage = withProtected(
           <List
             itemLayout='horizontal'
             dataSource={data}
-            renderItem={sub =>
+            renderItem={(sub) =>
               sub.name.toLowerCase().includes(filter.toLowerCase()) ? (
                 <List.Item
                   actions={[
@@ -98,7 +98,7 @@ export const SubscriptionListPage = withProtected(
                                 message.success(response.status);
                                 fetchSubscriptions(setData);
                               } catch (error) {
-                                console.log(error);
+                                message.error(error.response.data.status);
                               }
                             }}
                           >
@@ -108,7 +108,7 @@ export const SubscriptionListPage = withProtected(
                       }
                     >
                       <Link to='#'>delete</Link>
-                    </Popover>
+                    </Popover>,
                   ]}
                 >
                   <List.Item.Meta

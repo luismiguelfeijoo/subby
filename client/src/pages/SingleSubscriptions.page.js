@@ -4,7 +4,7 @@ import {
   UserContext,
   getSingleSubscription,
   getExtras,
-  addExtraOnSubscription
+  addExtraOnSubscription,
 } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
@@ -19,7 +19,7 @@ import {
   Modal,
   Form,
   Select,
-  message
+  message,
 } from 'antd';
 const { Option } = Select;
 import moment from 'moment';
@@ -38,12 +38,12 @@ export const SingleSubscriptionPage = withProtected(
         }
       }, []);
 
-      const fetchSubscription = id => {
+      const fetchSubscription = (id) => {
         getSingleSubscription(id)
-          .then(sub => {
+          .then((sub) => {
             setData(sub);
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
           });
       };
@@ -57,12 +57,12 @@ export const SingleSubscriptionPage = withProtected(
       };
 
       const methods = useForm({
-        mode: 'onBlur'
+        mode: 'onBlur',
       });
 
       const { register, handleSubmit, errors, reset } = methods;
 
-      const onSubmit = async data => {
+      const onSubmit = async (data) => {
         console.log(data);
         setConfirmLoading(true);
         try {
@@ -70,7 +70,7 @@ export const SingleSubscriptionPage = withProtected(
           fetchSubscription(match.params.id);
           message.success(response.status);
         } catch (error) {
-          console.log(error);
+          message.error(error.response.data.status);
         } finally {
           setConfirmLoading(false);
           setVisible(false);
@@ -193,7 +193,7 @@ export const SingleSubscriptionPage = withProtected(
                 footer={[
                   <Button key='back' onClick={() => handleCancel()}>
                     Cancel
-                  </Button>
+                  </Button>,
                 ]}
               >
                 <ExtraForm
@@ -233,10 +233,10 @@ const ExtraForm = ({ onSubmit, handleSubmit, errors, methods }) => {
 
   const fetchExtras = () => {
     getExtras()
-      .then(extras => {
+      .then((extras) => {
         setExtras(extras);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -244,8 +244,8 @@ const ExtraForm = ({ onSubmit, handleSubmit, errors, methods }) => {
   const formItemLayout = {
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 16, offset: 4 }
-    }
+      sm: { span: 16, offset: 4 },
+    },
   };
 
   return (
@@ -258,7 +258,7 @@ const ExtraForm = ({ onSubmit, handleSubmit, errors, methods }) => {
         >
           <Controller
             rules={{
-              required: 'Select the extra!'
+              required: 'Select the extra!',
             }}
             as={
               <Select placeholder='Select an Extra'>
@@ -282,12 +282,12 @@ const ExtraForm = ({ onSubmit, handleSubmit, errors, methods }) => {
         >
           <Controller
             style={{
-              width: '100%'
+              width: '100%',
             }}
             placeholder={`Select date`}
             as={DatePicker}
             rules={{
-              required: 'Select the date!'
+              required: 'Select the date!',
             }}
             format='DD-MM-YYYY'
             name={`extraDate`}

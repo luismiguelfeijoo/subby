@@ -10,7 +10,7 @@ const { Option } = Select;
 export const ProfilePage = withProtected(
   withRouter(({ history, match }) => {
     const { user, setUser, setLoading } = useContext(UserContext);
-
+    const [buttonLoading, setButtonLoading] = useState(false);
     const prefixSelector = (
       <Form.Item noStyle>
         <Controller
@@ -22,7 +22,7 @@ export const ProfilePage = withProtected(
           }
           placeholder='+00'
           style={{
-            width: 70
+            width: 70,
           }}
           name='prefix'
           defaultValue={user.phone ? `+${user.phone.prefix}` : ''}
@@ -31,39 +31,35 @@ export const ProfilePage = withProtected(
     );
 
     const methods = useForm({
-      mode: 'onBlur'
+      mode: 'onBlur',
     });
 
     const { register, handleSubmit, errors, reset } = methods;
 
-    const onSubmit = async data => {
-      console.log(data);
-      setLoading(true);
+    const onSubmit = async (data) => {
+      setButtonLoading(true);
       try {
         const response = await updateUser(data);
-        message.success(response.status);
+        setButtonLoading(false);
         setUser(response.user);
+        message.success(response.status);
       } catch (error) {
-        console.log(error);
+        message.error(error.response.data.status);
+        setButtonLoading(false);
       } finally {
-        setLoading(false);
         reset();
       }
     };
 
     return (
-      <LayoutTemplate
-        sider={true}
-        currentMenuTab={'User'}
-        currentPage='profile'
-      >
+      <LayoutTemplate sider={true} currentMenuTab='User' currentPage='profile'>
         <div
           style={{
             width: '100%',
             height: '100%',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
           }}
         >
           <FormContext {...methods}>
@@ -82,8 +78,8 @@ export const ProfilePage = withProtected(
                     required: 'Required',
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: 'invalid email address'
-                    }
+                      message: 'invalid email address',
+                    },
                   }}
                   disabled
                 />
@@ -100,7 +96,7 @@ export const ProfilePage = withProtected(
                   placeholder='First Name'
                   name='firstName'
                   rules={{
-                    required: 'Required'
+                    required: 'Required',
                   }}
                 />
               </Form.Item>
@@ -118,7 +114,7 @@ export const ProfilePage = withProtected(
                   placeholder='Last Name'
                   name='lastName'
                   rules={{
-                    required: 'Required'
+                    required: 'Required',
                   }}
                 />
               </Form.Item>
@@ -137,19 +133,20 @@ export const ProfilePage = withProtected(
                     placeholder='Phone Number'
                     addonBefore={prefixSelector}
                     style={{
-                      width: '100%'
+                      width: '100%',
                     }}
                     rules={[
                       {
                         required: true,
-                        message: 'Please input your phone number!'
-                      }
+                        message: 'Please input your phone number!',
+                      },
                     ]}
                   />
                 </Form.Item>
               )}
               <Form.Item {...formItemLayout}>
                 <Button
+                  disabled={buttonLoading}
                   type='primary'
                   htmlType='submit'
                   onClick={handleSubmit(onSubmit)}
