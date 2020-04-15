@@ -18,7 +18,7 @@ export const NewUserPage = withProtected(
   withTypeUser(
     withRouter(({ history }) => {
       const { setLoading } = useContext(UserContext);
-
+      const [buttonLoading, setButtonLoading] = useState(false);
       const methods = useForm({
         mode: 'onBlur',
       });
@@ -26,15 +26,15 @@ export const NewUserPage = withProtected(
       const { register, handleSubmit, errors, reset } = methods;
 
       const onSubmitUser = async (data) => {
-        setLoading(true);
+        setButtonLoading(true);
         try {
           const response = await askUserToken(data);
           message.success(response.status);
           reset();
         } catch (error) {
-          console.log(error);
+          message.error(error.response.data.status);
         } finally {
-          setLoading(false);
+          setButtonLoading(false);
         }
       };
 
@@ -86,6 +86,7 @@ export const NewUserPage = withProtected(
 
               <Form.Item {...formItemLayout}>
                 <Button
+                  disabled={buttonLoading}
                   type='primary'
                   htmlType='submit'
                   onClick={handleSubmit(onSubmitUser)}
