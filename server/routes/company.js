@@ -12,6 +12,8 @@ const Plan = require('../models/Plan');
 const Extra = require('../models/Extra');
 const { hashPassword } = require('../lib/hashing');
 const owasp = require('owasp-password-strength-test');
+const { newCompanyTemplate } = require('../templates/newCompany');
+const mjml2html = require('mjml');
 
 // Generate register Token for new companies, ask for company and email
 router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
@@ -32,11 +34,18 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
       },
     });
 
+    const context = {
+      url: `http://localhost:1234/new-company/${token}`,
+      company: company,
+    };
+
+    const html = mjml2html(newCompanyTemplate(context));
+
     const mailOptions = {
       from: process.env.MAILER_EMAIL_ID,
       to: email,
-      subject: 'Subby Link to register your company',
-      text: `Hi! welcome to subby, click on this link to set up your account: http://localhost:1234/new-company/${token}`, //change this for HTML template
+      subject: 'Welcome to SUBBY, follow this steps to complete your register',
+      html: html.html, //change this for HTML template
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
