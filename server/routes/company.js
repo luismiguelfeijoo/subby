@@ -13,6 +13,15 @@ const Extra = require('../models/Extra');
 const { hashPassword } = require('../lib/hashing');
 const owasp = require('owasp-password-strength-test');
 const { newCompanyTemplate } = require('../templates/newCompany');
+const { newUserTemplate } = require('../templates/newUser');
+
+const transporter = nodemailer.createTransport({
+  service: process.env.MAILER_SERVICE_PROVIDER || 'gmail',
+  auth: {
+    user: process.env.MAILER_EMAIL_ID,
+    pass: process.env.MAILER_PASSWORD,
+  },
+});
 
 // Generate register Token for new companies, ask for company and email
 router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
@@ -23,14 +32,6 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
   if (!existingCompany) {
     const token = jwt.sign({ company, email }, process.env.JWTSECRET, {
       expiresIn: 3600,
-    });
-
-    const transporter = nodemailer.createTransport({
-      service: process.env.MAILER_SERVICE_PROVIDER || 'gmail',
-      auth: {
-        user: process.env.MAILER_EMAIL_ID,
-        pass: process.env.MAILER_PASSWORD,
-      },
     });
 
     const html = newCompanyTemplate({
@@ -163,20 +164,17 @@ router.post(
             expiresIn: 3600,
           }
         );
-        //console.log('token', token);
-        const transporter = nodemailer.createTransport({
-          service: process.env.MAILER_SERVICE_PROVIDER || 'gmail',
-          auth: {
-            user: process.env.MAILER_EMAIL_ID,
-            pass: process.env.MAILER_PASSWORD,
-          },
+
+        const html = newUserTemplate({
+          url: `http://localhost:1234/new-user/${token}`,
+          company: company.name,
         });
 
         const mailOptions = {
           from: process.env.MAILER_EMAIL_ID,
           to: username,
           subject: `${company.name} invited you to join SUBBY!`,
-          text: `Hi! welcome to subby. ${loggedAdmin.company.name} has invited you to our platform. Click this link to register http://localhost:1234/new-user/${token}`, //change this for HTML template
+          html: html,
         };
 
         transporter.sendMail(mailOptions, function (error, info) {

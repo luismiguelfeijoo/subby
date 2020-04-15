@@ -1,7 +1,7 @@
 const Handlebars = require('handlebars');
 const mjml2html = require('mjml');
 
-const newCompanyTemplate = (context) => {
+const newUserTemplate = (context) => {
   const template = Handlebars.compile(`
   <mjml>
     <mj-head>
@@ -20,32 +20,29 @@ const newCompanyTemplate = (context) => {
       <mj-style inline="inline">
         .footer-link { color: #888888 }
       </mj-style>
-  
+
     </mj-head>
     <mj-body background-color="#E7E7E7" width="600px">
       <mj-section full-width="full-width" background-color="#391085" padding-bottom="0">
         <mj-column width="100%">
-          
-          <mj-image src="https://res.cloudinary.com/luismifeijoo/image/upload/v1586965997/emailBackground_arr3qt.png" width="600px" alt="" padding="0" />
+
+          <mj-image src="https://res.cloudinary.com/luismifeijoo/image/upload/v1586966339/emailBackgroundSmall_tl7vjr.png" width="600px" alt="" padding="0" />
         </mj-column>
-      </mj-section>
-      <mj-section background-color="#ffffff">
-        
       </mj-section>
       <mj-wrapper padding-top="0" padding-bottom="0" css-class="body-section">
         <mj-section background-color="#ffffff" padding-left="15px" padding-right="15px">
           <mj-column width="100%">
             <mj-text color="#212b35" font-weight="bold" font-size="20px">
-              Welcome to Subby
+              {{company}} invited you to Subby!
             </mj-text>
             <mj-text color="#637381" font-size="16px">
-              Hi!,
+              Hi!
             </mj-text>
             <mj-text color="#637381" font-size="16px">
-              We're happy to welcome you to our family.
+              Subby is a platform that is helping {{company}} to keep track of your subcription and they really want you to be in!
             </mj-text>
             <mj-text color="#637381" font-size="16px">
-              Subby is an app that will help you manage the monthly subscriptions of your company. To start your work in our platform you just need to conclude your registration
+              Once you have registered you can keep an eye on your subscriptions and make sure they are right on track.
             </mj-text>
             <mj-button background-color="#391085" align="center" color="#ffffff" font-size="17px" font-weight="bold" href={{url}} width="300px">
               Register
@@ -79,7 +76,7 @@ const newCompanyTemplate = (context) => {
               <mj-social-element name="linkedin" href="www.linkedin.com/in/luismifeijoo" background-color="#A1A0A0">
               </mj-social-element>
             </mj-social>
-            
+
             <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
               You are receiving this email regarding your Subby platform subscription! Subby is a app that let's any company keep track of their client's monthly subscriptions. It's currently in test period.
             </mj-text>
@@ -88,14 +85,14 @@ const newCompanyTemplate = (context) => {
             </mj-text>
           </mj-column>
         </mj-section>
-        
+
       </mj-wrapper>
-  
+
     </mj-body>
   </mjml>`);
   return mjml2html(template(context)).html;
 };
 
 module.exports = {
-  newCompanyTemplate,
+  newUserTemplate,
 };
