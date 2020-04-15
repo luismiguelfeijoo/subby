@@ -1,66 +1,48 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import {
   UserContext,
   doCompanySignup,
-  doPasswordReset
+  doPasswordReset,
 } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Button, Input } from 'antd';
-import jwt from 'jsonwebtoken';
+import { Form, Button, Input, message } from 'antd';
+import { formItemLayout } from './utils/styles';
 
 export const ResetPasswordForm = withProtected(
   withRouter(({ history, match }) => {
     const { setLoading } = useContext(UserContext);
-
-    /* Use this to only paint this view if the token is correct
-    useEffect(() => {
-      setLoading(true);
-      try {
-        let decode = jwt.verify(match.params.token, process.env.JWTSECRET);
-      } catch (error) {
-        history.push('/login');
-      } finally {
-        setLoading(false);
-      }
-    }, []);
-    */
-
-    const formItemLayout = {
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16, offset: 4 }
-      }
-    };
+    const [buttonDisable, setButtonDisable] = useState(false);
 
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
-        password: ''
-      }
+        password: '',
+      },
     });
 
     const { register, handleSubmit, errors, watch } = methods;
     const password = useRef({});
     password.current = watch('password', '');
 
-    const onSubmit = async data => {
-      //console.log(data);
-      setLoading(true);
+    const onSubmit = async (data) => {
+      setButtonDisable(true);
       try {
         const response = await doPasswordReset(
           data,
           match.params.token,
           match.params.id
         );
-        history.push('/login');
+        message.success(response.status);
       } catch (error) {
-        // Add modal to show error
         console.log(error);
+        message.error(
+          'Remember to create a secure password, at least 1 upper case and 1 lower case with numbers & special characters'
+        );
       } finally {
-        setLoading(false);
+        setButtonDisable(false);
       }
     };
     return (
@@ -82,8 +64,8 @@ export const ResetPasswordForm = withProtected(
                   required: 'Required',
                   minLength: {
                     value: 10,
-                    message: 'Password must have at least 10 characters'
-                  }
+                    message: 'Password must have at least 10 characters',
+                  },
                 }}
               />
             </Form.Item>
@@ -106,14 +88,15 @@ export const ResetPasswordForm = withProtected(
                 name='password_repeat'
                 rules={{
                   required: 'Required',
-                  validate: value =>
-                    value === password.current || 'The passwords do not match'
+                  validate: (value) =>
+                    value === password.current || 'The passwords do not match',
                 }}
               />
             </Form.Item>
 
             <Form.Item {...formItemLayout}>
               <Button
+                disabled={buttonDisable}
                 type='primary'
                 htmlType='submit'
                 onClick={handleSubmit(onSubmit)}
@@ -129,6 +112,6 @@ export const ResetPasswordForm = withProtected(
   {
     redirect: true,
     redirectTo: 'profile',
-    inverted: true
+    inverted: true,
   }
 );

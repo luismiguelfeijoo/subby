@@ -1,41 +1,38 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { UserContext, askPasswordToken } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Button, Input } from 'antd';
+import { Form, Button, Input, message } from 'antd';
+import { formItemLayout } from './utils/styles';
 
 export const ResetPasswordReq = withProtected(
   withRouter(({ history }) => {
     const { setLoading } = useContext(UserContext);
-
-    const formItemLayout = {
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16, offset: 4 }
-      }
-    };
+    const [buttonLoading, setButtonLoading] = useState(false);
 
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
-        username: ''
-      }
+        username: '',
+      },
     });
 
     const { register, handleSubmit, errors } = methods;
 
-    const onSubmit = async data => {
-      setLoading(true);
+    const onSubmit = async (data) => {
+      setButtonLoading(true);
       try {
         const response = await askPasswordToken(data);
-        history.push('/');
+        message.success(response.status);
       } catch (error) {
-        // do modal
         console.log(error);
+        message.error(
+          "We can't process your request at the time, try again later!"
+        );
       } finally {
-        setLoading(false);
+        setButtonLoading(false);
       }
     };
 
@@ -56,13 +53,14 @@ export const ResetPasswordReq = withProtected(
                   required: 'Required',
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                    message: 'invalid email address'
-                  }
+                    message: 'invalid email address',
+                  },
                 }}
               />
             </Form.Item>
             <Form.Item {...formItemLayout}>
               <Button
+                loading={buttonLoading}
                 type='primary'
                 htmlType='submit'
                 onClick={handleSubmit(onSubmit)}
@@ -78,6 +76,6 @@ export const ResetPasswordReq = withProtected(
   {
     redirect: true,
     redirectTo: 'profile',
-    inverted: true
+    inverted: true,
   }
 );

@@ -58,7 +58,9 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
       }
     });
   } else {
-    return res.status(422).json({ status: 'Unnprocessable entity' });
+    return res
+      .status(422)
+      .json({ status: 'We can`t process your request currently' });
   }
 });
 

@@ -41,7 +41,6 @@ export const LayoutTemplate = ({
             onBreakpoint={(broken) => {
               setBroken(broken);
             }}
-            broken
           >
             <div style={{ height: '50px' }}></div>
             <SiderMenu
