@@ -27,7 +27,9 @@ export const NewCompanyPage = withProtected(
         const response = await askCompanyToken(data);
         message.success(response.status);
       } catch (error) {
-        message.error(error.response.data.status);
+        error.response
+          ? message.error(error.response.data.status)
+          : message.error('Connection error');
       } finally {
         setButtonLoading(false);
       }
@@ -73,7 +75,6 @@ export const NewCompanyPage = withProtected(
 
             <Form.Item {...formItemLayout}>
               <Button
-                iconLoading={buttonLoading}
                 loading={buttonLoading}
                 type='primary'
                 htmlType='submit'

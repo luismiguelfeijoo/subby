@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { UserContext, doLogin } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
@@ -9,7 +9,7 @@ import { Input, Form, Button, Card, message } from 'antd';
 export const LoginPage = withProtected(
   withRouter(({ history }) => {
     const { setUser, setLoading } = useContext(UserContext);
-
+    const [buttonLoading, setButtonLoading] = useState(false);
     const formItemLayout = {
       wrapperCol: {
         xs: { span: 24 },
@@ -29,16 +29,15 @@ export const LoginPage = withProtected(
     password.current = watch('password', '');
 
     const onSubmit = async (data) => {
-      setLoading(true);
+      setButtonLoading(true);
       try {
         const newUser = await doLogin(data);
+        setButtonLoading(false);
         setUser(newUser);
         history.push('/company/clients');
       } catch (error) {
-        // do modal
         message.error(error.response.data.status);
-      } finally {
-        setLoading(false);
+        setButtonLoading(false);
       }
     };
 
@@ -88,6 +87,7 @@ export const LoginPage = withProtected(
 
             <Form.Item {...formItemLayout}>
               <Button
+                disabled={buttonLoading}
                 type='primary'
                 htmlType='submit'
                 onClick={handleSubmit(onSubmit)}
