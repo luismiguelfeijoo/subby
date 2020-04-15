@@ -9,6 +9,7 @@ const ClientUser = require('../models/ClientUser');
 const jwt = require('jsonwebtoken');
 const { hashPassword } = require('../lib/hashing');
 const owasp = require('owasp-password-strength-test');
+const { newPasswordTemplate } = require('../templates/newPassword');
 
 // Login
 router.post(
@@ -36,22 +37,30 @@ router.post(
     if (user) {
       const secret = user.password + user.createdAt;
       const token = jwt.sign({ username }, secret, {
-        expiresIn: 3600
+        expiresIn: 600,
       });
+
       const transporter = nodemailer.createTransport({
         service: process.env.MAILER_SERVICE_PROVIDER || 'gmail',
         auth: {
           user: process.env.MAILER_EMAIL_ID,
-          pass: process.env.MAILER_PASSWORD
-        }
+          pass: process.env.MAILER_PASSWORD,
+        },
       });
+
+      const html = newPasswordTemplate({
+        url: `http://localhost:1234/reset-password/${user._id}/${token}`,
+        name: user.name.first,
+      });
+
       const mailOptions = {
         from: process.env.MAILER_EMAIL_ID,
         to: username,
         subject: 'Subby Link to reset password',
-        text: `Hi! click this link to reset your password: http://localhost:1234/reset-password/${user._id}/${token}` //change this for HTML template
+        html: html,
       };
-      transporter.sendMail(mailOptions, function(error, info) {
+
+      transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
           console.log(error);
           return res
@@ -125,8 +134,8 @@ router.post('/edit', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
           'company',
           'name',
           'type',
-          'phone'
-        ])
+          'phone',
+        ]),
       });
     } else {
       res.status(401).json({ status: `You can't use that username` });
