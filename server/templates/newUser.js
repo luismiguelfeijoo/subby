@@ -76,7 +76,6 @@ const newUserTemplate = (context) => {
               <mj-social-element name="linkedin" href="www.linkedin.com/in/luismifeijoo" background-color="#A1A0A0">
               </mj-social-element>
             </mj-social>
-
             <mj-text color="#445566" font-size="11px" align="center" line-height="16px">
               You are receiving this email regarding your Subby platform subscription! Subby is a app that let's any company keep track of their client's monthly subscriptions. It's currently in test period.
             </mj-text>
