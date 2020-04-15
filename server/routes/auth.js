@@ -67,7 +67,11 @@ router.post(
             .status(500)
             .json({ status: 'mail not sent', errors: error });
         } else {
-          return res.json({ status: 'email sent', info: info });
+          return res.json({
+            status:
+              'You will recieve an email with instructions to reset your password!',
+            info: info,
+          });
         }
       });
     } else {

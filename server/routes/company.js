@@ -50,7 +50,11 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
         console.log(error);
         return res.status(500).json({ status: 'mail not sent', errors: error });
       } else {
-        return res.json({ status: 'email sent', info: info });
+        return res.json({
+          status:
+            'You will recieve an email with instructions to complete your registration!',
+          info: info,
+        });
       }
     });
   } else {
@@ -184,7 +188,11 @@ router.post(
               .status(500)
               .json({ status: 'mail not sent', errors: error });
           } else {
-            return res.json({ status: 'email sent', info: info });
+            return res.json({
+              status:
+                'Email sent. The user will recieve a link to complete registration',
+              info: info,
+            });
           }
         });
       } else {
