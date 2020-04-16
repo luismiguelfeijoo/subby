@@ -1,44 +1,43 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { UserContext, doLogin } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Input, Form, Button, Card } from 'antd';
+import { Input, Form, Button, Card, message } from 'antd';
 
 export const LoginPage = withProtected(
   withRouter(({ history }) => {
     const { setUser, setLoading } = useContext(UserContext);
-
+    const [buttonLoading, setButtonLoading] = useState(false);
     const formItemLayout = {
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 16, offset: 4 }
-      }
+        sm: { span: 16, offset: 4 },
+      },
     };
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
         username: '',
-        password: ''
-      }
+        password: '',
+      },
     });
 
     const { register, handleSubmit, errors, watch } = methods;
     const password = useRef({});
     password.current = watch('password', '');
 
-    const onSubmit = async data => {
-      setLoading(true);
+    const onSubmit = async (data) => {
+      setButtonLoading(true);
       try {
         const newUser = await doLogin(data);
+        setButtonLoading(false);
         setUser(newUser);
         history.push('/company/clients');
       } catch (error) {
-        // do modal
-        console.log(error);
-      } finally {
-        setLoading(false);
+        message.error(error.response.data.status);
+        setButtonLoading(false);
       }
     };
 
@@ -59,8 +58,8 @@ export const LoginPage = withProtected(
                   required: 'Required',
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                    message: 'invalid email address'
-                  }
+                    message: 'invalid email address',
+                  },
                 }}
               />
             </Form.Item>
@@ -80,14 +79,15 @@ export const LoginPage = withProtected(
                   required: 'Required',
                   minLength: {
                     value: 10,
-                    message: 'Password must have at least 10 characters'
-                  }
+                    message: 'Password must have at least 10 characters',
+                  },
                 }}
               />
             </Form.Item>
 
             <Form.Item {...formItemLayout}>
               <Button
+                disabled={buttonLoading}
                 type='primary'
                 htmlType='submit'
                 onClick={handleSubmit(onSubmit)}
@@ -103,7 +103,7 @@ export const LoginPage = withProtected(
   {
     redirect: true,
     redirectTo: 'profile',
-    inverted: true
+    inverted: true,
   }
 );
 

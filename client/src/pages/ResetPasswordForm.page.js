@@ -1,134 +1,116 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import {
   UserContext,
   doCompanySignup,
-  doPasswordReset
+  doPasswordReset,
 } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Button, Input } from 'antd';
-import jwt from 'jsonwebtoken';
+import { Form, Button, Input, message } from 'antd';
+import { formItemLayout } from './utils/styles';
 
-export const ResetPasswordForm = withProtected(
-  withRouter(({ history, match }) => {
-    const { setLoading } = useContext(UserContext);
+export const ResetPasswordForm = withRouter(({ history, match }) => {
+  const { setLoading, setUser, user } = useContext(UserContext);
+  const [buttonDisable, setButtonDisable] = useState(false);
 
-    /* Use this to only paint this view if the token is correct
-    useEffect(() => {
-      setLoading(true);
-      try {
-        let decode = jwt.verify(match.params.token, process.env.JWTSECRET);
-      } catch (error) {
-        history.push('/login');
-      } finally {
-        setLoading(false);
-      }
-    }, []);
-    */
+  useEffect(() => {
+    setLoading(true);
+    if (user) {
+      history.push('/profile');
+    }
+    setLoading(false);
+  }, []);
 
-    const formItemLayout = {
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16, offset: 4 }
-      }
-    };
+  const methods = useForm({
+    mode: 'onBlur',
+    defaultValue: {
+      password: '',
+    },
+  });
 
-    const methods = useForm({
-      mode: 'onBlur',
-      defaultValue: {
-        password: ''
-      }
-    });
+  const { register, handleSubmit, errors, watch } = methods;
+  const password = useRef({});
+  password.current = watch('password', '');
 
-    const { register, handleSubmit, errors, watch } = methods;
-    const password = useRef({});
-    password.current = watch('password', '');
+  const onSubmit = async (data) => {
+    setButtonDisable(true);
+    try {
+      const user = await doPasswordReset(
+        data,
+        match.params.token,
+        match.params.id
+      );
+      setUser(user);
+      history.push('/profile');
+    } catch (error) {
+      console.log(error.response);
+      message.error(error.response.data.status);
+      setButtonDisable(false);
+    }
+  };
 
-    const onSubmit = async data => {
-      //console.log(data);
-      setLoading(true);
-      try {
-        const response = await doPasswordReset(
-          data,
-          match.params.token,
-          match.params.id
-        );
-        history.push('/login');
-      } catch (error) {
-        // Add modal to show error
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    return (
-      <LayoutTemplate>
-        <FormContext {...methods}>
-          <Form>
-            <Form.Item
-              {...formItemLayout}
-              required={true}
-              validateStatus={errors.password?.message ? 'error' : 'success'}
-              help={errors.password?.message && errors.password.message}
+  return (
+    <LayoutTemplate>
+      <FormContext {...methods}>
+        <Form>
+          <Form.Item
+            {...formItemLayout}
+            required={true}
+            validateStatus={errors.password?.message ? 'error' : 'success'}
+            help={errors.password?.message && errors.password.message}
+          >
+            <Controller
+              as={Input.Password}
+              type='password'
+              placeholder='Password'
+              name='password'
+              rules={{
+                required: 'Required',
+                minLength: {
+                  value: 10,
+                  message: 'Password must have at least 10 characters',
+                },
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            {...formItemLayout}
+            required={true}
+            validateStatus={
+              errors.password_repeat?.message ? 'error' : 'success'
+            }
+            help={
+              errors.password_repeat?.message && errors.password_repeat.message
+            }
+          >
+            <Controller
+              as={Input.Password}
+              type='password'
+              placeholder='Repeat Password'
+              name='password_repeat'
+              rules={{
+                required: 'Required',
+                validate: (value) =>
+                  value === password.current || 'The passwords do not match',
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item {...formItemLayout}>
+            <Button
+              disabled={buttonDisable}
+              type='primary'
+              htmlType='submit'
+              onClick={handleSubmit(onSubmit)}
             >
-              <Controller
-                as={Input.Password}
-                type='password'
-                placeholder='Password'
-                name='password'
-                rules={{
-                  required: 'Required',
-                  minLength: {
-                    value: 10,
-                    message: 'Password must have at least 10 characters'
-                  }
-                }}
-              />
-            </Form.Item>
-
-            <Form.Item
-              {...formItemLayout}
-              required={true}
-              validateStatus={
-                errors.password_repeat?.message ? 'error' : 'success'
-              }
-              help={
-                errors.password_repeat?.message &&
-                errors.password_repeat.message
-              }
-            >
-              <Controller
-                as={Input.Password}
-                type='password'
-                placeholder='Repeat Password'
-                name='password_repeat'
-                rules={{
-                  required: 'Required',
-                  validate: value =>
-                    value === password.current || 'The passwords do not match'
-                }}
-              />
-            </Form.Item>
-
-            <Form.Item {...formItemLayout}>
-              <Button
-                type='primary'
-                htmlType='submit'
-                onClick={handleSubmit(onSubmit)}
-              >
-                Change Password
-              </Button>
-            </Form.Item>
-          </Form>
-        </FormContext>
-      </LayoutTemplate>
-    );
-  }),
-  {
-    redirect: true,
-    redirectTo: 'profile',
-    inverted: true
-  }
-);
+              Change Password
+            </Button>
+          </Form.Item>
+        </Form>
+      </FormContext>
+    </LayoutTemplate>
+  );
+});

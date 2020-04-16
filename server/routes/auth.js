@@ -67,7 +67,11 @@ router.post(
             .status(500)
             .json({ status: 'mail not sent', errors: error });
         } else {
-          return res.json({ status: 'email sent', info: info });
+          return res.json({
+            status:
+              'You will recieve an email with instructions to reset your password!',
+            info: info,
+          });
         }
       });
     } else {
@@ -92,13 +96,32 @@ router.post(
         const decodedToken = jwt.verify(token, secret);
         console.log(decodedToken, secret);
         if (user.username === decodedToken.username) {
-          const errors = owasp.test(password).errors;
+          let errors = owasp.test(password).errors;
           if (errors.length == 0) {
             user.password = hashPassword(password);
             await user.save();
-            return res.json({ status: 'Password changed correctly' });
+            req.logIn(user, (err) => {
+              return res.json(
+                _.pick(req.user, [
+                  'username',
+                  '_id',
+                  'company',
+                  'name',
+                  'type',
+                  'phone',
+                ])
+              );
+            });
           } else {
-            return res.json({ status: 'invalid password', errors: errors });
+            errors = errors.reduce((acc, error) => {
+              acc = acc
+                .substring(0, acc.length - 1)
+                .replace('The password', 'It');
+              return `${acc} & ${error}`;
+            });
+            return res
+              .status(412)
+              .json({ status: `Invalid password: ${errors}` });
           }
         } else {
           return res.status(401).json({ status: 'unathorized' });

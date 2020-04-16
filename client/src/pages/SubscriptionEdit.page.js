@@ -5,14 +5,15 @@ import {
   getSingleSubscription,
   getPlans,
   getExtras,
-  updateSubscription
+  updateSubscription,
 } from '../../lib/auth.api';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, Select, DatePicker } from 'antd';
+import { Form, Input, Button, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
+import { formItemLayout } from './utils/styles';
 const { Option } = Select;
 
 export const SubscriptionEditPage = withProtected(
@@ -23,6 +24,7 @@ export const SubscriptionEditPage = withProtected(
       const [extras, setExtras] = useState([]);
       const [sub, setSub] = useState();
       const [selectedPlan, setSelectedPlan] = useState([]);
+      const [buttonLoading, setButtonLoading] = useState(false);
 
       useEffect(() => {
         if (!loading) {
@@ -33,49 +35,40 @@ export const SubscriptionEditPage = withProtected(
 
       const fetchPlans = () => {
         getPlans()
-          .then(plans => {
+          .then((plans) => {
             setPlans(plans);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       };
 
-      const fetchSubscription = id => {
+      const fetchSubscription = (id) => {
         getSingleSubscription(id)
-          .then(sub => {
+          .then((sub) => {
             setSub(sub);
-            setSelectedPlan(sub.plans.map(plan => plan.plan.name));
+            setSelectedPlan(sub.plans.map((plan) => plan.plan.name));
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
           });
       };
 
-      const formItemLayout = {
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 16, offset: 4 }
-        }
-      };
-
       const methods = useForm({
-        mode: 'onBlur'
+        mode: 'onBlur',
       });
 
       const { register, handleSubmit, errors, getValues } = methods;
 
-      const onSubmit = async data => {
-        console.log(data);
-
-        setLoading(true);
+      const onSubmit = async (data) => {
+        setButtonLoading(true);
         try {
           const response = await updateSubscription(match.params.id, data);
-          history.push(`${match.url}`);
+          message.success(response.status);
         } catch (error) {
-          console.log(error);
+          message.error(error.response.data.status);
         } finally {
-          setLoading(false);
+          setButtonLoading(false);
         }
       };
 
@@ -100,8 +93,8 @@ export const SubscriptionEditPage = withProtected(
                       required: 'Required',
                       pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                        message: 'invalid email address'
-                      }
+                        message: 'invalid email address',
+                      },
                     }}
                     disabled
                   />
@@ -119,14 +112,14 @@ export const SubscriptionEditPage = withProtected(
                     placeholder='First Name'
                     name='name'
                     rules={{
-                      required: 'Required'
+                      required: 'Required',
                     }}
                   />
                 </Form.Item>
 
                 <Form.Item {...formItemLayout}>
                   <Controller
-                    defaultValue={sub.plans.map(plan => plan.plan.name)}
+                    defaultValue={sub.plans.map((plan) => plan.plan.name)}
                     onChange={([event]) => {
                       setSelectedPlan(event);
                       return event;
@@ -138,8 +131,9 @@ export const SubscriptionEditPage = withProtected(
                             return (
                               <Option value={plan.name} key={`${i} plan`}>{`${
                                 plan.name
-                              } - ${plan.price.price} ${plan.price.currency ||
-                                '$'}`}</Option>
+                              } - ${plan.price.price} ${
+                                plan.price.currency || '$'
+                              }`}</Option>
                             );
                           })}
                       </Select>
@@ -162,12 +156,12 @@ export const SubscriptionEditPage = withProtected(
                             : ''
                         }
                         style={{
-                          width: '100%'
+                          width: '100%',
                         }}
                         placeholder={`Select ${plan} date`}
                         as={DatePicker}
                         rules={{
-                          validate: value => value !== null
+                          validate: (value) => value !== null,
                         }}
                         format='DD-MM-YYYY'
                         name={`planDates[${i}]`}
@@ -177,6 +171,7 @@ export const SubscriptionEditPage = withProtected(
                 })}
                 <Form.Item {...formItemLayout}>
                   <Button
+                    disabled={buttonLoading}
                     type='primary'
                     htmlType='submit'
                     onClick={handleSubmit(onSubmit)}
@@ -192,7 +187,7 @@ export const SubscriptionEditPage = withProtected(
     }),
     {
       type: 'admin',
-      redirectTo: '/login'
+      redirectTo: '/login',
     }
   )
 );

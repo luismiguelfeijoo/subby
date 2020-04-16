@@ -16,6 +16,6 @@ export const HomePage = withProtected(
   {
     redirect: true,
     redirectTo: 'profile',
-    inverted: true
+    inverted: true,
   }
 );

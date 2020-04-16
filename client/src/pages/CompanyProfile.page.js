@@ -6,7 +6,7 @@ import {
   createExtra,
   createPlan,
   deleteExtra,
-  deletePlan
+  deletePlan,
 } from '../../lib/auth.api';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
@@ -24,7 +24,7 @@ import {
   Descriptions,
   List,
   Popover,
-  Typography
+  Typography,
 } from 'antd';
 
 import { formItemLayout } from './utils/styles';
@@ -37,6 +37,7 @@ export const CompanyProfilePage = withProtected(
       const [visibleExtra, setVisibleExtra] = useState(false);
       const [visiblePlan, setVisiblePlan] = useState(false);
       const [company, setCompany] = useState();
+      const [buttonDisabled, setButtonDisabled] = useState(false);
 
       useEffect(() => {
         if (!loading) {
@@ -46,33 +47,36 @@ export const CompanyProfilePage = withProtected(
 
       const fetchCompany = () => {
         getCompany()
-          .then(company => {
+          .then((company) => {
             setCompany(company);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       };
 
       const methods = useForm({
-        mode: 'onBlur'
+        mode: 'onBlur',
       });
 
       const { register, handleSubmit, errors, reset } = methods;
 
-      const onSubmitPlan = async data => {
+      const onSubmitPlan = async (data) => {
+        setButtonDisabled(true);
         try {
           const response = await createPlan(data);
           message.success(response.status);
           fetchCompany();
         } catch (error) {
-          console.log(error);
+          message.error(error.response.data.status);
         } finally {
           reset();
           setVisiblePlan(false);
+          setButtonDisabled(false);
         }
       };
-      const onSubmitExtra = async data => {
+      const onSubmitExtra = async (data) => {
+        setButtonDisabled(true);
         try {
           const response = await createExtra(data);
           message.success(response.status);
@@ -82,6 +86,7 @@ export const CompanyProfilePage = withProtected(
         } finally {
           reset();
           setVisibleExtra(false);
+          setButtonDisabled(false);
         }
       };
 
@@ -105,8 +110,8 @@ export const CompanyProfilePage = withProtected(
                   <List
                     size='small'
                     bordered
-                    dataSource={company.plans.filter(plan => plan.active)}
-                    renderItem={plan => (
+                    dataSource={company.plans.filter((plan) => plan.active)}
+                    renderItem={(plan) => (
                       <List.Item
                         actions={[
                           <Popover
@@ -140,7 +145,7 @@ export const CompanyProfilePage = withProtected(
                             }
                           >
                             <Link to='#'>delete</Link>
-                          </Popover>
+                          </Popover>,
                         ]}
                       >
                         <List.Item.Meta
@@ -157,8 +162,8 @@ export const CompanyProfilePage = withProtected(
                   <List
                     size='small'
                     bordered
-                    dataSource={company.extras.filter(extra => extra.active)}
-                    renderItem={extra => (
+                    dataSource={company.extras.filter((extra) => extra.active)}
+                    renderItem={(extra) => (
                       <List.Item
                         actions={[
                           <Popover
@@ -192,7 +197,7 @@ export const CompanyProfilePage = withProtected(
                             }
                           >
                             <Link to='#'>delete</Link>
-                          </Popover>
+                          </Popover>,
                         ]}
                       >
                         <List.Item.Meta
@@ -223,7 +228,7 @@ export const CompanyProfilePage = withProtected(
                     footer={[
                       <Button key='back' onClick={() => setVisiblePlan(false)}>
                         Cancel
-                      </Button>
+                      </Button>,
                     ]}
                   >
                     <TemplateForm
@@ -232,6 +237,7 @@ export const CompanyProfilePage = withProtected(
                       onSubmit={onSubmitPlan}
                       type={'plan'}
                       errors={errors}
+                      disable={buttonDisabled}
                     />
                   </Modal>
                 </Col>
@@ -253,7 +259,7 @@ export const CompanyProfilePage = withProtected(
                     footer={[
                       <Button key='back' onClick={() => setVisibleExtra(false)}>
                         Cancel
-                      </Button>
+                      </Button>,
                     ]}
                   >
                     <TemplateForm
@@ -262,6 +268,7 @@ export const CompanyProfilePage = withProtected(
                       onSubmit={onSubmitExtra}
                       type={'extra'}
                       errors={errors}
+                      disable={buttonDisabled}
                     />
                   </Modal>
                 </Col>
@@ -273,12 +280,19 @@ export const CompanyProfilePage = withProtected(
     }),
     {
       type: 'coordinator',
-      redirectTo: '/login'
+      redirectTo: '/login',
     }
   )
 );
 
-const TemplateForm = ({ onSubmit, handleSubmit, errors, methods, type }) => {
+const TemplateForm = ({
+  onSubmit,
+  handleSubmit,
+  errors,
+  methods,
+  type,
+  disable,
+}) => {
   const { loading, setLoading } = useContext(UserContext);
 
   const currencySelector = (
@@ -292,7 +306,7 @@ const TemplateForm = ({ onSubmit, handleSubmit, errors, methods, type }) => {
         }
         defaultValue='€'
         style={{
-          width: 70
+          width: 70,
         }}
         name='currency'
       />
@@ -312,7 +326,7 @@ const TemplateForm = ({ onSubmit, handleSubmit, errors, methods, type }) => {
             name='name'
             placeholder={`Provide a description for the ${type}`}
             rules={{
-              required: 'Please, input the name'
+              required: 'Please, input the name',
             }}
           />
         </Form.Item>
@@ -329,17 +343,18 @@ const TemplateForm = ({ onSubmit, handleSubmit, errors, methods, type }) => {
             placeholder='Price'
             addonAfter={currencySelector}
             style={{
-              width: '100%'
+              width: '100%',
             }}
             rules={{
               required: `Please input the price of the ${type}!`,
-              min: { value: 0.01, message: 'Input a valid amount!' }
+              min: { value: 0.01, message: 'Input a valid amount!' },
             }}
           />
         </Form.Item>
 
         <Form.Item {...formItemLayout}>
           <Button
+            disabled={disable}
             type='primary'
             htmlType='submit'
             onClick={handleSubmit(onSubmit)}

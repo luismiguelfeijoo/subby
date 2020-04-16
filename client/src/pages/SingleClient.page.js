@@ -92,14 +92,13 @@ export const SingleClientPage = withProtected(
       const { register, handleSubmit, errors, reset } = methods;
 
       const onSubmit = async (data) => {
-        console.log(data);
         setConfirmLoading(true);
         try {
           const response = await addPaymentOnClient(match.params.id, data);
           fetchClient(match.params.id);
           message.success(response.status);
         } catch (error) {
-          message.error('Error on the conection');
+          message.error(error.response.data.status);
         } finally {
           setConfirmLoading(false);
           setVisiblePaymentForm(false);
@@ -114,7 +113,7 @@ export const SingleClientPage = withProtected(
           fetchClient(match.params.id);
           message.success(response.status);
         } catch (error) {
-          console.log(error);
+          message.error(error.response.data.status);
         } finally {
           setConfirmLoading(false);
           setVisibleSubForm(false);

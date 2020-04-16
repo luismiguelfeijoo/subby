@@ -1,41 +1,37 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { UserContext, askCompanyToken } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Button, Input } from 'antd';
+import { Form, Button, Input, message } from 'antd';
+import { formItemLayout } from './utils/styles';
 
 export const NewCompanyPage = withProtected(
   withRouter(({ history }) => {
-    const { setLoading } = useContext(UserContext);
-
-    const formItemLayout = {
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16, offset: 4 }
-      }
-    };
+    const [buttonLoading, setButtonLoading] = useState(false);
 
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
         username: '',
-        password: ''
-      }
+        password: '',
+      },
     });
 
     const { register, handleSubmit, errors } = methods;
 
-    const onSubmit = async data => {
-      setLoading(true);
+    const onSubmit = async (data) => {
+      setButtonLoading(true);
       try {
         const response = await askCompanyToken(data);
-        history.push('/');
+        message.success(response.status);
       } catch (error) {
-        console.log(error);
+        if (error.response) {
+          message.error(error.response.data.status);
+        }
       } finally {
-        setLoading(false);
+        setButtonLoading(false);
       }
     };
 
@@ -53,7 +49,7 @@ export const NewCompanyPage = withProtected(
                 name='company'
                 placeholder="What's the name of your company?"
                 rules={{
-                  required: 'We need the name of your company to let you in!'
+                  required: 'We need the name of your company to let you in!',
                 }}
               />
             </Form.Item>
@@ -71,14 +67,15 @@ export const NewCompanyPage = withProtected(
                   required: 'Required',
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                    message: 'invalid email address'
-                  }
+                    message: 'invalid email address',
+                  },
                 }}
               />
             </Form.Item>
 
             <Form.Item {...formItemLayout}>
               <Button
+                loading={buttonLoading}
                 type='primary'
                 htmlType='submit'
                 onClick={handleSubmit(onSubmit)}
@@ -94,6 +91,6 @@ export const NewCompanyPage = withProtected(
   {
     redirect: true,
     redirectTo: 'profile',
-    inverted: true
+    inverted: true,
   }
 );

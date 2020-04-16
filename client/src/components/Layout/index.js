@@ -41,13 +41,12 @@ export const LayoutTemplate = ({
             onBreakpoint={(broken) => {
               setBroken(broken);
             }}
-            broken
           >
             <div style={{ height: '50px' }}></div>
             <SiderMenu
               selection={currentPage}
               history={history}
-              option={currentMenuTab}
+              open={currentMenuTab}
             />
           </Sider>
           <Layout style={{ minHeight: '100vh' }}>

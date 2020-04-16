@@ -50,11 +50,17 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
         console.log(error);
         return res.status(500).json({ status: 'mail not sent', errors: error });
       } else {
-        return res.json({ status: 'email sent', info: info });
+        return res.json({
+          status:
+            'You will recieve an email with instructions to complete your registration!',
+          info: info,
+        });
       }
     });
   } else {
-    return res.status(422).json({ status: 'Unnprocessable entity' });
+    return res
+      .status(422)
+      .json({ status: 'We can`t process your request currently' });
   }
 });
 
@@ -65,6 +71,7 @@ router.post(
   async (req, res, next) => {
     const { token } = req.params;
     const { password, firstName, lastName } = req.body;
+
     // Create the user, also check to wich company it belongs
     try {
       const decodedToken = jwt.verify(token, process.env.JWTSECRET);
@@ -72,7 +79,7 @@ router.post(
       if (check) {
         const existingCompany = await Company.findOne({ name: check });
         if (!existingCompany) {
-          const errors = owasp.test(password).errors;
+          let errors = owasp.test(password).errors;
           if (errors.length == 0) {
             const newCompany = await Company.create({ name: check });
             let newUser = await LocalUser.create({
@@ -85,10 +92,29 @@ router.post(
               type: 'admin',
               company: newCompany._id,
             });
-            //newUser.populate('company');
-            return res.json({ status: 'Company & admin user created' });
+            req.logIn(newUser, (err) => {
+              return res.json(
+                _.pick(req.user, [
+                  'username',
+                  '_id',
+                  'company',
+                  'name',
+                  'type',
+                  'phone',
+                ])
+              );
+            });
+            //return res.json({ status: 'Company & admin user created' });
           } else {
-            return res.json({ status: 'invalid password', errors: errors });
+            errors = errors.reduce((acc, error) => {
+              acc = acc
+                .substring(0, acc.length - 1)
+                .replace('The password', 'It');
+              return `${acc} & ${error}`;
+            });
+            return res
+              .status(412)
+              .json({ status: `Invalid password: ${errors}` });
           }
         } else {
           return res.status(401).json({ status: 'Not able to create company' });
@@ -96,6 +122,7 @@ router.post(
       }
       // if it get's here the token is valid
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ error: error });
     }
   }
@@ -184,7 +211,11 @@ router.post(
               .status(500)
               .json({ status: 'mail not sent', errors: error });
           } else {
-            return res.json({ status: 'email sent', info: info });
+            return res.json({
+              status:
+                'Email sent. The user will recieve a link to complete registration',
+              info: info,
+            });
           }
         });
       } else {
@@ -213,7 +244,7 @@ router.post(
           ? await ClientUser.findOne({ username: decodedToken.username })
           : await LocalUser.findOne({ username: decodedToken.username });
       if (!existingUser) {
-        const errors = owasp.test(password).errors;
+        let errors = owasp.test(password).errors;
         if (errors.length == 0) {
           if (decodedToken.type === 'admin') {
             const newUser = await LocalUser.create({
@@ -226,7 +257,18 @@ router.post(
               type: 'admin',
               company: decodedToken.id,
             });
-            return res.json({ status: 'New Admin User Created' });
+            req.logIn(newUser, (err) => {
+              return res.json(
+                _.pick(req.user, [
+                  'username',
+                  '_id',
+                  'company',
+                  'name',
+                  'type',
+                  'phone',
+                ])
+              );
+            });
           } else if (decodedToken.type === 'coordinator') {
             const newUser = await LocalUser.create({
               username: decodedToken.username,
@@ -238,7 +280,18 @@ router.post(
               type: 'coordinator',
               company: decodedToken.id,
             });
-            return res.json({ status: 'New Coordinator User Created' });
+            req.logIn(newUser, (err) => {
+              return res.json(
+                _.pick(req.user, [
+                  'username',
+                  '_id',
+                  'company',
+                  'name',
+                  'type',
+                  'phone',
+                ])
+              );
+            });
           } else if (decodedToken.type === 'client') {
             const newUser = await ClientUser.create({
               username: decodedToken.username,
@@ -250,10 +303,29 @@ router.post(
               phone,
               company: decodedToken.id,
             });
-            return res.json({ status: 'New Client User Created' });
+            req.logIn(newUser, (err) => {
+              return res.json(
+                _.pick(req.user, [
+                  'username',
+                  '_id',
+                  'company',
+                  'name',
+                  'type',
+                  'phone',
+                ])
+              );
+            });
           }
         } else {
-          return res.json({ status: 'invalid password', errors: errors });
+          errors = errors.reduce((acc, error) => {
+            acc = acc
+              .substring(0, acc.length - 1)
+              .replace('The password', 'It');
+            return `${acc} & ${error}`;
+          });
+          return res
+            .status(412)
+            .json({ status: `Invalid password: ${errors}` });
         }
       } else {
         return res.status(401).json({ status: 'Not able to create user' });
