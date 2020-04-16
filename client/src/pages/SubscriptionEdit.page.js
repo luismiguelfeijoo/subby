@@ -11,7 +11,7 @@ import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, Select, DatePicker } from 'antd';
+import { Form, Input, Button, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from './utils/styles';
 const { Option } = Select;
@@ -24,6 +24,7 @@ export const SubscriptionEditPage = withProtected(
       const [extras, setExtras] = useState([]);
       const [sub, setSub] = useState();
       const [selectedPlan, setSelectedPlan] = useState([]);
+      const [buttonLoading, setButtonLoading] = useState(false);
 
       useEffect(() => {
         if (!loading) {
@@ -60,16 +61,14 @@ export const SubscriptionEditPage = withProtected(
       const { register, handleSubmit, errors, getValues } = methods;
 
       const onSubmit = async (data) => {
-        console.log(data);
-
-        setLoading(true);
+        setButtonLoading(true);
         try {
           const response = await updateSubscription(match.params.id, data);
           message.success(response.status);
         } catch (error) {
           message.error(error.response.data.status);
         } finally {
-          setLoading(false);
+          setButtonLoading(false);
         }
       };
 
@@ -172,6 +171,7 @@ export const SubscriptionEditPage = withProtected(
                 })}
                 <Form.Item {...formItemLayout}>
                   <Button
+                    disabled={buttonLoading}
                     type='primary'
                     htmlType='submit'
                     onClick={handleSubmit(onSubmit)}

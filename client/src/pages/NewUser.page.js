@@ -86,7 +86,7 @@ export const NewUserPage = withProtected(
 
               <Form.Item {...formItemLayout}>
                 <Button
-                  disabled={buttonLoading}
+                  loading={buttonLoading}
                   type='primary'
                   htmlType='submit'
                   onClick={handleSubmit(onSubmitUser)}

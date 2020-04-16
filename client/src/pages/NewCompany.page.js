@@ -27,9 +27,9 @@ export const NewCompanyPage = withProtected(
         const response = await askCompanyToken(data);
         message.success(response.status);
       } catch (error) {
-        error.response
-          ? message.error(error.response.data.status)
-          : message.error('Connection error');
+        if (error.response) {
+          message.error(error.response.data.status);
+        }
       } finally {
         setButtonLoading(false);
       }

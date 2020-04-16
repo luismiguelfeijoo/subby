@@ -96,13 +96,21 @@ router.post(
         const decodedToken = jwt.verify(token, secret);
         console.log(decodedToken, secret);
         if (user.username === decodedToken.username) {
-          const errors = owasp.test(password).errors;
+          let errors = owasp.test(password).errors;
           if (errors.length == 0) {
             user.password = hashPassword(password);
             await user.save();
             return res.json({ status: 'Password changed correctly' });
           } else {
-            return res.json({ status: 'invalid password', errors: errors });
+            errors = errors.reduce((acc, error) => {
+              acc = acc
+                .substring(0, acc.length - 1)
+                .replace('The password', 'It');
+              return `${acc} & ${error}`;
+            });
+            return res
+              .status(412)
+              .json({ status: `Invalid password: ${errors}` });
           }
         } else {
           return res.status(401).json({ status: 'unathorized' });

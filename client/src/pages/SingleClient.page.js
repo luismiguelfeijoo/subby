@@ -92,7 +92,6 @@ export const SingleClientPage = withProtected(
       const { register, handleSubmit, errors, reset } = methods;
 
       const onSubmit = async (data) => {
-        console.log(data);
         setConfirmLoading(true);
         try {
           const response = await addPaymentOnClient(match.params.id, data);

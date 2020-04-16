@@ -63,7 +63,6 @@ export const SingleSubscriptionPage = withProtected(
       const { register, handleSubmit, errors, reset } = methods;
 
       const onSubmit = async (data) => {
-        console.log(data);
         setConfirmLoading(true);
         try {
           const response = await addExtraOnSubscription(match.params.id, data);
