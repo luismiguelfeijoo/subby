@@ -71,6 +71,7 @@ router.post(
   async (req, res, next) => {
     const { token } = req.params;
     const { password, firstName, lastName } = req.body;
+
     // Create the user, also check to wich company it belongs
     try {
       const decodedToken = jwt.verify(token, process.env.JWTSECRET);
@@ -78,7 +79,7 @@ router.post(
       if (check) {
         const existingCompany = await Company.findOne({ name: check });
         if (!existingCompany) {
-          const errors = owasp.test(password).errors;
+          let errors = owasp.test(password).errors;
           if (errors.length == 0) {
             const newCompany = await Company.create({ name: check });
             let newUser = await LocalUser.create({
@@ -91,10 +92,29 @@ router.post(
               type: 'admin',
               company: newCompany._id,
             });
-            //newUser.populate('company');
-            return res.json({ status: 'Company & admin user created' });
+            req.logIn(newUser, (err) => {
+              return res.json(
+                _.pick(req.user, [
+                  'username',
+                  '_id',
+                  'company',
+                  'name',
+                  'type',
+                  'phone',
+                ])
+              );
+            });
+            //return res.json({ status: 'Company & admin user created' });
           } else {
-            return res.json({ status: 'invalid password', errors: errors });
+            errors = errors.reduce((acc, error) => {
+              acc = acc
+                .substring(0, acc.length - 1)
+                .replace('The password', 'It');
+              return `${acc} & ${error}`;
+            });
+            return res
+              .status(412)
+              .json({ status: `Invalid password: ${errors}` });
           }
         } else {
           return res.status(401).json({ status: 'Not able to create company' });
@@ -102,6 +122,7 @@ router.post(
       }
       // if it get's here the token is valid
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ error: error });
     }
   }

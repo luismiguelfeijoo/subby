@@ -3,18 +3,18 @@ import { Loading } from './loading.js';
 import { UserContext, getUserLogged } from './auth.api.js';
 
 // THIS is a HOC
-export const withUser = Content => () => {
+export const withUser = (Content) => () => {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
-  const [type, setType] = useState();
+
   useEffect(() => {
     console.log('loading user...');
     getUserLogged()
-      .then(user => {
+      .then((user) => {
         console.log(`Welcome ${user.username}`);
         setUser(user);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('No user logged in');
       })
       .finally(() => {
