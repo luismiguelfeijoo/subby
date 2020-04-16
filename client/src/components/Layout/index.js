@@ -46,7 +46,7 @@ export const LayoutTemplate = ({
             <SiderMenu
               selection={currentPage}
               history={history}
-              option={currentMenuTab}
+              open={currentMenuTab}
             />
           </Sider>
           <Layout style={{ minHeight: '100vh' }}>
