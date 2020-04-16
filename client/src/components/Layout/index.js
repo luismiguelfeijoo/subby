@@ -23,6 +23,7 @@ export const LayoutTemplate = ({
   currentPage,
   currentMenuTab,
 }) => {
+  const { user } = useContext(UserContext);
   const [collapsed, setCollapsed] = useState(false);
   const [broken, setBroken] = useState(false);
   const onCollapse = (collapsed) => {
@@ -72,13 +73,22 @@ export const LayoutTemplate = ({
           </Header>
           <Content
             style={{
-              padding: 24,
+              padding: 30,
               margin: 0,
+              background: !user
+                ? 'url("https://res.cloudinary.com/luismifeijoo/image/upload/v1587055313/background_vyjopw.png") 1440px'
+                : '',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
           >
             {children}
           </Content>
-          <Footer>Footer</Footer>
+          {!user && (
+            <Footer style={{ textAlign: 'center', color: '#391085' }}>
+              S U B B Y © 2020 Created by Luismi
+            </Footer>
+          )}
         </>
       )}
     </Layout>
