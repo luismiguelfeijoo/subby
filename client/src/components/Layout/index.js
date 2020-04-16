@@ -239,16 +239,6 @@ const SiderMenu = withRouter(({ selection, history, open, broken }) => {
               <span className='nav-text'>S U B B Y</span>
             </Link>
           </Menu.Item>
-          <Menu.Item key='login'>
-            <Link to='/login' className='nav-text'>
-              <span className='nav-text'>Login</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key='register'>
-            <Link to='/new-company' className='nav-text'>
-              <span className='nav-text'>Join</span>
-            </Link>
-          </Menu.Item>
         </Menu>
       )}
     </>
