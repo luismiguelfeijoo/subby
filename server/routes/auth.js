@@ -100,7 +100,18 @@ router.post(
           if (errors.length == 0) {
             user.password = hashPassword(password);
             await user.save();
-            return res.json({ status: 'Password changed correctly' });
+            req.logIn(user, (err) => {
+              return res.json(
+                _.pick(req.user, [
+                  'username',
+                  '_id',
+                  'company',
+                  'name',
+                  'type',
+                  'phone',
+                ])
+              );
+            });
           } else {
             errors = errors.reduce((acc, error) => {
               acc = acc

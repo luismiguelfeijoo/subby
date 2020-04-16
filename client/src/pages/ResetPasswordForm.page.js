@@ -11,104 +11,106 @@ import { LayoutTemplate } from '../components/Layout';
 import { Form, Button, Input, message } from 'antd';
 import { formItemLayout } from './utils/styles';
 
-export const ResetPasswordForm = withProtected(
-  withRouter(({ history, match }) => {
-    const { setLoading } = useContext(UserContext);
-    const [buttonDisable, setButtonDisable] = useState(false);
+export const ResetPasswordForm = withRouter(({ history, match }) => {
+  const { setLoading, setUser, user } = useContext(UserContext);
+  const [buttonDisable, setButtonDisable] = useState(false);
 
-    const methods = useForm({
-      mode: 'onBlur',
-      defaultValue: {
-        password: '',
-      },
-    });
+  useEffect(() => {
+    setLoading(true);
+    if (user) {
+      history.push('/profile');
+    }
+    setLoading(false);
+  }, []);
 
-    const { register, handleSubmit, errors, watch } = methods;
-    const password = useRef({});
-    password.current = watch('password', '');
+  const methods = useForm({
+    mode: 'onBlur',
+    defaultValue: {
+      password: '',
+    },
+  });
 
-    const onSubmit = async (data) => {
-      setButtonDisable(true);
-      try {
-        const response = await doPasswordReset(
-          data,
-          match.params.token,
-          match.params.id
-        );
-        message.success(response.status);
-      } catch (error) {
-        message.error(error.response.data.status);
-      } finally {
-        setButtonDisable(false);
-      }
-    };
-    return (
-      <LayoutTemplate>
-        <FormContext {...methods}>
-          <Form>
-            <Form.Item
-              {...formItemLayout}
-              required={true}
-              validateStatus={errors.password?.message ? 'error' : 'success'}
-              help={errors.password?.message && errors.password.message}
+  const { register, handleSubmit, errors, watch } = methods;
+  const password = useRef({});
+  password.current = watch('password', '');
+
+  const onSubmit = async (data) => {
+    setButtonDisable(true);
+    try {
+      const user = await doPasswordReset(
+        data,
+        match.params.token,
+        match.params.id
+      );
+      setUser(user);
+      history.push('/profile');
+    } catch (error) {
+      console.log(error.response);
+      message.error(error.response.data.status);
+      setButtonDisable(false);
+    }
+  };
+
+  return (
+    <LayoutTemplate>
+      <FormContext {...methods}>
+        <Form>
+          <Form.Item
+            {...formItemLayout}
+            required={true}
+            validateStatus={errors.password?.message ? 'error' : 'success'}
+            help={errors.password?.message && errors.password.message}
+          >
+            <Controller
+              as={Input.Password}
+              type='password'
+              placeholder='Password'
+              name='password'
+              rules={{
+                required: 'Required',
+                minLength: {
+                  value: 10,
+                  message: 'Password must have at least 10 characters',
+                },
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            {...formItemLayout}
+            required={true}
+            validateStatus={
+              errors.password_repeat?.message ? 'error' : 'success'
+            }
+            help={
+              errors.password_repeat?.message && errors.password_repeat.message
+            }
+          >
+            <Controller
+              as={Input.Password}
+              type='password'
+              placeholder='Repeat Password'
+              name='password_repeat'
+              rules={{
+                required: 'Required',
+                validate: (value) =>
+                  value === password.current || 'The passwords do not match',
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item {...formItemLayout}>
+            <Button
+              disabled={buttonDisable}
+              type='primary'
+              htmlType='submit'
+              onClick={handleSubmit(onSubmit)}
             >
-              <Controller
-                as={Input.Password}
-                type='password'
-                placeholder='Password'
-                name='password'
-                rules={{
-                  required: 'Required',
-                  minLength: {
-                    value: 10,
-                    message: 'Password must have at least 10 characters',
-                  },
-                }}
-              />
-            </Form.Item>
-
-            <Form.Item
-              {...formItemLayout}
-              required={true}
-              validateStatus={
-                errors.password_repeat?.message ? 'error' : 'success'
-              }
-              help={
-                errors.password_repeat?.message &&
-                errors.password_repeat.message
-              }
-            >
-              <Controller
-                as={Input.Password}
-                type='password'
-                placeholder='Repeat Password'
-                name='password_repeat'
-                rules={{
-                  required: 'Required',
-                  validate: (value) =>
-                    value === password.current || 'The passwords do not match',
-                }}
-              />
-            </Form.Item>
-
-            <Form.Item {...formItemLayout}>
-              <Button
-                disabled={buttonDisable}
-                type='primary'
-                htmlType='submit'
-                onClick={handleSubmit(onSubmit)}
-              >
-                Change Password
-              </Button>
-            </Form.Item>
-          </Form>
-        </FormContext>
-      </LayoutTemplate>
-    );
-  }),
-  {
-    redirect: true,
-    redirectTo: 'profile',
-    inverted: true,
-  }
-);
+              Change Password
+            </Button>
+          </Form.Item>
+        </Form>
+      </FormContext>
+    </LayoutTemplate>
+  );
+});
