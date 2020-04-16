@@ -1,17 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
-import {
-  UserContext,
-  askUserToken,
-  createSubscription,
-  getPlans,
-} from '../../lib/auth.api';
+import { UserContext, askUserToken } from '../../lib/auth.api';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, Select, DatePicker, message } from 'antd';
+import { Form, Input, Button, Select, message, Typography } from 'antd';
 import { formItemLayout } from './utils/styles';
+const { Title } = Typography;
 const { Option } = Select;
 
 export const NewUserPage = withProtected(
@@ -45,7 +41,10 @@ export const NewUserPage = withProtected(
           currentMenuTab='company'
         >
           <FormContext {...methods}>
-            <Form>
+            <Title style={{ textAlign: 'center' }} level={2}>
+              New User
+            </Title>
+            <Form style={{ width: '100%', marginTop: '40px' }}>
               <Form.Item
                 {...formItemLayout}
                 validateStatus={errors.username?.message ? 'error' : 'success'}

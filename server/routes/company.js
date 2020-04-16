@@ -178,12 +178,10 @@ router.post(
     const company = await Company.findById(loggedAdmin.company);
 
     if (loggedAdmin.type === 'admin') {
-      const existingUser =
-        type === 'admin' || type === 'coordinator'
-          ? await LocalUser.findOne({ username })
-          : await ClientUser.findOne({ username });
+      const existingUserLocal = await LocalUser.findOne({ username });
+      const existingUserClient = await ClientUser.findOne({ username });
 
-      if (!existingUser) {
+      if (!existingUserLocal && !existingUserClient) {
         const token = jwt.sign(
           { id: company._id, username, type },
           process.env.JWTSECRET,
