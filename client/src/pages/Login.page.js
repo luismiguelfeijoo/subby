@@ -4,8 +4,8 @@ import { UserContext, doLogin } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Input, Form, Button, Card, message } from 'antd';
-
+import { Input, Form, Button, Typography, message } from 'antd';
+const { Title, Text } = Typography;
 export const LoginPage = withProtected(
   withRouter(({ history }) => {
     const { setUser, setLoading } = useContext(UserContext);
@@ -44,7 +44,18 @@ export const LoginPage = withProtected(
     return (
       <LayoutTemplate>
         <FormContext {...methods}>
-          <Form>
+          <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
+            LOGIN
+          </Title>
+          <Form
+            style={{
+              width: '100%',
+              backgroundColor: '#fff',
+              margin: '40px 0',
+              padding: '30px 8%',
+              borderRadius: '5px',
+            }}
+          >
             <Form.Item
               {...formItemLayout}
               validateStatus={errors.username?.message ? 'error' : 'success'}
@@ -85,7 +96,7 @@ export const LoginPage = withProtected(
               />
             </Form.Item>
 
-            <Form.Item {...formItemLayout}>
+            <Form.Item {...formItemLayout} style={{ margin: '0 0 10px' }}>
               <Button
                 disabled={buttonLoading}
                 type='primary'
@@ -94,6 +105,12 @@ export const LoginPage = withProtected(
               >
                 Login
               </Button>
+            </Form.Item>
+            <Form.Item {...formItemLayout} style={{ margin: '0 10px' }}>
+              <Text>or</Text>
+            </Form.Item>
+            <Form.Item {...formItemLayout} style={{ margin: '0' }}>
+              <Link to='/reset-password'>Forgot Password?</Link>
             </Form.Item>
           </Form>
         </FormContext>

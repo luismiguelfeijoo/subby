@@ -2,10 +2,10 @@ import React, { useContext, useRef, useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { UserContext, doUserSignup } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
-import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, Select, message } from 'antd';
+import { Form, Input, Button, Select, message, Typography } from 'antd';
 const { Option } = Select;
+const { Title } = Typography;
 import jwt from 'jsonwebtoken';
 import { formItemLayout } from './utils/styles';
 
@@ -82,7 +82,18 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
   return (
     <LayoutTemplate>
       <FormContext {...methods}>
-        <Form>
+        <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
+          REGISTER
+        </Title>
+        <Form
+          style={{
+            width: '100%',
+            backgroundColor: '#fff',
+            margin: '40px 0',
+            padding: '30px 8%',
+            borderRadius: '5px',
+          }}
+        >
           <Form.Item
             {...formItemLayout}
             required={true}

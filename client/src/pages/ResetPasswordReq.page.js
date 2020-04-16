@@ -4,8 +4,9 @@ import { UserContext, askPasswordToken } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Button, Input, message } from 'antd';
+import { Form, Button, Input, message, Typography } from 'antd';
 import { formItemLayout } from './utils/styles';
+const { Title } = Typography;
 
 export const ResetPasswordReq = withProtected(
   withRouter(({ history }) => {
@@ -36,7 +37,18 @@ export const ResetPasswordReq = withProtected(
     return (
       <LayoutTemplate>
         <FormContext {...methods}>
-          <Form>
+          <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
+            REQUEST NEW PASSWORD
+          </Title>
+          <Form
+            style={{
+              width: '100%',
+              backgroundColor: '#fff',
+              margin: '40px 0',
+              padding: '30px 8%',
+              borderRadius: '5px',
+            }}
+          >
             <Form.Item
               {...formItemLayout}
               validateStatus={errors.username?.message ? 'error' : 'success'}
