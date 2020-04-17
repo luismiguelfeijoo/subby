@@ -4,7 +4,7 @@ import React, { useContext } from 'react';
 export const UserContext = React.createContext();
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: process.env.BACK_URL,
   withCredentials: true,
 });
 

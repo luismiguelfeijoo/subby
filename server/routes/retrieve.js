@@ -17,7 +17,7 @@ router.get('/plans', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
     const plans = await Plan.find({
       company: loggedAdmin.company,
-      active: true
+      active: true,
     });
     return res.json(plans);
   } else {
@@ -34,7 +34,7 @@ router.get(
     if (loggedAdmin.type === 'admin') {
       const plan = await Plan.findByIdAndUpdate(id, { active: false });
       return res.json({
-        status: 'Plan deleted, this will not affect charged plans'
+        status: 'Plan deleted, this will not affect charged plans',
       });
     } else {
       return res.status(401).json({ status: 'Local user is not admin' });
@@ -47,7 +47,7 @@ router.get('/extras', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
     const extras = await Extra.find({
       company: loggedAdmin.company,
-      active: true
+      active: true,
     });
     return res.json(extras);
   } else {
@@ -64,7 +64,7 @@ router.get(
     if (loggedAdmin.type === 'admin') {
       const extra = await Extra.findByIdAndUpdate(id, { active: false });
       return res.json({
-        status: 'Extra deleted, this will not affect charged extras'
+        status: 'Extra deleted, this will not affect charged extras',
       });
     } else {
       return res.status(401).json({ status: 'Local user is not admin' });
@@ -76,72 +76,104 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
   const loggedAdmin = req.user;
   if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
     const clients = await ClientUser.find({
-      company: loggedAdmin.company
+      company: loggedAdmin.company,
     }).populate({
       path: 'subscriptions',
-      populate: ['plans.plan', 'extras.extra']
+      populate: ['plans.plan', 'extras.extra'],
     });
-    clients.map(async client => {
-      client.subscriptions.map(async sub => {
-        sub.extras.map(async extra => {
-          if (!extra.charged) {
-            client.debts = [
-              ...client.debts,
-              {
-                type: 'extra',
-                date: extra.date,
-                amount: extra.extra.price,
-                name: extra.extra.name
-              }
-            ];
-            const updatedSub = await Subscription.findById(sub._id);
-            updatedSub.extras.map(extraInSub => {
-              extraInSub.charged = true;
-            });
-            await updatedSub.save();
-          }
-        });
-        sub.plans.map(async plan => {
-          if (!plan.charged) {
-            const days = moment().diff(moment(plan.startDate), 'days');
-            console.log(days);
-            if (days % 30 === 0 && days > 0) {
-              let monthsPassed = plan.timesCharged;
-              do {
+    clients.map(async (client) => {
+      client.subscriptions.map(async (sub) => {
+        if (sub.active) {
+          sub.extras.map(async (extra) => {
+            if (!extra.charged) {
+              if (
+                moment().isSame(moment(extra.date), 'month') ||
+                moment().isAfter(moment(extra.date), 'month')
+              ) {
                 client.debts = [
                   ...client.debts,
                   {
-                    type: 'plan',
-                    date: moment(),
-                    amount: plan.plan.price,
-                    name: plan.plan.name
-                  }
+                    type: 'extra',
+                    date: extra.date,
+                    amount: {
+                      price: extra.extra.price.price.concat('.00'),
+                      currency: extra.extra.price.currency,
+                    },
+                    name: extra.extra.name,
+                    subscription: sub.name,
+                  },
                 ];
-                monthsPassed++;
-              } while (monthsPassed < Math.floor(days / 30));
-
-              let updatedSub = await Subscription.findById(sub._id);
-              updatedSub.plans.map(planInSub => {
-                if (String(planInSub.plan) == String(plan.plan._id)) {
-                  planInSub.charged = true;
-                  planInSub.timesCharged =
-                    planInSub.timesCharged + monthsPassed;
-                }
-              });
-              await updatedSub.save();
-            } else {
-              if (days % 30 != 0) {
-                let updatedSub = await Subscription.findById(sub._id);
-                updatedSub.plans.map(planInSub => {
-                  if (String(planInSub.plan) == String(plan.plan._id)) {
-                    planInSub.charged = false;
-                  }
-                });
-                await updatedSub.save();
+                extra.charged = true;
               }
             }
-          }
-        });
+          });
+          sub.plans.map(async (plan) => {
+            const startOfNextMonth = moment([
+              moment().year(),
+              moment().month() + 1,
+              2,
+            ]).toDate();
+            //const proof = moment(new Date('2020-06-01')).toDate(); this is to make tests
+
+            const isStartOfMonth =
+              moment().diff(moment().endOf('month'), 'day') === 1;
+
+            if (isStartOfMonth) {
+              plan.charged = false;
+            }
+            if (!plan.charged) {
+              if (
+                moment().isSame(moment(plan.startDate), 'month') ||
+                moment().isAfter(moment(plan.startDate), 'month')
+              ) {
+                const monthsSinceStart = moment(startOfNextMonth).diff(
+                  moment(plan.startDate),
+                  'months',
+                  true
+                );
+
+                let monthsToCharge =
+                  plan.timesCharged === 0
+                    ? (monthsSinceStart - plan.timesCharged).toFixed(2)
+                    : 1;
+
+                let monthCount = 0;
+
+                while (monthsToCharge > 0) {
+                  let date = new Date();
+                  date = moment(
+                    date.setMonth(plan.startDate.getMonth() - monthCount)
+                  )
+                    .endOf('month')
+                    .toDate();
+                  let fraction =
+                    monthsToCharge % 1 == 0 ? 1 : monthsToCharge % 1;
+                  client.debts = [
+                    ...client.debts,
+                    {
+                      type: 'plan',
+                      date: date,
+                      amount: {
+                        price: Math.floor(
+                          plan.plan.price.price * fraction
+                        ).toFixed(2),
+                        currency: plan.plan.price.currency,
+                      },
+                      name: plan.plan.name,
+                      subscription: sub.name,
+                    },
+                  ];
+                  monthCount--;
+                  monthsToCharge -= fraction;
+                }
+
+                plan.charged = true;
+                plan.timesCharged = monthsSinceStart;
+              }
+            }
+          });
+        }
+        await sub.save();
       });
       await client.save();
     });
@@ -168,8 +200,8 @@ router.post(
         {
           date: paymentDate,
           amount: { price: paymentAmount, currency: currency },
-          description
-        }
+          description,
+        },
       ];
 
       await updateClient.save();
@@ -191,7 +223,7 @@ router.get(
       if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
         const client = await ClientUser.findById(id).populate({
           path: 'subscriptions',
-          populate: ['plans.plan', 'extras.extra', 'debts.data']
+          populate: ['plans.plan', 'extras.extra', 'debts.data'],
         });
         return res.json(client);
       } else {
@@ -225,7 +257,7 @@ router.get(
     const loggedAdmin = req.user;
     if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
       const subscriptions = await Subscription.find({
-        company: loggedAdmin.company
+        company: loggedAdmin.company,
       }).populate('parents');
       return res.json(subscriptions);
     } else {
@@ -264,7 +296,7 @@ router.get(
     const loggedAdmin = req.user;
     if (loggedAdmin.type === 'admin') {
       const subscription = await Subscription.findById(id);
-      subscription.plans.map(plan => {
+      subscription.plans.map((plan) => {
         plan.endDate = new Date();
       });
       subscription.active = false;
@@ -300,10 +332,10 @@ router.post(
       updateSub.name = name;
       await updateSub.save();
       if (plansName.length > 0) {
-        const plansPromises = await plansName.map(async plan => {
+        const plansPromises = await plansName.map(async (plan) => {
           let result = await Plan.findOne({
             name: plan,
-            company: loggedAdmin.company
+            company: loggedAdmin.company,
           });
           return result;
         });
@@ -322,12 +354,12 @@ router.post(
         updateSub.plans.map((existingPlan, existingPlanIndex) => {
           const newDupPlan = _.find(
             plans,
-            element => String(element._id) === String(existingPlan.plan)
+            (element) => String(element._id) === String(existingPlan.plan)
           );
           if (newDupPlan) {
             const newDupPlanIndex = _.findIndex(
               plans,
-              element => String(element._id) === String(existingPlan.plan)
+              (element) => String(element._id) === String(existingPlan.plan)
             );
             if (
               !moment(existingPlan.startDate).isSame(
@@ -371,7 +403,7 @@ router.post(
           ...updateSub.plans,
           ...plans.map((plan, i) => {
             return { plan: plan._id, startDate: planDates[i] };
-          })
+          }),
         ];
 
         await updateSub.save();
@@ -380,7 +412,7 @@ router.post(
           ...updateSub.plans,
           ...prevAddedPlans.map((plan, i) => {
             return { plan: plan._id, startDate: datesToChange[i] };
-          })
+          }),
         ];
         await updateSub.save();
       } else {
@@ -407,12 +439,12 @@ router.post(
       const updateSub = await Subscription.findById(id);
       const extra = await Extra.findOne({
         name: extraName,
-        company: loggedAdmin.company
+        company: loggedAdmin.company,
       });
 
       updateSub.extras = [
         ...updateSub.extras,
-        { extra: extra._id, date: extraDate }
+        { extra: extra._id, date: extraDate },
       ];
 
       await updateSub.save();
@@ -446,7 +478,7 @@ router.post(
       const newPlan = await Plan.create({
         name,
         price: { price, currency },
-        company: loggedAdmin.company // id of the company
+        company: loggedAdmin.company, // id of the company
       });
       const company = await Company.findById(loggedAdmin.company);
       company.plans = [...company.plans, newPlan._id];
@@ -466,7 +498,7 @@ router.post(
       const newExtra = await Extra.create({
         name,
         price: { price, currency },
-        company: loggedAdmin.company // id of the company
+        company: loggedAdmin.company, // id of the company
       });
       const company = await Company.findById(loggedAdmin.company);
       company.extras = [...company.extras, newExtra._id];
