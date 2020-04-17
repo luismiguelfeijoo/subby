@@ -8,6 +8,7 @@ import { ResetPasswordRouter } from '../../routes/ResetPassword.router';
 import { NewUserRouter } from '../../routes/NewUser.router';
 import { CompanyRouter } from '../../routes/Company.router';
 import { ProfileRouter } from '../../routes/Profile.router';
+import { NotFoundPage } from '../../pages/NotFoundPage';
 
 export const App = withUser(() => {
   return (
@@ -16,25 +17,26 @@ export const App = withUser(() => {
         <Route path='/' exact component={HomePage} />
         <Route
           path='/new-company'
-          component={props => <NewCompanyRouter {...props} />}
+          component={(props) => <NewCompanyRouter {...props} />}
         />
         <Route path='/login' component={LoginPage} />
         <Route
           path='/reset-password'
-          component={props => <ResetPasswordRouter {...props} />}
+          component={(props) => <ResetPasswordRouter {...props} />}
         />
         <Route
           path='/new-user'
-          component={props => <NewUserRouter {...props} />}
+          component={(props) => <NewUserRouter {...props} />}
         />
         <Route
           path='/company'
-          component={props => <CompanyRouter {...props} />}
+          component={(props) => <CompanyRouter {...props} />}
         />
         <Route
           path='/profile'
-          component={props => <ProfileRouter {...props} />}
+          component={(props) => <ProfileRouter {...props} />}
         />
+        <Route path='*' component={NotFoundPage} />
       </Switch>
     </Router>
   );
