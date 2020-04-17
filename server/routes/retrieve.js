@@ -97,6 +97,7 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
                     date: extra.date,
                     amount: extra.extra.price,
                     name: extra.extra.name,
+                    subscription: sub.name,
                   },
                 ];
                 extra.charged = true;
@@ -104,7 +105,74 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
             }
           });
           sub.plans.map(async (plan) => {
+            const currentDate = new Date();
+            const startOfNextMonth = moment([
+              moment().year(),
+              moment().month() + 1,
+              2,
+            ]).toDate();
+            const proof = moment(new Date('2020-06-01')).toDate();
+            console.log('prueba', proof);
+            console.log('start of next month', startOfNextMonth);
+            const isStartOfMonth =
+              moment().diff(moment().endOf('month'), 'day') === 1;
+            if (isStartOfMonth) {
+              plan.charged = false;
+              console.log('activating plan');
+            }
+            console.log('isStartOfMonth', isStartOfMonth);
+            console.log('end Date', moment().endOf('month').toDate());
+            console.log('current date', currentDate);
             if (!plan.charged) {
+              if (
+                moment().isSame(moment(plan.startDate), 'month') ||
+                moment().isAfter(moment(plan.startDate), 'month')
+              ) {
+                const monthsSinceStart = moment(startOfNextMonth).diff(
+                  moment(plan.startDate),
+                  'months',
+                  true
+                );
+                console.log('since start', monthsSinceStart);
+                let monthsToCharge =
+                  plan.timesCharged === 0
+                    ? (monthsSinceStart - plan.timesCharged).toFixed(2)
+                    : 1;
+                console.log('to charge', monthsToCharge);
+                let monthCount = 0;
+                console.log(monthsToCharge % 1 == 0);
+                while (monthsToCharge > 0) {
+                  let date = new Date();
+                  date = moment(
+                    date.setMonth(plan.startDate.getMonth() - monthCount)
+                  )
+                    .endOf('month')
+                    .toDate();
+                  let fraction =
+                    monthsToCharge % 1 == 0 ? 1 : monthsToCharge % 1;
+                  client.debts = [
+                    ...client.debts,
+                    {
+                      type: 'plan',
+                      date: date,
+                      amount: {
+                        price: Math.floor(
+                          plan.plan.price.price * fraction
+                        ).toFixed(2),
+                        currency: plan.plan.price.currency,
+                      },
+                      name: plan.plan.name,
+                      subscription: sub.name,
+                    },
+                  ];
+                  console.log(date);
+                  monthCount--;
+                  monthsToCharge -= fraction;
+                }
+                plan.charged = true;
+                plan.timesCharged = monthsSinceStart;
+              }
+              /*
               const days = moment().diff(moment(plan.startDate), 'days');
               console.log(days);
               if (days % 30 === 0 && days > 0) {
@@ -131,6 +199,8 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
                   }
                 });
                 await updatedSub.save();
+                
+                
               } else {
                 if (days % 30 != 0) {
                   let updatedSub = await Subscription.findById(sub._id);
@@ -141,7 +211,7 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
                   });
                   await updatedSub.save();
                 }
-              }
+              }*/
             }
           });
         }

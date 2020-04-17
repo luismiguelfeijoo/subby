@@ -8,7 +8,7 @@ const schema = new mongoose.Schema(
     password: { type: String, required: true },
     name: {
       first: { type: String },
-      last: { type: String }
+      last: { type: String },
     },
     subscriptions: [{ type: ObjectId, ref: 'subscription' }],
     company: { type: ObjectId, ref: 'company' },
@@ -17,20 +17,21 @@ const schema = new mongoose.Schema(
       {
         date: Date,
         amount: { type: Object, required: true },
-        description: String
-      }
+        description: String,
+      },
     ],
     debts: [
       {
         date: Date,
         amount: { type: Object, required: true },
         type: { type: String, enum: ['extra', 'plan'] },
-        name: String
-      }
-    ]
+        name: String,
+        subscription: String,
+      },
+    ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

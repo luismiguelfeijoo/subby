@@ -120,7 +120,7 @@ export const SingleClientPage = withProtected(
           reset();
         }
       };
-
+      console.log(client);
       return (
         <LayoutTemplate sider={true}>
           {client ? (
@@ -254,6 +254,7 @@ export const SingleClientPage = withProtected(
                                 title={`${
                                   debt.type === 'extra' ? 'Extra:' : 'Plan:'
                                 }  ${debt.name}`}
+                                description={`${debt.subscription}`}
                               />
                               <DatePicker
                                 format='DD-MM-YYYY'
