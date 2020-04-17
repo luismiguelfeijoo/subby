@@ -105,24 +105,19 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
             }
           });
           sub.plans.map(async (plan) => {
-            const currentDate = new Date();
             const startOfNextMonth = moment([
               moment().year(),
               moment().month() + 1,
               2,
             ]).toDate();
-            const proof = moment(new Date('2020-06-01')).toDate();
-            console.log('prueba', proof);
-            console.log('start of next month', startOfNextMonth);
+            //const proof = moment(new Date('2020-06-01')).toDate(); this is to make tests
+
             const isStartOfMonth =
               moment().diff(moment().endOf('month'), 'day') === 1;
+
             if (isStartOfMonth) {
               plan.charged = false;
-              console.log('activating plan');
             }
-            console.log('isStartOfMonth', isStartOfMonth);
-            console.log('end Date', moment().endOf('month').toDate());
-            console.log('current date', currentDate);
             if (!plan.charged) {
               if (
                 moment().isSame(moment(plan.startDate), 'month') ||
@@ -133,14 +128,14 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
                   'months',
                   true
                 );
-                console.log('since start', monthsSinceStart);
+
                 let monthsToCharge =
                   plan.timesCharged === 0
                     ? (monthsSinceStart - plan.timesCharged).toFixed(2)
                     : 1;
-                console.log('to charge', monthsToCharge);
+
                 let monthCount = 0;
-                console.log(monthsToCharge % 1 == 0);
+
                 while (monthsToCharge > 0) {
                   let date = new Date();
                   date = moment(
@@ -165,53 +160,13 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
                       subscription: sub.name,
                     },
                   ];
-                  console.log(date);
                   monthCount--;
                   monthsToCharge -= fraction;
                 }
+
                 plan.charged = true;
                 plan.timesCharged = monthsSinceStart;
               }
-              /*
-              const days = moment().diff(moment(plan.startDate), 'days');
-              console.log(days);
-              if (days % 30 === 0 && days > 0) {
-                let monthsPassed = plan.timesCharged;
-                do {
-                  client.debts = [
-                    ...client.debts,
-                    {
-                      type: 'plan',
-                      date: moment(),
-                      amount: plan.plan.price,
-                      name: plan.plan.name,
-                    },
-                  ];
-                  monthsPassed++;
-                } while (monthsPassed < Math.floor(days / 30));
-
-                let updatedSub = await Subscription.findById(sub._id);
-                updatedSub.plans.map((planInSub) => {
-                  if (String(planInSub.plan) == String(plan.plan._id)) {
-                    planInSub.charged = true;
-                    planInSub.timesCharged =
-                      planInSub.timesCharged + monthsPassed;
-                  }
-                });
-                await updatedSub.save();
-                
-                
-              } else {
-                if (days % 30 != 0) {
-                  let updatedSub = await Subscription.findById(sub._id);
-                  updatedSub.plans.map((planInSub) => {
-                    if (String(planInSub.plan) == String(plan.plan._id)) {
-                      planInSub.charged = false;
-                    }
-                  });
-                  await updatedSub.save();
-                }
-              }*/
             }
           });
         }
