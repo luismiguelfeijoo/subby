@@ -74,6 +74,7 @@ export const SingleClientPage = withProtected(
                 : true
             )
             .reduce((acc, element) => acc + parseInt(element.amount.price), 0)
+            .toFixed(2)
         );
       };
 
@@ -120,7 +121,7 @@ export const SingleClientPage = withProtected(
           reset();
         }
       };
-      console.log(client);
+
       return (
         <LayoutTemplate sider={true}>
           {client ? (
@@ -349,7 +350,7 @@ export const SingleClientPage = withProtected(
                         <Text
                           key='total-balance'
                           type={payedTotal - debtTotal > 0 ? '' : 'danger'}
-                        >{`${payedTotal - debtTotal} $`}</Text>,
+                        >{`${(payedTotal - debtTotal).toFixed(2)} $`}</Text>,
                       ]}
                     >
                       <List.Item.Meta title={`Total:`} />

@@ -95,7 +95,10 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
                   {
                     type: 'extra',
                     date: extra.date,
-                    amount: extra.extra.price,
+                    amount: {
+                      price: extra.extra.price.price.concat('.00'),
+                      currency: extra.extra.price.currency,
+                    },
                     name: extra.extra.name,
                     subscription: sub.name,
                   },
