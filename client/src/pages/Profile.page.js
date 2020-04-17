@@ -51,7 +51,7 @@ export const ProfilePage = withProtected(
         reset();
       }
     };
-
+    console.log(process.env.BACK_URL);
     return (
       <LayoutTemplate sider={true} currentMenuTab='User' currentPage='profile'>
         <FormContext {...methods}>
