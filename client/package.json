@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "serve dist",
-    "build": "parcel build index.html & npm run create",
-    "create": "mv serve.json dist"
+    "start": "serve",
+    "build": "parcel build index.html"
   },
   "author": "",
   "license": "ISC",
