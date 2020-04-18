@@ -2,35 +2,52 @@ import {
   getSubscriptions,
   getExtras,
   getClients,
-  getPlans
+  getPlans,
 } from '../../../lib/auth.api';
 
-export const fetchSubscriptions = setter => {
+export const fetchSubscriptions = (setter) => {
   getSubscriptions()
-    .then(subs => {
-      setter(subs.filter(sub => sub.active));
+    .then((subs) => {
+      setter(subs.filter((sub) => sub.active));
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
     });
 };
 
 export const fetchPlans = () => {
+  setLoading(true);
   getPlans()
-    .then(plans => {
+    .then((plans) => {
       setPlans(plans);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
-    });
+    })
+    .finally(setLoading(false));
 };
 
 export const fetchExtras = () => {
+  setLoading(true);
   getExtras()
-    .then(extras => {
+    .then((extras) => {
       setExtras(extras);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
-    });
+    })
+    .finally(setLoading(false));
+};
+
+export const typeSub = {
+  name: '',
+  plan: '',
+  extra: '',
+  parents: [],
+};
+
+export const typeClient = {
+  name: { first: '', last: '' },
+  subscriptions: '',
+  extras: '',
 };

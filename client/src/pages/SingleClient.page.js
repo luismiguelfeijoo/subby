@@ -27,12 +27,13 @@ import {
   Input,
   Typography,
   Popover,
+  Spin,
 } from 'antd';
 const { Option } = Select;
 const { Text } = Typography;
 import moment from 'moment';
-import { SingleSubscriptionPage } from './SingleSubscriptions.page';
-import { formItemLayout } from './utils/styles';
+import { SpinIcon } from '../../lib/loading';
+import { formItemLayout, PageSpinner } from './utils/styles';
 export const SingleClientPage = withProtected(
   withTypeUser(
     withRouter(({ history, match }) => {
@@ -44,7 +45,7 @@ export const SingleClientPage = withProtected(
       const [month, setMonth] = useState();
       const [debtTotal, setDebtTotal] = useState(0);
       const [payedTotal, setPayedTotal] = useState(0);
-
+      const [spinner, setSpinner] = useState(true);
       useEffect(() => {
         if (!loading) {
           fetchClient(match.params.id);
@@ -52,7 +53,7 @@ export const SingleClientPage = withProtected(
       }, []);
 
       const fetchClient = (id) => {
-        console.log('fetching');
+        setSpinner(true);
         getSingleClient(id)
           .then((client) => {
             setClient(client);
@@ -61,7 +62,8 @@ export const SingleClientPage = withProtected(
           })
           .catch((err) => {
             console.log(err);
-          });
+          })
+          .finally(() => setSpinner(false));
       };
 
       const calculateTotal = (data, month, setter) => {
@@ -358,76 +360,78 @@ export const SingleClientPage = withProtected(
                   </List>
                 </Descriptions.Item>
               </Descriptions>
+              <Row>
+                <Col span={8} offset={8}>
+                  <Button
+                    style={{ margin: '30px 0 0 ' }}
+                    block
+                    onClick={() => showModal(setVisibleSubForm)}
+                  >
+                    Add Subscription
+                  </Button>
+                  <Modal
+                    centered
+                    title='Add Subscription'
+                    visible={visibleSubForm}
+                    confirmLoading={confirmLoading}
+                    onCancel={() => handleCancel(setVisibleSubForm)}
+                    footer={[
+                      <Button
+                        key='back'
+                        onClick={() => handleCancel(setVisibleSubForm)}
+                      >
+                        Cancel
+                      </Button>,
+                    ]}
+                  >
+                    <SubscriptionForm
+                      onSubmit={onSubmitSub}
+                      handleSubmit={handleSubmit}
+                      errors={errors}
+                      methods={methods}
+                    />
+                  </Modal>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={8} offset={8}>
+                  <Button
+                    style={{ margin: '30px 0 0 ' }}
+                    block
+                    onClick={() => showModal(setVisiblePaymentForm)}
+                  >
+                    Add Payment Info
+                  </Button>
+                  <Modal
+                    centered
+                    title='Add Payment'
+                    visible={visiblePaymentForm}
+                    confirmLoading={confirmLoading}
+                    onCancel={() => handleCancel(setVisiblePaymentForm)}
+                    footer={[
+                      <Button
+                        key='back'
+                        onClick={() => handleCancel(setVisiblePaymentForm)}
+                      >
+                        Cancel
+                      </Button>,
+                    ]}
+                  >
+                    <PaymentForm
+                      onSubmit={onSubmit}
+                      handleSubmit={handleSubmit}
+                      errors={errors}
+                      methods={methods}
+                    />
+                  </Modal>
+                </Col>
+              </Row>
             </>
           ) : (
-            'ERROR LOADING '
+            <PageSpinner>
+              <Spin size='large' indicator={SpinIcon} />
+            </PageSpinner>
           )}
-          <Row>
-            <Col span={8} offset={8}>
-              <Button
-                style={{ margin: '30px 0 0 ' }}
-                block
-                onClick={() => showModal(setVisibleSubForm)}
-              >
-                Add Subscription
-              </Button>
-              <Modal
-                centered
-                title='Add Subscription'
-                visible={visibleSubForm}
-                confirmLoading={confirmLoading}
-                onCancel={() => handleCancel(setVisibleSubForm)}
-                footer={[
-                  <Button
-                    key='back'
-                    onClick={() => handleCancel(setVisibleSubForm)}
-                  >
-                    Cancel
-                  </Button>,
-                ]}
-              >
-                <SubscriptionForm
-                  onSubmit={onSubmitSub}
-                  handleSubmit={handleSubmit}
-                  errors={errors}
-                  methods={methods}
-                />
-              </Modal>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8} offset={8}>
-              <Button
-                style={{ margin: '30px 0 0 ' }}
-                block
-                onClick={() => showModal(setVisiblePaymentForm)}
-              >
-                Add Payment Info
-              </Button>
-              <Modal
-                centered
-                title='Add Payment'
-                visible={visiblePaymentForm}
-                confirmLoading={confirmLoading}
-                onCancel={() => handleCancel(setVisiblePaymentForm)}
-                footer={[
-                  <Button
-                    key='back'
-                    onClick={() => handleCancel(setVisiblePaymentForm)}
-                  >
-                    Cancel
-                  </Button>,
-                ]}
-              >
-                <PaymentForm
-                  onSubmit={onSubmit}
-                  handleSubmit={handleSubmit}
-                  errors={errors}
-                  methods={methods}
-                />
-              </Modal>
-            </Col>
-          </Row>
         </LayoutTemplate>
       );
     }),

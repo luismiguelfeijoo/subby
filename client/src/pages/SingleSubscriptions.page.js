@@ -20,9 +20,12 @@ import {
   Form,
   Select,
   message,
+  Spin,
 } from 'antd';
 const { Option } = Select;
+import { SpinIcon } from '../../lib/loading';
 import moment from 'moment';
+import { PageSpinner } from './utils/styles';
 
 export const SingleSubscriptionPage = withProtected(
   withTypeUser(
@@ -31,6 +34,7 @@ export const SingleSubscriptionPage = withProtected(
       const [data, setData] = useState();
       const [visible, setVisible] = useState(false);
       const [confirmLoading, setConfirmLoading] = useState(false);
+      const [spinner, setSpinner] = useState(true);
 
       useEffect(() => {
         if (!loading) {
@@ -39,13 +43,15 @@ export const SingleSubscriptionPage = withProtected(
       }, []);
 
       const fetchSubscription = (id) => {
+        setSpinner(true);
         getSingleSubscription(id)
           .then((sub) => {
             setData(sub);
           })
           .catch((err) => {
             console.log(err);
-          });
+          })
+          .finally(() => setSpinner(false));
       };
 
       const showModal = () => {
@@ -157,68 +163,63 @@ export const SingleSubscriptionPage = withProtected(
                       );
                     })}
               </Descriptions>
+              <Row>
+                <Col span={8} offset={8}>
+                  <Button
+                    style={{ margin: '30px 0 0 ' }}
+                    block
+                    onClick={() =>
+                      history.push(
+                        `/company/subscriptions/edit/${match.params.id}`
+                      )
+                    }
+                  >
+                    Edit Subscription
+                  </Button>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={8} offset={8}>
+                  <Button
+                    style={{ margin: '30px 0 0 ' }}
+                    block
+                    onClick={() => showModal()}
+                  >
+                    Add Extra
+                  </Button>
+                  <Modal
+                    centered
+                    title='Add extra'
+                    visible={visible}
+                    confirmLoading={confirmLoading}
+                    onCancel={() => handleCancel()}
+                    footer={[
+                      <Button key='back' onClick={() => handleCancel()}>
+                        Cancel
+                      </Button>,
+                    ]}
+                  >
+                    <ExtraForm
+                      onSubmit={onSubmit}
+                      handleSubmit={handleSubmit}
+                      errors={errors}
+                      methods={methods}
+                    />
+                  </Modal>
+                </Col>
+              </Row>
             </>
           ) : (
-            'ERROR LOADING '
+            <PageSpinner>
+              <Spin size='large' indicator={SpinIcon} />
+            </PageSpinner>
           )}
-          <Row>
-            <Col span={8} offset={8}>
-              <Button
-                style={{ margin: '30px 0 0 ' }}
-                block
-                onClick={() =>
-                  history.push(`/company/subscriptions/edit/${match.params.id}`)
-                }
-              >
-                Edit Subscription
-              </Button>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8} offset={8}>
-              <Button
-                style={{ margin: '30px 0 0 ' }}
-                block
-                onClick={() => showModal()}
-              >
-                Add Extra
-              </Button>
-              <Modal
-                centered
-                title='Add extra'
-                visible={visible}
-                confirmLoading={confirmLoading}
-                onCancel={() => handleCancel()}
-                footer={[
-                  <Button key='back' onClick={() => handleCancel()}>
-                    Cancel
-                  </Button>,
-                ]}
-              >
-                <ExtraForm
-                  onSubmit={onSubmit}
-                  handleSubmit={handleSubmit}
-                  errors={errors}
-                  methods={methods}
-                />
-              </Modal>
-            </Col>
-          </Row>
         </LayoutTemplate>
       );
     }),
     { type: 'coordinator' }
   )
 );
-
-/*
-Use datepicker to show information depending on month
-<DatePicker
-  format='MM-YYYY'
-  onChange={(date, dateS) => console.log(date, dateS)}
-  picker='month'
-/>;
-*/
 
 const ExtraForm = ({ onSubmit, handleSubmit, errors, methods }) => {
   const { loading, setLoading } = useContext(UserContext);

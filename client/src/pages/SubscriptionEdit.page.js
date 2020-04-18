@@ -11,9 +11,10 @@ import { withTypeUser } from '../../lib/protectedTypeUser';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, Select, DatePicker, message } from 'antd';
+import { Form, Input, Button, Select, DatePicker, message, Spin } from 'antd';
 import moment from 'moment';
-import { formItemLayout } from './utils/styles';
+import { formItemLayout, PageSpinner } from './utils/styles';
+import { SpinIcon } from '../../lib/loading';
 const { Option } = Select;
 
 export const SubscriptionEditPage = withProtected(
@@ -21,10 +22,10 @@ export const SubscriptionEditPage = withProtected(
     withRouter(({ history, match }) => {
       const { user, loading, setLoading } = useContext(UserContext);
       const [plans, setPlans] = useState([]);
-      const [extras, setExtras] = useState([]);
       const [sub, setSub] = useState();
       const [selectedPlan, setSelectedPlan] = useState([]);
       const [buttonLoading, setButtonLoading] = useState(false);
+      const [spinner, setSpinner] = useState(true);
 
       useEffect(() => {
         if (!loading) {
@@ -34,16 +35,19 @@ export const SubscriptionEditPage = withProtected(
       }, []);
 
       const fetchPlans = () => {
+        setSpinner(true);
         getPlans()
           .then((plans) => {
             setPlans(plans);
           })
           .catch((error) => {
             console.log(error);
-          });
+          })
+          .finally(() => setSpinner(false));
       };
 
       const fetchSubscription = (id) => {
+        setSpinner(true);
         getSingleSubscription(id)
           .then((sub) => {
             setSub(sub);
@@ -51,7 +55,8 @@ export const SubscriptionEditPage = withProtected(
           })
           .catch((err) => {
             console.log(err);
-          });
+          })
+          .finally(() => setSpinner(false));
       };
 
       const methods = useForm({
@@ -74,7 +79,7 @@ export const SubscriptionEditPage = withProtected(
 
       return (
         <LayoutTemplate sider={true}>
-          {sub && (
+          {sub ? (
             <FormContext {...methods}>
               <Form>
                 <Form.Item
@@ -181,6 +186,10 @@ export const SubscriptionEditPage = withProtected(
                 </Form.Item>
               </Form>
             </FormContext>
+          ) : (
+            <PageSpinner>
+              <Spin size='large' indicator={SpinIcon} />
+            </PageSpinner>
           )}
         </LayoutTemplate>
       );
