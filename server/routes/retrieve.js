@@ -143,14 +143,18 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
                   console.log('monthToCharge', monthsToCharge);
 
                   let date = new Date();
+                  
                   date = moment(
                     date.setYear(plan.startDate.getFullYear())
                   ).toDate();
+
                   date = moment(
                     date.setMonth(plan.startDate.getMonth() - monthCount)
-                  )
-                    .endOf('month')
-                    .toDate();
+                  ).endOf('month')
+                  .toDate();
+
+                  date = moment(date).startOf("day").toDate()
+                    
                   let fraction =
                     monthsToCharge % 1 == 0 ? 1 : monthsToCharge % 1;
                   console.log('fraction', fraction);
