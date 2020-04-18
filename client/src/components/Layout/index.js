@@ -76,7 +76,7 @@ export const LayoutTemplate = ({
               padding: 30,
               margin: 0,
               background: !user
-                ? 'url("https://res.cloudinary.com/luismifeijoo/image/upload/v1587055313/background_vyjopw.png") 1440px'
+                ? 'linear-gradient(rgba(33, 6, 94, 1) 0%, rgba(83, 29, 171, 1) 50%, rgba(255, 255, 255, 1) 100%)'
                 : '',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
