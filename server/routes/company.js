@@ -35,7 +35,7 @@ router.post('/', ensureLogin.ensureLoggedOut(), async (req, res, next) => {
     });
 
     const html = newCompanyTemplate({
-      url: `http://localhost:1234/new-company/${token}`,
+      url: `${process.env.FRONT_URL}/new-company/${token}`,
     });
 
     const mailOptions = {
@@ -191,7 +191,7 @@ router.post(
         );
 
         const html = newUserTemplate({
-          url: `http://localhost:1234/new-user/${token}`,
+          url: `${process.env.FRONT_URL}/new-user/${token}`,
           company: company.name,
         });
 
