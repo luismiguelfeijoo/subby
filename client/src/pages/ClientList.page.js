@@ -3,16 +3,31 @@ import { Link, withRouter } from 'react-router-dom';
 import { UserContext, getClients, deleteClient } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { List, Input, Divider, Button, Popover, Typography } from 'antd';
+import {
+  List,
+  Input,
+  Divider,
+  Button,
+  Popover,
+  Typography,
+  Skeleton,
+} from 'antd';
 import { withTypeUser } from '../../lib/protectedTypeUser';
+import { typeClient } from './utils/helpers';
 const { Text } = Typography;
 
 export const ClientListPage = withProtected(
   withTypeUser(
     withRouter(({ history }) => {
-      const { loading } = useContext(UserContext);
-      const [data, setData] = useState([]);
+      const { loading, setLoading } = useContext(UserContext);
+      const [data, setData] = useState([
+        typeClient,
+        typeClient,
+        typeClient,
+        typeClient,
+      ]);
       const [filter, setFilter] = useState('');
+      const [spinner, setSpinner] = useState(true);
 
       useEffect(() => {
         if (!loading) {
@@ -21,16 +36,19 @@ export const ClientListPage = withProtected(
       }, []);
 
       const fetchClients = () => {
-        getClients().then(subs => {
-          setData(subs);
-        });
+        setSpinner(true);
+        getClients()
+          .then((subs) => {
+            setData(subs);
+          })
+          .finally(() => setSpinner(false));
       };
 
       return (
         <LayoutTemplate sider={true} currentPage='clientsList'>
           <Input.Search
             placeholder='Search by name'
-            onChange={event => setFilter(event.target.value)}
+            onChange={(event) => setFilter(event.target.value)}
             style={{ width: '50%', marginRight: 10 }}
           />
           <Button
@@ -50,60 +68,66 @@ export const ClientListPage = withProtected(
           <List
             itemLayout='horizontal'
             dataSource={data}
-            renderItem={client =>
+            renderItem={(client) =>
               client.name.first.toLowerCase().includes(filter.toLowerCase()) ||
               client.name.last.toLowerCase().includes(filter.toLowerCase()) ? (
                 <List.Item
                   actions={[
-                    <Link
-                      key='list-loadmore-edit'
-                      to={`/company/clients/${client._id}`}
-                    >
-                      edit
-                    </Link>,
-                    <Popover
-                      key='list-loadmore-delete'
-                      title='Are you sure?'
-                      trigger='click'
-                      placement='topRight'
-                      content={
-                        <>
-                          <p>This is a change you can't undo</p>
-                          <Text
-                            type='danger'
-                            onClick={async () => {
-                              try {
-                                await deleteClient(client._id);
-                                fetchClients();
-                              } catch (error) {
-                                console.log(error);
-                              }
-                            }}
-                          >
-                            Delete anyways
-                          </Text>
-                        </>
-                      }
-                    >
-                      <Link to='#'>delete</Link>
-                    </Popover>
+                    <Skeleton loading={spinner} active>
+                      <Link
+                        key='list-loadmore-edit'
+                        to={`/company/clients/${client._id}`}
+                      >
+                        edit
+                      </Link>
+                    </Skeleton>,
+                    <Skeleton loading={spinner} active>
+                      <Popover
+                        key='list-loadmore-delete'
+                        title='Are you sure?'
+                        trigger='click'
+                        placement='topRight'
+                        content={
+                          <>
+                            <p>This is a change you can't undo</p>
+                            <Text
+                              type='danger'
+                              onClick={async () => {
+                                try {
+                                  await deleteClient(client._id);
+                                  fetchClients();
+                                } catch (error) {
+                                  console.log(error);
+                                }
+                              }}
+                            >
+                              Delete anyways
+                            </Text>
+                          </>
+                        }
+                      >
+                        <Link to='#'>delete</Link>
+                      </Popover>
+                    </Skeleton>,
                   ]}
                 >
-                  <List.Item.Meta
-                    title={
-                      <Link to={`/company/clients/${client._id}`}>
-                        {`${client.name.first} ${client.name.last}`}
-                      </Link>
-                    }
-                    description={
-                      client.subscriptions.length > 0 &&
-                      client.subscriptions.reduce((acc, sub) => {
-                        return acc !== ''
-                          ? `${acc},  ${sub.name}`
-                          : `Subs: ${sub.name}`;
-                      }, '')
-                    }
-                  />
+                  <Skeleton loading={spinner} active>
+                    <List.Item.Meta
+                      title={
+                        <Link to={`/company/clients/${client._id}`}>
+                          {`${client.name.first} ${client.name.last}`}
+                        </Link>
+                      }
+                      description={
+                        client.subscriptions.length > 0 &&
+                        client.subscriptions.reduce((acc, sub) => {
+                          return acc !== ''
+                            ? `${acc},  ${sub.name}`
+                            : `Subs: ${sub.name}`;
+                        }, '')
+                      }
+                    />
+                  </Skeleton>
                 </List.Item>
               ) : (
                 <></>

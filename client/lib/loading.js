@@ -12,11 +12,12 @@ const LoadingWrapper = styled.div`
   position: absolute;
   top: 0%;
   z-index: 10000;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 1);
 `;
-const Icon = <SyncOutlined spin style={{ fontSize: 50 }} spin />;
+export const SpinIcon = <SyncOutlined spin style={{ fontSize: 50 }} spin />;
+
 export const Loading = () => (
   <LoadingWrapper>
-    <Spin size='large' indicator={Icon} />
+    <Spin size='large' indicator={SpinIcon} />
   </LoadingWrapper>
 );

@@ -25,11 +25,13 @@ import {
   List,
   Popover,
   Typography,
+  Spin,
 } from 'antd';
-
-import { formItemLayout } from './utils/styles';
+import { formItemLayout, PageSpinner } from './utils/styles';
+import { SpinIcon } from '../../lib/loading';
 const { Option } = Select;
 const { Text } = Typography;
+
 export const CompanyProfilePage = withProtected(
   withTypeUser(
     withRouter(({ history, match }) => {
@@ -38,7 +40,7 @@ export const CompanyProfilePage = withProtected(
       const [visiblePlan, setVisiblePlan] = useState(false);
       const [company, setCompany] = useState();
       const [buttonDisabled, setButtonDisabled] = useState(false);
-
+      const [spinner, setSpinner] = useState(true);
       useEffect(() => {
         if (!loading) {
           fetchCompany();
@@ -46,13 +48,15 @@ export const CompanyProfilePage = withProtected(
       }, []);
 
       const fetchCompany = () => {
+        setSpinner(true);
         getCompany()
           .then((company) => {
             setCompany(company);
           })
           .catch((error) => {
             console.log(error);
-          });
+          })
+          .finally(() => setSpinner(false));
       };
 
       const methods = useForm({
@@ -96,7 +100,7 @@ export const CompanyProfilePage = withProtected(
           currentPage='companyProfile'
           currentMenuTab='company'
         >
-          {company && (
+          {company ? (
             <>
               <Descriptions
                 title={
@@ -274,6 +278,10 @@ export const CompanyProfilePage = withProtected(
                 </Col>
               </Row>
             </>
+          ) : (
+            <PageSpinner>
+              <Spin size='large' indicator={SpinIcon} />
+            </PageSpinner>
           )}
         </LayoutTemplate>
       );
