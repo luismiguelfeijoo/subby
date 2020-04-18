@@ -49,7 +49,7 @@ router.post(
       });
 
       const html = newPasswordTemplate({
-        url: `http://localhost:1234/reset-password/${user._id}/${token}`,
+        url: `${process.env.FRONT_URL}/reset-password/${user._id}/${token}`,
         name: user.name.first,
       });
 
