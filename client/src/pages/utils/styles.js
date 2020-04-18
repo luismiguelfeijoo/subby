@@ -23,6 +23,14 @@ export const Button = styled.button`
 export const formItemLayout = {
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16, offset: 4 }
-  }
+    sm: { span: 16, offset: 4 },
+  },
 };
+
+export const PageSpinner = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+`;

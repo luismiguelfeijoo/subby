@@ -2,13 +2,13 @@ import React, { useEffect, useContext, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import {
   UserContext,
-  deleteClient,
+  getSubscriptions,
   deleteSubscription,
 } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { withTypeUser } from '../../lib/protectedTypeUser';
-import { fetchSubscriptions } from './utils/helpers';
+
 import {
   List,
   Input,
@@ -17,22 +17,37 @@ import {
   Popover,
   message,
   Typography,
+  Skeleton,
 } from 'antd';
+import { typeSub } from './utils/helpers';
 const { Text } = Typography;
 const { Search } = Input;
 
 export const SubscriptionListPage = withProtected(
   withTypeUser(
     withRouter(({ match, history }) => {
-      const { loading } = useContext(UserContext);
-      const [data, setData] = useState([]);
+      const { loading, setLoading } = useContext(UserContext);
+      const [data, setData] = useState([typeSub, typeSub, typeSub, typeSub]);
       const [filter, setFilter] = useState('');
+      const [spinner, setSpinner] = useState(true);
 
       useEffect(() => {
         if (!loading) {
           fetchSubscriptions(setData);
         }
       }, []);
+
+      const fetchSubscriptions = (setter) => {
+        setSpinner(true);
+        getSubscriptions()
+          .then((subs) => {
+            setter(subs.filter((sub) => sub.active));
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => setSpinner(false));
+      };
 
       return (
         <LayoutTemplate sider={true} currentPage={'subscriptionsList'}>
@@ -74,62 +89,68 @@ export const SubscriptionListPage = withProtected(
               sub.name.toLowerCase().includes(filter.toLowerCase()) ? (
                 <List.Item
                   actions={[
-                    <Link
-                      key='list-loadmore-edit'
-                      to={`/company/subscriptions/edit/${sub._id}`}
-                    >
-                      edit
-                    </Link>,
-                    <Popover
-                      key='list-loadmore-delete'
-                      title='Are you sure?'
-                      trigger='click'
-                      placement='topRight'
-                      content={
-                        <>
-                          <p>This is a change you can't undo</p>
-                          <Text
-                            type='danger'
-                            onClick={async () => {
-                              try {
-                                const response = await deleteSubscription(
-                                  sub._id
-                                );
-                                message.success(response.status);
-                                fetchSubscriptions(setData);
-                              } catch (error) {
-                                message.error(error.response.data.status);
-                              }
-                            }}
-                          >
-                            Delete anyways
-                          </Text>
-                        </>
-                      }
-                    >
-                      <Link to='#'>delete</Link>
-                    </Popover>,
+                    <Skeleton loading={spinner} active>
+                      <Link
+                        key='list-loadmore-edit'
+                        to={`/company/subscriptions/edit/${sub._id}`}
+                      >
+                        edit
+                      </Link>
+                    </Skeleton>,
+                    <Skeleton loading={spinner} active>
+                      <Popover
+                        key='list-loadmore-delete'
+                        title='Are you sure?'
+                        trigger='click'
+                        placement='topRight'
+                        content={
+                          <>
+                            <p>This is a change you can't undo</p>
+                            <Text
+                              type='danger'
+                              onClick={async () => {
+                                try {
+                                  const response = await deleteSubscription(
+                                    sub._id
+                                  );
+                                  message.success(response.status);
+                                  fetchSubscriptions(setData);
+                                } catch (error) {
+                                  message.error(error.response.data.status);
+                                }
+                              }}
+                            >
+                              Delete anyways
+                            </Text>
+                          </>
+                        }
+                      >
+                        <Link to='#'>delete</Link>
+                      </Popover>
+                    </Skeleton>,
                   ]}
                 >
-                  <List.Item.Meta
-                    title={
-                      <Link to={`/company/subscriptions/${sub._id}`}>
-                        {`${sub.name}`}
-                      </Link>
-                    }
-                    description={
-                      <>
-                        <div>
-                          {sub.parents.reduce((acc, parent) => {
-                            return acc !== ''
-                              ? `${acc}, ${parent.name.first} ${parent.name.last}`
-                              : `Clients: ${parent.name.first} ${parent.name.last}`;
-                          }, '')}
-                        </div>
-                        {sub.level && <div>Level: {sub.level}</div>}
-                      </>
-                    }
-                  />
+                  <Skeleton loading={spinner} active>
+                    <List.Item.Meta
+                      title={
+                        <Link to={`/company/subscriptions/${sub._id}`}>
+                          {`${sub.name}`}
+                        </Link>
+                      }
+                      description={
+                        <>
+                          <div>
+                            {sub.parents.reduce((acc, parent) => {
+                              return acc !== ''
+                                ? `${acc}, ${parent.name.first} ${parent.name.last}`
+                                : `Clients: ${parent.name.first} ${parent.name.last}`;
+                            }, '')}
+                          </div>
+                          {sub.level && <div>Level: {sub.level}</div>}
+                        </>
+                      }
+                    />
+                  </Skeleton>
                 </List.Item>
               ) : (
                 <></>
