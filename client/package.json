@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel index.html",
-    "start": "./node_modules/parcel-bundler/bin/cli.js index.html",
-    "build": "parcel build index.html",
-    "heroku-postbuild": "parcel build index.html"
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
   },
   "author": "",
   "license": "ISC",
@@ -25,13 +23,12 @@
     "react-dom": "^16.13.1",
     "react-hook-form": "^5.1.3",
     "react-router-dom": "^5.1.2",
-    "styled-components": "^5.1.0"
-  },
-  "devDependencies": {
+    "styled-components": "^5.1.0",
     "@babel/core": "^7.9.0",
     "@babel/preset-react": "^7.9.4",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1"
   },
+  "devDependencies": {},
   "description": ""
 }
