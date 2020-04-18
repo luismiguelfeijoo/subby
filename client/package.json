@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "serve dist",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html & npm run create",
+    "create": "mv serve.json dist"
   },
   "author": "",
   "license": "ISC",
