@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "dev": "parcel index.html",
+    "start": "./node_modules/parcel-bundler/bin/cli.js index.html",
+    "build": "parcel build index.html",
+    "heroku-postbuild": "parcel build index.html"
   },
   "author": "",
   "license": "ISC",
