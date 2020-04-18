@@ -114,7 +114,7 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
               2,
             ]).toDate();
             //const proof = moment(new Date('2020-06-01')).toDate(); this is to make tests
-
+            console.log(startOfNextMonth);
             const isStartOfMonth =
               moment().diff(moment().endOf('month'), 'day') === 1;
 
@@ -134,13 +134,18 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
 
                 let monthsToCharge =
                   plan.timesCharged === 0
-                    ? (monthsSinceStart - plan.timesCharged).toFixed(2)
+                    ? (monthsSinceStart - plan.timesCharged).toFixed(1)
                     : 1;
 
                 let monthCount = 0;
 
                 while (monthsToCharge > 0) {
+                  console.log('monthToCharge', monthsToCharge);
+
                   let date = new Date();
+                  date = moment(
+                    date.setYear(plan.startDate.getFullYear())
+                  ).toDate();
                   date = moment(
                     date.setMonth(plan.startDate.getMonth() - monthCount)
                   )
@@ -148,6 +153,7 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
                     .toDate();
                   let fraction =
                     monthsToCharge % 1 == 0 ? 1 : monthsToCharge % 1;
+                  console.log('fraction', fraction);
                   client.debts = [
                     ...client.debts,
                     {
