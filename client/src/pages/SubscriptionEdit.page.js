@@ -25,7 +25,6 @@ export const SubscriptionEditPage = withProtected(
       const [sub, setSub] = useState();
       const [selectedPlan, setSelectedPlan] = useState([]);
       const [buttonLoading, setButtonLoading] = useState(false);
-      const [spinner, setSpinner] = useState(true);
 
       useEffect(() => {
         if (!loading) {
@@ -35,19 +34,16 @@ export const SubscriptionEditPage = withProtected(
       }, []);
 
       const fetchPlans = () => {
-        setSpinner(true);
         getPlans()
           .then((plans) => {
             setPlans(plans);
           })
           .catch((error) => {
             console.log(error);
-          })
-          .finally(() => setSpinner(false));
+          });
       };
 
       const fetchSubscription = (id) => {
-        setSpinner(true);
         getSingleSubscription(id)
           .then((sub) => {
             setSub(sub);
@@ -55,8 +51,7 @@ export const SubscriptionEditPage = withProtected(
           })
           .catch((err) => {
             console.log(err);
-          })
-          .finally(() => setSpinner(false));
+          });
       };
 
       const methods = useForm({
