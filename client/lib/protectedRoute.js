@@ -10,7 +10,7 @@ const ProtectedPagePlaceholder = () => <Loading />;
 export const withProtected = (
   Component,
   { redirect = true, redirectTo = '/login', inverted = false } = {} // options are always present
-) => props => {
+) => (props) => {
   const { user, loading } = useContext(UserContext);
   if (!inverted) {
     if (user) {

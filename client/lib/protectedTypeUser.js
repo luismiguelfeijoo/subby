@@ -10,7 +10,7 @@ const ProtectedPagePlaceholder = () => <Loading />;
 export const withTypeUser = (
   Component,
   { redirect = true, redirectTo = '/profile', type = 'admin' } = {} // options are always present
-) => props => {
+) => (props) => {
   const { user, loading } = useContext(UserContext);
   // If you're talking about localClient Protection
   if (type === 'client') {
