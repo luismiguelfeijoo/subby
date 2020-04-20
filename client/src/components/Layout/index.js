@@ -55,6 +55,7 @@ export const LayoutTemplate = ({
               style={{
                 padding: 24,
                 margin: 0,
+                minHeight: '100vh',
               }}
             >
               {children}

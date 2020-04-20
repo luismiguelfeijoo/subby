@@ -11,25 +11,32 @@ module.exports = (server) => {
   io.on('connection', (socket) => {
     console.log('a user connected');
     // Emit the first message on connect
-
-    socket.on('auth', async (user, id) => {
+    socket.on('userType', async (user) => {
       socket.user = user;
+      if (user.type) {
+        console.log('connecting to company room');
+        socket.join(socket.user.company);
+      }
+    });
+
+    socket.on('auth', async (id) => {
+      console.log('user entering chatroom');
       existingRoom = await Chat.findOne({
-        company: user.company,
+        company: socket.user.company,
         roomName: id,
       });
-      console.log('after looking room', existingRoom);
+      console.log(socket.user);
       socket.room = existingRoom
         ? existingRoom
-        : await Chat.create({ company: user.company, roomName: id });
+        : await Chat.create({ company: socket.user.company, roomName: id });
       socket.join(socket.room.roomName);
+      console.log(socket.room);
       socket.emit(
         'chatHistory',
         socket.room.messages.length > 0
           ? socket.room.messages
-          : [{ text: `Welcome ${user.name.first}` }]
+          : [{ text: `Welcome ${socket.user.name.first}` }]
       );
-      console.log(socket.user, socket.room);
     });
 
     // Register event listener on messages
@@ -40,6 +47,9 @@ module.exports = (server) => {
       socket
         .to(socket.room.roomName)
         .emit('chatmessage', { user: socket.user._id, text: msg });
+      socket
+        .to(socket.user.company)
+        .emit('notification', `${socket.user.name.first} sent ${msg}`);
     });
   });
 };

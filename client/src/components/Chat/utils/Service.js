@@ -1,21 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
-import io from 'socket.io-client';
 import { UserContext } from '../../../../lib/auth.api';
 
-export const ChatService = (handleMessage, user, id) => {
-  console.log('Connecting websocket...');
-  const socket = io(process.env.BACK_URL);
+export const ChatService = (handleMessage, id, socket) => {
+  console.log('entering chat room', handleMessage);
 
-  socket.emit('auth', user, id);
+  socket.emit('auth', id);
 
   socket.on('chatHistory', (chatHistory) => {
     chatHistory.map((message) => {
       handleMessage(message);
     });
   });
+
   // recieve message
   socket.on('chatmessage', (message) => {
-    console.log(message);
     handleMessage(message);
   });
 
@@ -29,7 +27,7 @@ export const ChatService = (handleMessage, user, id) => {
 
 export const useChatService = (onMessage, id) => {
   // The chat messagesstate holder
-  const { loading } = useContext(UserContext);
+  const { loading, socket, setLoading } = useContext(UserContext);
   const [messages, setChatMessages] = useState([]);
 
   // The emitter holder
@@ -55,8 +53,8 @@ export const useChatService = (onMessage, id) => {
           //setChatMessages([...messages, msgobj]);
           onMessage(msg);
         },
-        user,
-        id
+        id,
+        socket
       );
 
       // NOTE: https://github.com/facebook/react/issues/14087

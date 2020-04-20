@@ -6,20 +6,24 @@ import { UserContext } from '../../../lib/auth.api';
 
 const ChatDeco = styled.div`
   border: 1px solid red;
-  width: 300px;
+  width: 100%;
 `;
 const MessagesWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  justify-content: flex-end;
+  height: calc(100vh - 80px);
+  width: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
   padding-bottom: 20px;
 `;
+
 export const Message = styled.div`
-  background: ${({ type }) => (type == 'server' ? 'lightgreen' : 'lightgray')};
+  background: ${({ type }) => (type == 'server' ? '#722ed1' : 'lightgray')};
+  color: ${({ type }) => (type == 'server' ? 'white' : 'black')};
   border-radius: 10px;
-  padding: 3px 10px;
+  padding: 6px 10px;
   margin: ${({ type }) =>
     type == 'server' ? '3px 20px 3px 10px' : '3px 10px 3px 20px'};
   align-self: ${({ type }) => (type == 'server' ? 'flex-start' : 'flex-end')};
@@ -37,9 +41,11 @@ export const Chat = ({ id }) => {
   // The Chat service :)
   const { sendMessage, messages } = useChatService(() => {
     // Scroll the messages to end
-    msgRef.current.scrollTop = msgRef.current.scrollHeight;
+    msgRef.current
+      ? (msgRef.current.scrollTop = msgRef.current.scrollHeight)
+      : '';
   }, id);
-  console.log(msgRef);
+
   return (
     <ChatDeco>
       <MessagesWrapper ref={msgRef}>
