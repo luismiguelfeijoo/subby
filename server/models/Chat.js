@@ -1,0 +1,16 @@
+const mongoose = require('mongoose');
+const _ = require('lodash');
+const { ObjectId } = mongoose.Schema.Types;
+
+const schema = new mongoose.Schema(
+  {
+    company: { type: ObjectId, ref: 'company' },
+    roomName: { type: ObjectId, required: true },
+    messages: [{ text: String, user: ObjectId }],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model('chat', schema);
