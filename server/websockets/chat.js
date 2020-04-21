@@ -124,16 +124,22 @@ module.exports = (server) => {
       });
 
       room.messages = [...room.messages, { user: socket.user._id, text: msg }];
+      room.messages.length > 50 &&
+        (room.messages = [...room.messages].slice(-50));
       room.notifications = [
         ...room.notifications,
         { sentBy: socket.user._id, readBy: [socket.user._id] },
       ];
+      room.notifications.length > 10 &&
+        (room.notifications = [...room.notifications].slice(-10));
       await room.save();
 
       globalRoom.notifications = [
         ...globalRoom.notifications,
         { sentBy: socket.user._id, readBy: [socket.user._id] },
       ];
+      globalRoom.notifications.length > 10 &&
+        (globalRoom.notifications = [...globalRoom.notifications].slice(-10));
       await globalRoom.save();
 
       socket
