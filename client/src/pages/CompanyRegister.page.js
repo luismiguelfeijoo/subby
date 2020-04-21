@@ -3,14 +3,15 @@ import { withRouter } from 'react-router-dom';
 import { UserContext, doCompanySignup } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, message, Typography } from 'antd';
-import { formItemLayout } from './utils/styles';
+import { Form, Input, Button, message, Typography, notification } from 'antd';
 import jwt from 'jsonwebtoken';
 import { SiderMenu } from '../components/Layout/Menu';
 const { Title } = Typography;
 
 export const CompanyRegisterPage = withRouter(({ history, match }) => {
-  const { setLoading, setUser, user } = useContext(UserContext);
+  const { setLoading, setUser, user, setNotifications, setSocket } = useContext(
+    UserContext
+  );
   const [buttonLoading, setButtonLoading] = useState(false);
 
   useEffect(() => {
@@ -46,6 +47,8 @@ export const CompanyRegisterPage = withRouter(({ history, match }) => {
       const user = await doCompanySignup(data, match.params.token);
       setButtonLoading(false);
       setUser(user);
+      const userSocket = SocketConnection(setNotifications, user, notification);
+      setSocket(userSocket);
       history.push('/profile');
     } catch (error) {
       if (error.response) {

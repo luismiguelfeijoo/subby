@@ -6,15 +6,15 @@ import {
   doPasswordReset,
 } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
-import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Button, Input, message, Typography } from 'antd';
-import { formItemLayout } from './utils/styles';
+import { Form, Button, Input, message, Typography, notification } from 'antd';
 import { SiderMenu } from '../components/Layout/Menu';
 const { Title } = Typography;
 
 export const ResetPasswordForm = withRouter(({ history, match }) => {
-  const { setLoading, setUser, user } = useContext(UserContext);
+  const { setLoading, setUser, user, setNotifications, setSocket } = useContext(
+    UserContext
+  );
   const [buttonDisable, setButtonDisable] = useState(false);
 
   useEffect(() => {
@@ -45,6 +45,8 @@ export const ResetPasswordForm = withRouter(({ history, match }) => {
         match.params.id
       );
       setUser(user);
+      const userSocket = SocketConnection(setNotifications, user, notification);
+      setSocket(userSocket);
       history.push('/profile');
     } catch (error) {
       console.log(error.response);

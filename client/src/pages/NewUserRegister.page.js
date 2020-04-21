@@ -3,7 +3,15 @@ import { withRouter } from 'react-router-dom';
 import { UserContext, doUserSignup } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, Select, message, Typography } from 'antd';
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  message,
+  Typography,
+  notification,
+} from 'antd';
 const { Option } = Select;
 const { Title } = Typography;
 import jwt from 'jsonwebtoken';
@@ -11,7 +19,9 @@ import { formItemLayout } from './utils/styles';
 import { SiderMenu } from '../components/Layout/Menu';
 
 export const UserRegisterPage = withRouter(({ history, match }) => {
-  const { setLoading, user, setUser } = useContext(UserContext);
+  const { setLoading, user, setUser, setNotifications } = useContext(
+    UserContext
+  );
   const [userType, setUserType] = useState();
   const [buttonLoading, setButtonLoading] = useState(false);
 
@@ -71,6 +81,8 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
       const user = await doUserSignup(data, match.params.token);
       setButtonLoading(false);
       setUser(user);
+      const userSocket = SocketConnection(setNotifications, user, notification);
+      setSocket(userSocket);
       history.push('/profile');
     } catch (error) {
       if (error.response) {

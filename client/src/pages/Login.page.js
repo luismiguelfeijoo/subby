@@ -4,12 +4,13 @@ import { UserContext, doLogin } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Input, Form, Button, Typography, message } from 'antd';
+import { Input, Form, Button, Typography, message, notification } from 'antd';
 import { SiderMenu } from '../components/Layout/Menu';
+import { SocketConnection } from '../../lib/socketConnection';
 const { Title, Text } = Typography;
 export const LoginPage = withProtected(
   withRouter(({ history }) => {
-    const { setUser, setLoading } = useContext(UserContext);
+    const { setUser, setNotifications, setSocket } = useContext(UserContext);
     const [buttonLoading, setButtonLoading] = useState(false);
 
     const methods = useForm({
@@ -30,6 +31,12 @@ export const LoginPage = withProtected(
         const newUser = await doLogin(data);
         setButtonLoading(false);
         setUser(newUser);
+        const userSocket = SocketConnection(
+          setNotifications,
+          newUser,
+          notification
+        );
+        setSocket(userSocket);
         history.push('/company/clients');
       } catch (error) {
         message.error(error.response.data.status);
