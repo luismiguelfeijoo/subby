@@ -18,9 +18,13 @@ router.post(
   passport.authenticate('local'),
   (req, res) => {
     // Return the logged in user
-    return res.json(
-      _.pick(req.user, ['username', '_id', 'company', 'name', 'type'])
-    );
+    return req.user.type
+      ? res.json(
+          _.pick(req.user, ['username', '_id', 'company', 'name', 'type'])
+        )
+      : res.json(
+          _.pick(req.user, ['username', '_id', 'company', 'name', 'phone'])
+        );
   }
 );
 
@@ -101,16 +105,25 @@ router.post(
             user.password = hashPassword(password);
             await user.save();
             req.logIn(user, (err) => {
-              return res.json(
-                _.pick(req.user, [
-                  'username',
-                  '_id',
-                  'company',
-                  'name',
-                  'type',
-                  'phone',
-                ])
-              );
+              return req.user.type
+                ? res.json(
+                    _.pick(req.user, [
+                      'username',
+                      '_id',
+                      'company',
+                      'name',
+                      'type',
+                    ])
+                  )
+                : res.json(
+                    _.pick(req.user, [
+                      'username',
+                      '_id',
+                      'company',
+                      'name',
+                      'phone',
+                    ])
+                  );
             });
           } else {
             errors = errors.reduce((acc, error) => {
@@ -149,17 +162,27 @@ router.post('/edit', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
       loggedUser.name = { first: firstName, last: lastName };
       if (loggedUser.type) loggedUser.phone = { phone, prefix };
       loggedUser.save();
-      return res.json({
-        status: 'User updated',
-        user: _.pick(req.user, [
-          'username',
-          '_id',
-          'company',
-          'name',
-          'type',
-          'phone',
-        ]),
-      });
+      return req.user.type
+        ? res.json({
+            status: 'User updated',
+            user: _.pick(req.user, [
+              'username',
+              '_id',
+              'company',
+              'name',
+              'type',
+            ]),
+          })
+        : res.json({
+            status: 'User updated',
+            user: _.pick(req.user, [
+              'username',
+              '_id',
+              'company',
+              'name',
+              'phone',
+            ]),
+          });
     } else {
       res.status(401).json({ status: `You can't use that username` });
     }

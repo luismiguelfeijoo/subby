@@ -62,7 +62,6 @@ module.exports = (server) => {
           company: user.company,
           roomName: user._id,
         });
-        console.log('old notifications', existingRoom.notifications);
       }
       existingRoom &&
         socket.emit(
@@ -82,7 +81,6 @@ module.exports = (server) => {
           (roomNotification) =>
             String(roomNotification._id) === String(incomingNotification._id)
         );
-        console.log(readNotification);
         if (readNotification) {
           readNotification.readBy = [
             ...readNotification.readBy,

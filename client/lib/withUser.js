@@ -40,6 +40,7 @@ export const withUser = (Content) => () => {
         loading,
         setLoading,
         socket,
+        setSocket,
         notifications,
         setNotifications,
       }}

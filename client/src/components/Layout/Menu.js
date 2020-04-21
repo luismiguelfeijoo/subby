@@ -16,7 +16,7 @@ const { SubMenu } = Menu;
 import { doLogout, UserContext } from '../../../lib/auth.api';
 
 export const SiderMenu = withRouter(
-  ({ currentPage, currentMenuTab, broken = false }) => {
+  ({ currentPage, currentMenuTab, broken = false, history }) => {
     const { user, setUser, notifications } = useContext(UserContext);
 
     return (
