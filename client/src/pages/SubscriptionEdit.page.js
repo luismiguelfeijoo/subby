@@ -15,6 +15,7 @@ import { Form, Input, Button, Select, DatePicker, message, Spin } from 'antd';
 import moment from 'moment';
 import { formItemLayout, PageSpinner } from './utils/styles';
 import { SpinIcon } from '../../lib/loading';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Option } = Select;
 
 export const SubscriptionEditPage = withProtected(
@@ -73,7 +74,7 @@ export const SubscriptionEditPage = withProtected(
       };
 
       return (
-        <LayoutTemplate sider={true}>
+        <LayoutTemplate sider menu={<SiderMenu />}>
           {sub ? (
             <FormContext {...methods}>
               <Form>

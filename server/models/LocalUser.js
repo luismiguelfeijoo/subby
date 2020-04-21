@@ -8,16 +8,16 @@ const schema = new mongoose.Schema(
     password: { type: String, required: true },
     name: {
       first: { type: String },
-      last: { type: String }
+      last: { type: String },
     },
     type: {
       type: String,
-      enum: ['admin', 'coordinator']
+      enum: ['admin', 'coordinator'],
     },
-    company: { type: ObjectId, ref: 'company' }
+    company: { type: ObjectId, ref: 'company' },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

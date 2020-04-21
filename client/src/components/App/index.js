@@ -9,6 +9,7 @@ import { NewUserRouter } from '../../routes/NewUser.router';
 import { CompanyRouter } from '../../routes/Company.router';
 import { ProfileRouter } from '../../routes/Profile.router';
 import { NotFoundPage } from '../../pages/NotFoundPage';
+import { ChatRouter } from '../../routes/Chat.router';
 
 export const App = withUser(() => {
   return (
@@ -36,6 +37,7 @@ export const App = withUser(() => {
           path='/profile'
           component={(props) => <ProfileRouter {...props} />}
         />
+        <Route path='/chat' component={(props) => <ChatRouter {...props} />} />
         <Route path='*' component={NotFoundPage} />
       </Switch>
     </Router>

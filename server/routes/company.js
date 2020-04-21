@@ -93,16 +93,25 @@ router.post(
               company: newCompany._id,
             });
             req.logIn(newUser, (err) => {
-              return res.json(
-                _.pick(req.user, [
-                  'username',
-                  '_id',
-                  'company',
-                  'name',
-                  'type',
-                  'phone',
-                ])
-              );
+              return req.user.type
+                ? res.json(
+                    _.pick(req.user, [
+                      'username',
+                      '_id',
+                      'company',
+                      'name',
+                      'type',
+                    ])
+                  )
+                : res.json(
+                    _.pick(req.user, [
+                      'username',
+                      '_id',
+                      'company',
+                      'name',
+                      'phone',
+                    ])
+                  );
             });
             //return res.json({ status: 'Company & admin user created' });
           } else {

@@ -26,6 +26,7 @@ const { Option } = Select;
 import { SpinIcon } from '../../lib/loading';
 import moment from 'moment';
 import { PageSpinner } from './utils/styles';
+import { SiderMenu } from '../components/Layout/Menu';
 
 export const SingleSubscriptionPage = withProtected(
   withTypeUser(
@@ -84,7 +85,7 @@ export const SingleSubscriptionPage = withProtected(
       };
 
       return (
-        <LayoutTemplate sider={true}>
+        <LayoutTemplate sider menu={<SiderMenu />}>
           {data ? (
             <>
               <Descriptions

@@ -7,6 +7,7 @@ import { LayoutTemplate } from '../components/Layout';
 import { Form, Button, Input, message, Typography } from 'antd';
 const { Title } = Typography;
 import { formItemLayout } from './utils/styles';
+import { SiderMenu } from '../components/Layout/Menu';
 
 export const NewCompanyPage = withProtected(
   withRouter(({ history }) => {
@@ -38,21 +39,21 @@ export const NewCompanyPage = withProtected(
 
     return (
       <LayoutTemplate>
-        <FormContext {...methods}>
+        <FormContext {...methods} menu={<SiderMenu broken />}>
           <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
             JOIN OUR COMUNITY
           </Title>
           <Form
             style={{
-              width: '100%',
+              margin: '40px auto',
+              width: '50%',
               backgroundColor: '#fff',
-              margin: '40px 0',
               padding: '30px 8%',
               borderRadius: '5px',
             }}
           >
             <Form.Item
-              {...formItemLayout}
+              wrapperCol={{ xs: { span: 24 } }}
               validateStatus={errors.company?.message ? 'error' : 'success'}
               help={errors.company?.message && errors.company.message}
             >
@@ -67,7 +68,7 @@ export const NewCompanyPage = withProtected(
             </Form.Item>
 
             <Form.Item
-              {...formItemLayout}
+              wrapperCol={{ xs: { span: 24 } }}
               validateStatus={errors.email?.message ? 'error' : 'success'}
               help={errors.email?.message && errors.email.message}
             >
@@ -85,7 +86,7 @@ export const NewCompanyPage = withProtected(
               />
             </Form.Item>
 
-            <Form.Item {...formItemLayout}>
+            <Form.Item wrapperCol={{ xs: { span: 24 } }}>
               <Button
                 loading={buttonLoading}
                 type='primary'
