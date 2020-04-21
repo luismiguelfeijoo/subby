@@ -6,6 +6,7 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Form, Button, Input, message, Typography } from 'antd';
 import { formItemLayout } from './utils/styles';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Title } = Typography;
 
 export const ResetPasswordReq = withProtected(
@@ -36,21 +37,21 @@ export const ResetPasswordReq = withProtected(
 
     return (
       <LayoutTemplate>
-        <FormContext {...methods}>
+        <FormContext {...methods} menu={<SiderMenu broken />}>
           <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
             REQUEST NEW PASSWORD
           </Title>
           <Form
             style={{
-              width: '100%',
+              margin: '40px auto',
+              width: '50%',
               backgroundColor: '#fff',
-              margin: '40px 0',
               padding: '30px 8%',
               borderRadius: '5px',
             }}
           >
             <Form.Item
-              {...formItemLayout}
+              wrapperCol={{ xs: { span: 24 } }}
               validateStatus={errors.username?.message ? 'error' : 'success'}
               help={errors.username?.message && errors.username.message}
             >
@@ -67,7 +68,7 @@ export const ResetPasswordReq = withProtected(
                 }}
               />
             </Form.Item>
-            <Form.Item {...formItemLayout}>
+            <Form.Item wrapperCol={{ xs: { span: 24 } }}>
               <Button
                 loading={buttonLoading}
                 type='primary'

@@ -4,18 +4,15 @@ import { UserContext, doLogin } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Input, Form, Button, Typography, message } from 'antd';
+import { Input, Form, Button, Typography, message, notification } from 'antd';
+import { SiderMenu } from '../components/Layout/Menu';
+import { SocketConnection } from '../../lib/socketConnection';
 const { Title, Text } = Typography;
 export const LoginPage = withProtected(
   withRouter(({ history }) => {
-    const { setUser, setLoading } = useContext(UserContext);
+    const { setUser, setNotifications, setSocket } = useContext(UserContext);
     const [buttonLoading, setButtonLoading] = useState(false);
-    const formItemLayout = {
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16, offset: 4 },
-      },
-    };
+
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
@@ -34,6 +31,12 @@ export const LoginPage = withProtected(
         const newUser = await doLogin(data);
         setButtonLoading(false);
         setUser(newUser);
+        const userSocket = SocketConnection(
+          setNotifications,
+          newUser,
+          notification
+        );
+        setSocket(userSocket);
         history.push('/company/clients');
       } catch (error) {
         message.error(error.response.data.status);
@@ -42,29 +45,29 @@ export const LoginPage = withProtected(
     };
 
     return (
-      <LayoutTemplate>
+      <LayoutTemplate menu={<SiderMenu broken />}>
         <FormContext {...methods}>
           <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
             LOGIN
           </Title>
           <Form
             style={{
-              width: '100%',
+              margin: '40px auto',
+              width: '50%',
               backgroundColor: '#fff',
-              margin: '40px 0',
               padding: '30px 8%',
               borderRadius: '5px',
             }}
           >
             <Form.Item
-              {...formItemLayout}
+              wrapperCol={{ xs: { span: 24 } }}
               validateStatus={errors.username?.message ? 'error' : 'success'}
               help={errors.username?.message && errors.username.message}
             >
               <Controller
                 as={Input}
                 name='username'
-                placeholder='Username'
+                placeholder='Email'
                 rules={{
                   required: 'Required',
                   pattern: {
@@ -76,7 +79,7 @@ export const LoginPage = withProtected(
             </Form.Item>
 
             <Form.Item
-              {...formItemLayout}
+              wrapperCol={{ xs: { span: 24 } }}
               required={true}
               validateStatus={errors.password?.message ? 'error' : 'success'}
               help={errors.password?.message && errors.password.message}
@@ -96,7 +99,10 @@ export const LoginPage = withProtected(
               />
             </Form.Item>
 
-            <Form.Item {...formItemLayout} style={{ margin: '0 0 10px' }}>
+            <Form.Item
+              wrapperCol={{ xs: { span: 24 } }}
+              style={{ margin: '0 0 10px' }}
+            >
               <Button
                 disabled={buttonLoading}
                 type='primary'
@@ -106,10 +112,16 @@ export const LoginPage = withProtected(
                 Login
               </Button>
             </Form.Item>
-            <Form.Item {...formItemLayout} style={{ margin: '0 10px' }}>
+            <Form.Item
+              wrapperCol={{ xs: { span: 24 } }}
+              style={{ margin: '0 10px' }}
+            >
               <Text>or</Text>
             </Form.Item>
-            <Form.Item {...formItemLayout} style={{ margin: '0' }}>
+            <Form.Item
+              wrapperCol={{ xs: { span: 24 } }}
+              style={{ margin: '0' }}
+            >
               <Link to='/reset-password'>Forgot Password?</Link>
             </Form.Item>
           </Form>

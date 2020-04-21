@@ -3,13 +3,15 @@ import { withRouter } from 'react-router-dom';
 import { UserContext, doCompanySignup } from '../../lib/auth.api';
 import { useForm, FormContext, Controller } from 'react-hook-form';
 import { LayoutTemplate } from '../components/Layout';
-import { Form, Input, Button, message, Typography } from 'antd';
-import { formItemLayout } from './utils/styles';
+import { Form, Input, Button, message, Typography, notification } from 'antd';
 import jwt from 'jsonwebtoken';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Title } = Typography;
 
 export const CompanyRegisterPage = withRouter(({ history, match }) => {
-  const { setLoading, setUser, user } = useContext(UserContext);
+  const { setLoading, setUser, user, setNotifications, setSocket } = useContext(
+    UserContext
+  );
   const [buttonLoading, setButtonLoading] = useState(false);
 
   useEffect(() => {
@@ -45,6 +47,8 @@ export const CompanyRegisterPage = withRouter(({ history, match }) => {
       const user = await doCompanySignup(data, match.params.token);
       setButtonLoading(false);
       setUser(user);
+      const userSocket = SocketConnection(setNotifications, user, notification);
+      setSocket(userSocket);
       history.push('/profile');
     } catch (error) {
       if (error.response) {
@@ -55,22 +59,22 @@ export const CompanyRegisterPage = withRouter(({ history, match }) => {
   };
 
   return (
-    <LayoutTemplate>
+    <LayoutTemplate menu={<SiderMenu broken />}>
       <FormContext {...methods}>
         <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
           REGISTER
         </Title>
         <Form
           style={{
-            width: '100%',
+            margin: '40px auto',
+            width: '50%',
             backgroundColor: '#fff',
-            margin: '40px 0',
             padding: '30px 8%',
             borderRadius: '5px',
           }}
         >
           <Form.Item
-            {...formItemLayout}
+            wrapperCol={{ xs: { span: 24 } }}
             required={true}
             validateStatus={errors.password?.message ? 'error' : 'success'}
             help={errors.password?.message && errors.password.message}
@@ -91,7 +95,7 @@ export const CompanyRegisterPage = withRouter(({ history, match }) => {
           </Form.Item>
 
           <Form.Item
-            {...formItemLayout}
+            wrapperCol={{ xs: { span: 24 } }}
             required={true}
             validateStatus={
               errors.password_repeat?.message ? 'error' : 'success'
@@ -113,7 +117,7 @@ export const CompanyRegisterPage = withRouter(({ history, match }) => {
             />
           </Form.Item>
           <Form.Item
-            {...formItemLayout}
+            wrapperCol={{ xs: { span: 24 } }}
             required={true}
             validateStatus={errors.firstName?.message ? 'error' : 'success'}
             help={errors.firstName?.message && errors.firstName.message}
@@ -129,7 +133,7 @@ export const CompanyRegisterPage = withRouter(({ history, match }) => {
             />
           </Form.Item>
           <Form.Item
-            {...formItemLayout}
+            wrapperCol={{ xs: { span: 24 } }}
             required={true}
             validateStatus={errors.lastName?.message ? 'error' : 'success'}
             help={errors.lastName?.message && errors.lastName.message}
@@ -144,7 +148,7 @@ export const CompanyRegisterPage = withRouter(({ history, match }) => {
               }}
             />
           </Form.Item>
-          <Form.Item {...formItemLayout}>
+          <Form.Item wrapperCol={{ xs: { span: 24 } }}>
             <Button
               disabled={buttonLoading}
               type='primary'

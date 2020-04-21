@@ -6,6 +6,7 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Form, Input, Button, Select, message, Typography } from 'antd';
 import { formItemLayout } from './utils/styles';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Option } = Select;
 const { Title } = Typography;
 export const ProfilePage = withProtected(
@@ -53,7 +54,10 @@ export const ProfilePage = withProtected(
     };
 
     return (
-      <LayoutTemplate sider={true} currentMenuTab='User' currentPage='profile'>
+      <LayoutTemplate
+        sider={true}
+        menu={<SiderMenu currentMenuTab='User' currentPage='profile' />}
+      >
         <FormContext {...methods}>
           <Title style={{ textAlign: 'center' }} level={2}>
             Profile
