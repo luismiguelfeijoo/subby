@@ -12,7 +12,7 @@ import {
   PlusOutlined,
   LoginOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, notification } from 'antd';
 const { SubMenu } = Menu;
 const { Header, Footer, Sider, Content } = Layout;
 import { doLogout, UserContext } from '../../../lib/auth.api';
@@ -43,7 +43,6 @@ export const LayoutTemplate = ({
               setBroken(broken);
             }}
           >
-            <div style={{ height: '50px' }}></div>
             <SiderMenu
               selection={currentPage}
               history={history}
@@ -97,7 +96,9 @@ export const LayoutTemplate = ({
 };
 
 const SiderMenu = withRouter(({ selection, history, open, broken }) => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, notifications, setNotifications } = useContext(
+    UserContext
+  );
 
   return (
     <>
@@ -177,8 +178,10 @@ const SiderMenu = withRouter(({ selection, history, open, broken }) => {
               </Link>
             </Menu.Item>
             <Menu.Item key='Chat'>
-              <MessageOutlined />
-              <span className='nav-text'>Chat</span>
+              <Link to='/chat' onClick={() => setNotifications()}>
+                <ChatIcon notifications={notifications} />
+                <span className='nav-text'>Chat</span>
+              </Link>
             </Menu.Item>
           </Menu>
         ) : (
@@ -227,9 +230,11 @@ const SiderMenu = withRouter(({ selection, history, open, broken }) => {
                 <span className='nav-text'>Subscriptions</span>
               </Link>
             </Menu.Item>
-            <Menu.Item key='Chat'>
-              <MessageOutlined />
-              <span className='nav-text'>Chat</span>
+            <Menu.Item key='Chat' onClick={() => setNotifications()}>
+              <Link to='/chat'>
+                <ChatIcon notifications={notifications} />
+                <span className='nav-text'>Chat</span>
+              </Link>
             </Menu.Item>
           </Menu>
         )
@@ -245,6 +250,45 @@ const SiderMenu = withRouter(({ selection, history, open, broken }) => {
     </>
   );
 });
+
+import styled from 'styled-components';
+
+const DotContainer = styled.div`
+  position: relative;
+  width: 20px;
+  span {
+    position: static;
+  }
+`;
+
+const Dot = styled.div`
+  background-color: #fa3e3e;
+  border-radius: 50%;
+  color: white;
+
+  padding: 5px;
+  font-size: 10px;
+
+  position: absolute; /* Position the badge within the relatively positioned button */
+  top: 10px;
+  left: 10px;
+`;
+
+const ChatIcon = ({ notifications }) => {
+  return (
+    <>
+      {notifications ? (
+        <DotContainer>
+          <MessageOutlined />
+          <Dot />
+          <span className='nav-text'>Chat</span>
+        </DotContainer>
+      ) : (
+        <MessageOutlined />
+      )}
+    </>
+  );
+};
 
 /* 
 

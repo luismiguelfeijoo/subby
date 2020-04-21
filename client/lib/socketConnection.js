@@ -8,6 +8,7 @@ export const SocketConnection = (handleNotification, user) => {
 
   socket.on('notification', (notification) => {
     console.log(notification);
+    handleNotification(notification);
     /*notifications.map((notification) => {
       handleNotification(notification);
     });*/

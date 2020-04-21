@@ -13,7 +13,7 @@ export const ChatPage = withProtected(
     const [spinner, setSpinner] = useState(true);
 
     useEffect(() => {
-      if (!loading) {
+      if (!loading && user.type) {
         fetchClients();
       }
     }, []);

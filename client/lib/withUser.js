@@ -28,7 +28,15 @@ export const withUser = (Content) => () => {
   }, []);
   return (
     <UserContext.Provider
-      value={{ user, setUser, loading, setLoading, socket, notifications }}
+      value={{
+        user,
+        setUser,
+        loading,
+        setLoading,
+        socket,
+        notifications,
+        setNotifications,
+      }}
     >
       {loading && <Loading />}
       <Content />

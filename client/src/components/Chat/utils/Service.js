@@ -27,7 +27,7 @@ export const ChatService = (handleMessage, id, socket) => {
 
 export const useChatService = (onMessage, id) => {
   // The chat messagesstate holder
-  const { loading, socket, setLoading } = useContext(UserContext);
+  const { loading, socket } = useContext(UserContext);
   const [messages, setChatMessages] = useState([]);
 
   // The emitter holder
