@@ -42,6 +42,14 @@ module.exports = (server) => {
       }
     });
 
+    socket.on('adminUserConnecting', (user) => {
+      socket.user = user;
+      console.log('reconnecting');
+      if (user.type) {
+        socket.join(socket.user.company);
+      }
+    });
+
     socket.on('retrieveNotifications', async (user) => {
       console.log('retrieving notific');
       if (user.type) {
@@ -89,6 +97,7 @@ module.exports = (server) => {
     socket.on('auth', async (id) => {
       console.log('user entering chatroom');
       if (socket.user.type) {
+        socket.leave(socket.user.company);
         existingRoom = await Chat.findOne({
           company: socket.user.company,
           roomName: id,

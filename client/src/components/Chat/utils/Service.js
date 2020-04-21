@@ -39,7 +39,9 @@ export const ChatService = (
 
 export const useChatService = (onMessage, id) => {
   // The chat messagesstate holder
-  const { loading, socket } = useContext(UserContext);
+  const { loading, socket, user, notifications, setNotifications } = useContext(
+    UserContext
+  );
   const [messages, setChatMessages] = useState([]);
 
   // The emitter holder
@@ -47,8 +49,6 @@ export const useChatService = (onMessage, id) => {
     console.log('Server not connected');
     return false;
   });
-
-  const { user, notifications, setNotifications } = useContext(UserContext);
 
   // Connect on component mounted
   useEffect(() => {
@@ -82,6 +82,15 @@ export const useChatService = (onMessage, id) => {
         onMessage(msgobj);
       });
     }
+    return (
+      user.type &&
+      (() => {
+        if (socket) {
+          console.log('executing reconnect');
+          socket.emit('adminUserConnecting', user);
+        }
+      })
+    );
   }, []);
 
   return {
