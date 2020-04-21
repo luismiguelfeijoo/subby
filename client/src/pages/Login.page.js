@@ -11,12 +11,7 @@ export const LoginPage = withProtected(
   withRouter(({ history }) => {
     const { setUser, setLoading } = useContext(UserContext);
     const [buttonLoading, setButtonLoading] = useState(false);
-    const formItemLayout = {
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16, offset: 4 },
-      },
-    };
+
     const methods = useForm({
       mode: 'onBlur',
       defaultValue: {
@@ -50,22 +45,22 @@ export const LoginPage = withProtected(
           </Title>
           <Form
             style={{
-              width: '100%',
+              margin: '40px auto',
+              width: '50%',
               backgroundColor: '#fff',
-              margin: '40px 0',
               padding: '30px 8%',
               borderRadius: '5px',
             }}
           >
             <Form.Item
-              {...formItemLayout}
+              wrapperCol={{ xs: { span: 24 } }}
               validateStatus={errors.username?.message ? 'error' : 'success'}
               help={errors.username?.message && errors.username.message}
             >
               <Controller
                 as={Input}
                 name='username'
-                placeholder='Username'
+                placeholder='Email'
                 rules={{
                   required: 'Required',
                   pattern: {
@@ -77,7 +72,7 @@ export const LoginPage = withProtected(
             </Form.Item>
 
             <Form.Item
-              {...formItemLayout}
+              wrapperCol={{ xs: { span: 24 } }}
               required={true}
               validateStatus={errors.password?.message ? 'error' : 'success'}
               help={errors.password?.message && errors.password.message}
@@ -97,7 +92,10 @@ export const LoginPage = withProtected(
               />
             </Form.Item>
 
-            <Form.Item {...formItemLayout} style={{ margin: '0 0 10px' }}>
+            <Form.Item
+              wrapperCol={{ xs: { span: 24 } }}
+              style={{ margin: '0 0 10px' }}
+            >
               <Button
                 disabled={buttonLoading}
                 type='primary'
@@ -107,10 +105,16 @@ export const LoginPage = withProtected(
                 Login
               </Button>
             </Form.Item>
-            <Form.Item {...formItemLayout} style={{ margin: '0 10px' }}>
+            <Form.Item
+              wrapperCol={{ xs: { span: 24 } }}
+              style={{ margin: '0 10px' }}
+            >
               <Text>or</Text>
             </Form.Item>
-            <Form.Item {...formItemLayout} style={{ margin: '0' }}>
+            <Form.Item
+              wrapperCol={{ xs: { span: 24 } }}
+              style={{ margin: '0' }}
+            >
               <Link to='/reset-password'>Forgot Password?</Link>
             </Form.Item>
           </Form>

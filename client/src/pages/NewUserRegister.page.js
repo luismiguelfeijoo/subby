@@ -88,15 +88,15 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
         </Title>
         <Form
           style={{
-            width: '100%',
+            margin: '40px auto',
+            width: '50%',
             backgroundColor: '#fff',
-            margin: '40px 0',
             padding: '30px 8%',
             borderRadius: '5px',
           }}
         >
           <Form.Item
-            {...formItemLayout}
+            wrapperCol={{ xs: { span: 24 } }}
             required={true}
             validateStatus={errors.password?.message ? 'error' : 'success'}
             help={errors.password?.message && errors.password.message}
@@ -116,7 +116,7 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
             />
           </Form.Item>
           <Form.Item
-            {...formItemLayout}
+            wrapperCol={{ xs: { span: 24 } }}
             required={true}
             validateStatus={
               errors.password_repeat?.message ? 'error' : 'success'
@@ -138,7 +138,7 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
             />
           </Form.Item>
           <Form.Item
-            {...formItemLayout}
+            wrapperCol={{ xs: { span: 24 } }}
             validateStatus={errors.firstName?.message ? 'error' : 'success'}
             help={errors.firstName?.message && errors.firstName.message}
           >
@@ -153,7 +153,7 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
             />
           </Form.Item>
           <Form.Item
-            {...formItemLayout}
+            wrapperCol={{ xs: { span: 24 } }}
             validateStatus={errors.lastName?.message ? 'error' : 'success'}
             help={errors.lastName?.message && errors.lastName.message}
           >
@@ -171,7 +171,7 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
             <Form.Item
               validateStatus={errors.lastName?.message ? 'error' : 'success'}
               help={errors.lastName?.message && errors.lastName.message}
-              {...formItemLayout}
+              wrapperCol={{ xs: { span: 24 } }}
             >
               <Controller
                 name='phone'
@@ -191,7 +191,7 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
             </Form.Item>
           )}
 
-          <Form.Item {...formItemLayout}>
+          <Form.Item wrapperCol={{ xs: { span: 24 } }}>
             <Button
               disabled={buttonLoading}
               type='primary'

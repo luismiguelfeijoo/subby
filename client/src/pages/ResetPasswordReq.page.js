@@ -43,15 +43,15 @@ export const ResetPasswordReq = withProtected(
           </Title>
           <Form
             style={{
-              width: '100%',
+              margin: '40px auto',
+              width: '50%',
               backgroundColor: '#fff',
-              margin: '40px 0',
               padding: '30px 8%',
               borderRadius: '5px',
             }}
           >
             <Form.Item
-              {...formItemLayout}
+              wrapperCol={{ xs: { span: 24 } }}
               validateStatus={errors.username?.message ? 'error' : 'success'}
               help={errors.username?.message && errors.username.message}
             >
@@ -68,7 +68,7 @@ export const ResetPasswordReq = withProtected(
                 }}
               />
             </Form.Item>
-            <Form.Item {...formItemLayout}>
+            <Form.Item wrapperCol={{ xs: { span: 24 } }}>
               <Button
                 loading={buttonLoading}
                 type='primary'
