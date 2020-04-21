@@ -5,6 +5,7 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Typography, List, Skeleton } from 'antd';
 import { Chat } from '../components/Chat/Index';
+import { SiderMenu } from '../components/Layout/Menu';
 
 export const ChatPage = withProtected(
   withRouter(({ history }) => {
@@ -27,7 +28,7 @@ export const ChatPage = withProtected(
         .finally(() => setSpinner(false));
     };
     return (
-      <LayoutTemplate sider>
+      <LayoutTemplate sider menu={<SiderMenu currentPage='chat' />}>
         {user.type ? (
           <List
             itemLayout='horizontal'

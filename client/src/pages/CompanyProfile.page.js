@@ -29,6 +29,7 @@ import {
 } from 'antd';
 import { formItemLayout, PageSpinner } from './utils/styles';
 import { SpinIcon } from '../../lib/loading';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Option } = Select;
 const { Text } = Typography;
 
@@ -97,8 +98,9 @@ export const CompanyProfilePage = withProtected(
       return (
         <LayoutTemplate
           sider
-          currentPage='companyProfile'
-          currentMenuTab='company'
+          menu={
+            <SiderMenu currentPage='companyProfile' currentMenuTab='company' />
+          }
         >
           {company ? (
             <>

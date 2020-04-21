@@ -5,6 +5,7 @@ import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Input, Form, Button, Typography, message } from 'antd';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Title, Text } = Typography;
 export const LoginPage = withProtected(
   withRouter(({ history }) => {
@@ -42,7 +43,7 @@ export const LoginPage = withProtected(
     };
 
     return (
-      <LayoutTemplate>
+      <LayoutTemplate menu={<SiderMenu broken />}>
         <FormContext {...methods}>
           <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
             LOGIN

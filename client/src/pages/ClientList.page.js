@@ -14,6 +14,7 @@ import {
 } from 'antd';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { typeClient } from './utils/helpers';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Text } = Typography;
 
 export const ClientListPage = withProtected(
@@ -45,7 +46,10 @@ export const ClientListPage = withProtected(
       };
 
       return (
-        <LayoutTemplate sider={true} currentPage='clientsList'>
+        <LayoutTemplate
+          sider={true}
+          menu={<SiderMenu currentPage='clientsList' />}
+        >
           <Input.Search
             placeholder='Search by name'
             onChange={(event) => setFilter(event.target.value)}

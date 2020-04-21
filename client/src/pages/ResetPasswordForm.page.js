@@ -10,6 +10,7 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Form, Button, Input, message, Typography } from 'antd';
 import { formItemLayout } from './utils/styles';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Title } = Typography;
 
 export const ResetPasswordForm = withRouter(({ history, match }) => {
@@ -54,7 +55,7 @@ export const ResetPasswordForm = withRouter(({ history, match }) => {
 
   return (
     <LayoutTemplate>
-      <FormContext {...methods}>
+      <FormContext {...methods} menu={<SiderMenu broken />}>
         <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
           UPDATE YOUR PASSWORD
         </Title>

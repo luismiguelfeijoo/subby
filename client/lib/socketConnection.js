@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 
-export const SocketConnection = (setNotifications, user) => {
+export const SocketConnection = (setNotifications, user, notification) => {
   console.log('Connecting websocket...');
   const socket = io(process.env.BACK_URL);
 
@@ -9,21 +9,28 @@ export const SocketConnection = (setNotifications, user) => {
   socket.emit('retrieveNotifications', user);
 
   socket.on('notification', (notifications, room) => {
-    console.log(notifications);
-
-    notifications.map((notification) => {
-      if (String(notification.sentBy) !== String(user._id)) {
-        const check = notification.readBy
+    notifications.map((incomingNotification) => {
+      if (String(incomingNotification.sentBy) !== String(user._id)) {
+        const check = incomingNotification.readBy
           .map((userThatRead) => String(userThatRead) !== String(user._id))
           .includes(false);
         if (!check) {
           setNotifications({
             active: true,
-            data: { user, notification, room },
+            data: { user, incomingNotification, room },
           });
           //socket.emit('readNotification', { user, notification, room });
         }
       }
+    });
+  });
+
+  socket.on('newNotification', (name) => {
+    console.log('setting new notification');
+    notification.open({
+      message: 'New message',
+      description: `${name.first} wrote you a new message`,
+      duration: 3,
     });
   });
 

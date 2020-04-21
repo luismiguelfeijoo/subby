@@ -34,6 +34,7 @@ const { Text } = Typography;
 import moment from 'moment';
 import { SpinIcon } from '../../lib/loading';
 import { formItemLayout, PageSpinner } from './utils/styles';
+import { SiderMenu } from '../components/Layout/Menu';
 export const SingleClientPage = withProtected(
   withTypeUser(
     withRouter(({ history, match }) => {
@@ -125,7 +126,7 @@ export const SingleClientPage = withProtected(
       };
 
       return (
-        <LayoutTemplate sider={true}>
+        <LayoutTemplate sider menu={<SiderMenu />}>
           {client ? (
             <>
               <Descriptions

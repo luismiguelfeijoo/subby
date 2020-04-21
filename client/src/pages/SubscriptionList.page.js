@@ -20,6 +20,7 @@ import {
   Skeleton,
 } from 'antd';
 import { typeSub } from './utils/helpers';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Text } = Typography;
 const { Search } = Input;
 
@@ -50,7 +51,10 @@ export const SubscriptionListPage = withProtected(
       };
 
       return (
-        <LayoutTemplate sider={true} currentPage={'subscriptionsList'}>
+        <LayoutTemplate
+          sider
+          menu={<SiderMenu currentPage={'subscriptionsList'} />}
+        >
           <Search
             placeholder='Search by name'
             onChange={(event) => setFilter(event.target.value)}

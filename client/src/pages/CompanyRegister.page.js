@@ -6,6 +6,7 @@ import { LayoutTemplate } from '../components/Layout';
 import { Form, Input, Button, message, Typography } from 'antd';
 import { formItemLayout } from './utils/styles';
 import jwt from 'jsonwebtoken';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Title } = Typography;
 
 export const CompanyRegisterPage = withRouter(({ history, match }) => {
@@ -55,7 +56,7 @@ export const CompanyRegisterPage = withRouter(({ history, match }) => {
   };
 
   return (
-    <LayoutTemplate>
+    <LayoutTemplate menu={<SiderMenu broken />}>
       <FormContext {...methods}>
         <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
           REGISTER

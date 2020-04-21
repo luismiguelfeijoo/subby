@@ -8,6 +8,7 @@ const { Option } = Select;
 const { Title } = Typography;
 import jwt from 'jsonwebtoken';
 import { formItemLayout } from './utils/styles';
+import { SiderMenu } from '../components/Layout/Menu';
 
 export const UserRegisterPage = withRouter(({ history, match }) => {
   const { setLoading, user, setUser } = useContext(UserContext);
@@ -80,7 +81,7 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
   };
 
   return (
-    <LayoutTemplate>
+    <LayoutTemplate menu={<SiderMenu />}>
       <FormContext {...methods}>
         <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
           REGISTER

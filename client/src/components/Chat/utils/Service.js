@@ -1,10 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../../../../lib/auth.api';
+import { notification } from 'antd';
 
-export const ChatService = (handleMessage, id, socket) => {
+export const ChatService = (
+  handleMessage,
+  id,
+  socket,
+  notifications,
+  setNotifications
+) => {
   console.log('entering chat room');
 
   socket.emit('auth', id);
+
+  if (notifications.active) {
+    setNotifications({ active: false });
+    socket.emit('updateNotification', notifications.data);
+  }
 
   socket.on('chatHistory', (chatHistory) => {
     chatHistory.map((message) => {
@@ -36,7 +48,7 @@ export const useChatService = (onMessage, id) => {
     return false;
   });
 
-  const { user } = useContext(UserContext);
+  const { user, notifications, setNotifications } = useContext(UserContext);
 
   // Connect on component mounted
   useEffect(() => {
@@ -54,7 +66,9 @@ export const useChatService = (onMessage, id) => {
           onMessage(msg);
         },
         id,
-        socket
+        socket,
+        notifications,
+        setNotifications
       );
 
       // NOTE: https://github.com/facebook/react/issues/14087

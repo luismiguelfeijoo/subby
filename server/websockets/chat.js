@@ -15,7 +15,6 @@ module.exports = (server) => {
     socket.on('userType', async (user) => {
       socket.user = user;
       if (user.type) {
-        console.log(socket.user);
         console.log('connecting to company room');
         socket.join(socket.user.company);
         const existingRoom = await Chat.findOne({
@@ -43,6 +42,49 @@ module.exports = (server) => {
       }
     });
 
+    socket.on('retrieveNotifications', async (user) => {
+      console.log('retrieving notific');
+      if (user.type) {
+        existingRoom = await Chat.findOne({
+          company: user.company,
+          roomName: user.company,
+        });
+      } else {
+        existingRoom = await Chat.findOne({
+          company: user.company,
+          roomName: user._id,
+        });
+        console.log('old notifications', existingRoom.notifications);
+      }
+      existingRoom &&
+        socket.emit(
+          'notification',
+          existingRoom.notifications.slice(-3),
+          existingRoom._id
+        );
+    });
+
+    socket.on(
+      'updateNotification',
+      async ({ user, incomingNotification, room }) => {
+        console.log('updating notific');
+        const existingRoom = await Chat.findById(room);
+        const readNotification = _.find(
+          existingRoom.notifications,
+          (roomNotification) =>
+            String(roomNotification._id) === String(incomingNotification._id)
+        );
+        console.log(readNotification);
+        if (readNotification) {
+          readNotification.readBy = [
+            ...readNotification.readBy,
+            socket.user._id,
+          ];
+          await existingRoom.save();
+        }
+      }
+    );
+
     //connect the admin to the room of specific user && recover history messages
     socket.on('auth', async (id) => {
       console.log('user entering chatroom');
@@ -51,7 +93,6 @@ module.exports = (server) => {
           company: socket.user.company,
           roomName: id,
         });
-        console.log(socket.user);
         socket.room = existingRoom
           ? existingRoom
           : await Chat.create({ company: socket.user.company, roomName: id });
@@ -91,50 +132,12 @@ module.exports = (server) => {
         .emit('chatmessage', { user: socket.user._id, text: msg });
 
       // send only last notification
-      socket
-        .to(socket.room.roomName)
-        .emit('notification', room.notifications.slice(-3), room._id);
-      socket
-        .to(socket.user.company)
-        .emit(
-          'notification',
-          globalRoom.notifications.slice(-3),
-          globalRoom._id
-        );
 
-      socket.on('readNotification', async ({ user, notification, room }) => {
-        console.log('updating notific');
-        const existingRoom = await Chat.findById(room);
-        const readNotification = _.find(
-          existingRoom.notifications,
-          (roomNotification) =>
-            String(roomNotification._id) === String(notification._id)
-        );
-        if (readNotification) {
-          readNotification.readBy = [
-            ...readNotification.readBy,
-            socket.user._id,
-          ];
-        }
-      });
-
-      socket.on('retrieveNotifications', async (user) => {
-        console.log('retrieving notific');
-        if (user.type) {
-          existingRoom = Chat.findOne({
-            company: user.company,
-            roomName: user.company,
-          });
-        } else {
-          existingRoom = Chat.findOne({
-            company: user.company,
-            roomName: user._id,
-          });
-          console.log(existingRoom);
-          existingRoom &&
-            socket.emit('notification', existingRoom.notifications.slice(-3));
-        }
-      });
+      if (!socket.user.type) {
+        socket
+          .to(socket.user.company)
+          .emit('newNotification', socket.user.name);
+      }
     });
   });
 };

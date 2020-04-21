@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Loading } from './loading.js';
 import { UserContext, getUserLogged } from './auth.api.js';
 import { SocketConnection } from './socketConnection.js';
+import { notification } from 'antd';
 
 // THIS is a HOC
 export const withUser = (Content) => () => {
@@ -16,7 +17,11 @@ export const withUser = (Content) => () => {
       .then((user) => {
         console.log(`Welcome ${user.username}`);
         setUser(user);
-        const userSocket = SocketConnection(setNotifications, user);
+        const userSocket = SocketConnection(
+          setNotifications,
+          user,
+          notification
+        );
         setSocket(userSocket);
       })
       .catch((error) => {
@@ -26,6 +31,7 @@ export const withUser = (Content) => () => {
         setLoading(false);
       });
   }, []);
+
   return (
     <UserContext.Provider
       value={{

@@ -4,6 +4,7 @@ import { UserContext } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Card, Col, Row, Button, Typography } from 'antd';
+import { SiderMenu } from '../components/Layout/Menu';
 const { Title } = Typography;
 
 export const HomePage = withProtected(
@@ -11,7 +12,7 @@ export const HomePage = withProtected(
     const style = { margin: '10px 0' };
     const { user, setLoading } = useContext(UserContext);
     return (
-      <LayoutTemplate>
+      <LayoutTemplate menu={<SiderMenu broken />}>
         <Row gutter={16}>
           <Col xs={24} md={{ span: 10, offset: 12 }}>
             <Card

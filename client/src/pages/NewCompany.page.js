@@ -7,6 +7,7 @@ import { LayoutTemplate } from '../components/Layout';
 import { Form, Button, Input, message, Typography } from 'antd';
 const { Title } = Typography;
 import { formItemLayout } from './utils/styles';
+import { SiderMenu } from '../components/Layout/Menu';
 
 export const NewCompanyPage = withProtected(
   withRouter(({ history }) => {
@@ -38,7 +39,7 @@ export const NewCompanyPage = withProtected(
 
     return (
       <LayoutTemplate>
-        <FormContext {...methods}>
+        <FormContext {...methods} menu={<SiderMenu broken />}>
           <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
             JOIN OUR COMUNITY
           </Title>

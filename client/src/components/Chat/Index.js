@@ -2,25 +2,28 @@ import React, { useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useChatService } from './utils/Service';
 import { MessageInput } from './utils/Input';
+import { Card } from 'antd';
 import { UserContext } from '../../../lib/auth.api';
 
 const ChatDeco = styled.div`
-  border: 1px solid red;
   width: 100%;
 `;
+
 const MessagesWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: calc(100vh - 80px);
-  width: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  height: 90vh;
+  flex-grow: 1;
+  overflow: auto;
   padding-bottom: 20px;
 `;
 
 export const Message = styled.div`
-  background: ${({ type }) => (type == 'server' ? '#722ed1' : 'lightgray')};
+  background: ${({ type }) =>
+    type == 'server'
+      ? 'linear-gradient(60deg,rgba(33, 6, 94, 1) 0%,rgba(83, 29, 171, 1) 100%);'
+      : 'linear-gradient(60deg,rgba(255,255,255, 1) 0%,rgba(211,211,211, 1) 100%);'};
   color: ${({ type }) => (type == 'server' ? 'white' : 'black')};
   border-radius: 10px;
   padding: 6px 10px;
