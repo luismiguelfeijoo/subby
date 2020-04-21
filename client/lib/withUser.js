@@ -8,7 +8,7 @@ export const withUser = (Content) => () => {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState();
-  const [notifications, setNotifications] = useState();
+  const [notifications, setNotifications] = useState({ active: false });
 
   useEffect(() => {
     console.log('loading user...');

@@ -43,6 +43,7 @@ export const LayoutTemplate = ({
               setBroken(broken);
             }}
           >
+            <div style={{ height: '10px' }}></div>
             <SiderMenu
               selection={currentPage}
               history={history}
@@ -96,7 +97,7 @@ export const LayoutTemplate = ({
 };
 
 const SiderMenu = withRouter(({ selection, history, open, broken }) => {
-  const { user, setUser, notifications, setNotifications } = useContext(
+  const { user, setUser, notifications, setNotifications, socket } = useContext(
     UserContext
   );
 
@@ -178,7 +179,15 @@ const SiderMenu = withRouter(({ selection, history, open, broken }) => {
               </Link>
             </Menu.Item>
             <Menu.Item key='Chat'>
-              <Link to='/chat' onClick={() => setNotifications()}>
+              <Link
+                to='/chat'
+                onClick={() => {
+                  if (notifications.active) {
+                    setNotifications({ active: false });
+                    socket.emit('readNotification', notifications.data);
+                  }
+                }}
+              >
                 <ChatIcon notifications={notifications} />
                 <span className='nav-text'>Chat</span>
               </Link>
@@ -230,7 +239,15 @@ const SiderMenu = withRouter(({ selection, history, open, broken }) => {
                 <span className='nav-text'>Subscriptions</span>
               </Link>
             </Menu.Item>
-            <Menu.Item key='Chat' onClick={() => setNotifications()}>
+            <Menu.Item
+              key='Chat'
+              onClick={() => {
+                if (notifications.active) {
+                  setNotifications({ active: false });
+                  socket.emit('readNotification', notifications.data);
+                }
+              }}
+            >
               <Link to='/chat'>
                 <ChatIcon notifications={notifications} />
                 <span className='nav-text'>Chat</span>
@@ -277,7 +294,7 @@ const Dot = styled.div`
 const ChatIcon = ({ notifications }) => {
   return (
     <>
-      {notifications ? (
+      {notifications.active ? (
         <DotContainer>
           <MessageOutlined />
           <Dot />

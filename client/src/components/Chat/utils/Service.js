@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../../../../lib/auth.api';
 
 export const ChatService = (handleMessage, id, socket) => {
-  console.log('entering chat room', handleMessage);
+  console.log('entering chat room');
 
   socket.emit('auth', id);
 

@@ -13,8 +13,6 @@ export const SingleChatPage = withProtected(
       const { user } = useContext(UserContext);
       const [spinner, setSpinner] = useState(true);
 
-      console.log(match.params.id);
-
       return (
         <LayoutTemplate sider>
           <Chat id={match.params.id}></Chat>

@@ -7,6 +7,9 @@ const schema = new mongoose.Schema(
     company: { type: ObjectId, ref: 'company' },
     roomName: { type: ObjectId, required: true },
     messages: [{ text: String, user: ObjectId }],
+    notifications: [
+      { sentBy: { type: ObjectId }, readBy: [{ type: ObjectId }] },
+    ],
   },
   {
     timestamps: true,
