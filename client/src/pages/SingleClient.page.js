@@ -31,6 +31,7 @@ import {
 } from 'antd';
 const { Option } = Select;
 const { Text } = Typography;
+import '../../public/css/form';
 import moment from 'moment';
 import { SpinIcon } from '../../lib/loading';
 import { formItemLayout, PageSpinner } from './utils/styles';
@@ -219,12 +220,7 @@ export const SingleClientPage = withProtected(
                   <Row gutter={[16, { md: 16, lg: 24 }]}>
                     <Col md={24} lg={12}>
                       <List
-                        style={{
-                          height: '100%',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                        }}
+                        className='paymentList'
                         header={<div>Services Adquired</div>}
                         footer={
                           <div
@@ -250,6 +246,7 @@ export const SingleClientPage = withProtected(
                         renderItem={(debt, i) => {
                           return (
                             <List.Item
+                              style={{ marginBottom: 'auto' }}
                               actions={[
                                 <p key='list-price'>{`${debt.amount.price} ${debt.amount.currency}`}</p>,
                               ]}
@@ -272,12 +269,7 @@ export const SingleClientPage = withProtected(
                     </Col>
                     <Col md={24} lg={12}>
                       <List
-                        style={{
-                          height: '100%',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                        }}
+                        className='paymentList'
                         header={<div>Payments Recieved</div>}
                         footer={
                           <div
