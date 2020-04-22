@@ -15,11 +15,10 @@ import {
 const { Option } = Select;
 const { Title } = Typography;
 import jwt from 'jsonwebtoken';
-import { formItemLayout } from './utils/styles';
-import { SiderMenu } from '../components/Layout/Menu';
+import '../../public/css/form.css';
 
 export const UserRegisterPage = withRouter(({ history, match }) => {
-  const { setLoading, user, setUser, setNotifications } = useContext(
+  const { setLoading, user, setUser, setNotifications, setSocket } = useContext(
     UserContext
   );
   const [userType, setUserType] = useState();
@@ -93,20 +92,12 @@ export const UserRegisterPage = withRouter(({ history, match }) => {
   };
 
   return (
-    <LayoutTemplate menu={<SiderMenu />}>
+    <LayoutTemplate>
       <FormContext {...methods}>
         <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
           REGISTER
         </Title>
-        <Form
-          style={{
-            margin: '40px auto',
-            width: '50%',
-            backgroundColor: '#fff',
-            padding: '30px 8%',
-            borderRadius: '5px',
-          }}
-        >
+        <Form className='outForm'>
           <Form.Item
             wrapperCol={{ xs: { span: 24 } }}
             required={true}

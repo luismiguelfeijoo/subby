@@ -51,10 +51,7 @@ export const SubscriptionListPage = withProtected(
       };
 
       return (
-        <LayoutTemplate
-          sider
-          menu={<SiderMenu currentPage={'subscriptionsList'} />}
-        >
+        <LayoutTemplate sider currentPage='subscriptionsList'>
           <Search
             placeholder='Search by name'
             onChange={(event) => setFilter(event.target.value)}

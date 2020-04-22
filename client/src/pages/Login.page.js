@@ -5,7 +5,7 @@ import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Input, Form, Button, Typography, message, notification } from 'antd';
-import { SiderMenu } from '../components/Layout/Menu';
+import '../../public/css/form.css';
 import { SocketConnection } from '../../lib/socketConnection';
 const { Title, Text } = Typography;
 export const LoginPage = withProtected(
@@ -45,20 +45,12 @@ export const LoginPage = withProtected(
     };
 
     return (
-      <LayoutTemplate menu={<SiderMenu broken />}>
+      <LayoutTemplate>
         <FormContext {...methods}>
           <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
             LOGIN
           </Title>
-          <Form
-            style={{
-              margin: '40px auto',
-              width: '50%',
-              backgroundColor: '#fff',
-              padding: '30px 8%',
-              borderRadius: '5px',
-            }}
-          >
+          <Form className='outForm'>
             <Form.Item
               wrapperCol={{ xs: { span: 24 } }}
               validateStatus={errors.username?.message ? 'error' : 'success'}

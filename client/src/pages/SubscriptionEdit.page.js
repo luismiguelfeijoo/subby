@@ -74,7 +74,7 @@ export const SubscriptionEditPage = withProtected(
       };
 
       return (
-        <LayoutTemplate sider menu={<SiderMenu />}>
+        <LayoutTemplate sider>
           {sub ? (
             <FormContext {...methods}>
               <Form>

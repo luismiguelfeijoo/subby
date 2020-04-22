@@ -6,8 +6,7 @@ import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Form, Button, Input, message, Typography } from 'antd';
 const { Title } = Typography;
-import { formItemLayout } from './utils/styles';
-import { SiderMenu } from '../components/Layout/Menu';
+import '../../public/css/form.css';
 
 export const NewCompanyPage = withProtected(
   withRouter(({ history }) => {
@@ -39,19 +38,11 @@ export const NewCompanyPage = withProtected(
 
     return (
       <LayoutTemplate>
-        <FormContext {...methods} menu={<SiderMenu broken />}>
+        <FormContext {...methods}>
           <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
             JOIN OUR COMUNITY
           </Title>
-          <Form
-            style={{
-              margin: '40px auto',
-              width: '50%',
-              backgroundColor: '#fff',
-              padding: '30px 8%',
-              borderRadius: '5px',
-            }}
-          >
+          <Form className='outForm'>
             <Form.Item
               wrapperCol={{ xs: { span: 24 } }}
               validateStatus={errors.company?.message ? 'error' : 'success'}

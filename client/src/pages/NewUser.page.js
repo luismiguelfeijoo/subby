@@ -38,9 +38,8 @@ export const NewUserPage = withProtected(
       return (
         <LayoutTemplate
           sider
-          menu={
-            <SiderMenu currentPage='addUserOrPlan' currentMenuTab='company' />
-          }
+          currentPage='addUserOrPlan'
+          currentMenuTab='company'
         >
           <FormContext {...methods}>
             <Title style={{ textAlign: 'center' }} level={2}>

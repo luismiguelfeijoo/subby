@@ -126,7 +126,7 @@ export const SingleClientPage = withProtected(
       };
 
       return (
-        <LayoutTemplate sider menu={<SiderMenu />}>
+        <LayoutTemplate sider>
           {client ? (
             <>
               <Descriptions

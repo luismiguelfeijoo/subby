@@ -28,7 +28,7 @@ export const ChatPage = withProtected(
         .finally(() => setSpinner(false));
     };
     return (
-      <LayoutTemplate sider menu={<SiderMenu currentPage='chat' />}>
+      <LayoutTemplate sider currentPage='chat'>
         {user.type ? (
           <List
             itemLayout='horizontal'

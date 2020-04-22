@@ -98,9 +98,8 @@ export const CompanyProfilePage = withProtected(
       return (
         <LayoutTemplate
           sider
-          menu={
-            <SiderMenu currentPage='companyProfile' currentMenuTab='company' />
-          }
+          currentPage='companyProfile'
+          currentMenuTab='company'
         >
           {company ? (
             <>

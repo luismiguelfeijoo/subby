@@ -46,10 +46,7 @@ export const ClientListPage = withProtected(
       };
 
       return (
-        <LayoutTemplate
-          sider={true}
-          menu={<SiderMenu currentPage='clientsList' />}
-        >
+        <LayoutTemplate sider={true} currentPage='clientsList'>
           <Input.Search
             placeholder='Search by name'
             onChange={(event) => setFilter(event.target.value)}
