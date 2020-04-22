@@ -11,11 +11,13 @@ import {
   Popover,
   Typography,
   Skeleton,
+  Row,
+  Col,
 } from 'antd';
 import { withTypeUser } from '../../lib/protectedTypeUser';
 import { typeClient } from './utils/helpers';
 import { SiderMenu } from '../components/Layout/Menu';
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 export const ClientListPage = withProtected(
   withTypeUser(
@@ -47,22 +49,33 @@ export const ClientListPage = withProtected(
 
       return (
         <LayoutTemplate sider={true} currentPage='clientsList'>
-          <Input.Search
-            placeholder='Search by name'
-            onChange={(event) => setFilter(event.target.value)}
-            style={{ width: '50%', marginRight: 10 }}
-          />
-          <Button
-            onClick={() => {
-              const newData = [...data];
-              newData.sort((a, b) => {
-                return a.name.first < b.name.first ? -1 : 1;
-              });
-              setData(newData);
-            }}
-          >
-            Sort by Name
-          </Button>
+          <Title style={{ textAlign: 'center' }} level={4}>
+            Clients List
+          </Title>
+          <Divider />
+          <Row gutter={16}>
+            <Col xs={14} lg={18}>
+              <Input.Search
+                placeholder='Search by name'
+                onChange={(event) => setFilter(event.target.value)}
+                style={{ width: '100%', marginRight: 10 }}
+              />
+            </Col>
+            <Col xs={10} lg={6}>
+              <Button
+                block
+                onClick={() => {
+                  const newData = [...data];
+                  newData.sort((a, b) => {
+                    return a.name.first < b.name.first ? -1 : 1;
+                  });
+                  setData(newData);
+                }}
+              >
+                Sort by Name
+              </Button>
+            </Col>
+          </Row>
 
           <Divider />
 

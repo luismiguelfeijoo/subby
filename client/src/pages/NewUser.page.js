@@ -42,7 +42,7 @@ export const NewUserPage = withProtected(
           currentMenuTab='company'
         >
           <FormContext {...methods}>
-            <Title style={{ textAlign: 'center' }} level={2}>
+            <Title style={{ textAlign: 'center' }} level={4}>
               New User
             </Title>
             <Form style={{ width: '100%', marginTop: '40px' }}>
