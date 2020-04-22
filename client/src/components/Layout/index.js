@@ -52,23 +52,40 @@ export const LayoutTemplate = ({
         </>
       ) : (
         <>
-          <StyledBurger visible={visible} onClick={() => setVisible(!visible)}>
-            <div />
-            <div />
-            <div />
-          </StyledBurger>
-          <Drawer
-            placement='left'
-            closable={false}
-            onClose={() => setVisible(false)}
-            visible={visible}
-          >
-            <div style={{ height: '50px' }}></div>
-            <SiderMenu
-              currentMenuTab={currentMenuTab}
-              currentPage={currentPage}
-            />
-          </Drawer>
+          {user ? (
+            <>
+              <Header style={{ background: '#ffffff' }}>
+                <StyledBurger
+                  visible={visible}
+                  onClick={() => setVisible(!visible)}
+                >
+                  <div />
+                  <div />
+                  <div />
+                </StyledBurger>
+              </Header>
+              <Drawer
+                placement='left'
+                closable={false}
+                onClose={() => setVisible(false)}
+                visible={visible}
+              >
+                <div style={{ height: '50px' }}></div>
+                <SiderMenu
+                  currentMenuTab={currentMenuTab}
+                  currentPage={currentPage}
+                />
+              </Drawer>
+            </>
+          ) : (
+            <Header>
+              <SiderMenu
+                currentMenuTab={currentMenuTab}
+                currentPage={currentPage}
+                broken={broken}
+              />
+            </Header>
+          )}
           <Content
             style={{
               padding: 30,

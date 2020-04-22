@@ -3,9 +3,9 @@ import { Link, withRouter } from 'react-router-dom';
 import { UserContext, getClients } from '../../lib/auth.api';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
-import { Typography, List, Skeleton } from 'antd';
+import { Typography, List, Skeleton, Divider } from 'antd';
+const { Title } = Typography;
 import { Chat } from '../components/Chat/Index';
-import { SiderMenu } from '../components/Layout/Menu';
 
 export const ChatPage = withProtected(
   withRouter(({ history }) => {
@@ -30,23 +30,29 @@ export const ChatPage = withProtected(
     return (
       <LayoutTemplate sider currentPage='chat'>
         {user.type ? (
-          <List
-            itemLayout='horizontal'
-            dataSource={data}
-            renderItem={(client) => (
-              <List.Item>
-                <Skeleton loading={spinner} active>
-                  <List.Item.Meta
-                    title={
-                      <Link to={`/chat/${client._id}`}>
-                        {`${client.name.first} ${client.name.last}`}
-                      </Link>
-                    }
-                  />
-                </Skeleton>
-              </List.Item>
-            )}
-          />
+          <>
+            <Title style={{ textAlign: 'center' }} level={2}>
+              Chat List
+            </Title>
+            <Divider />
+            <List
+              itemLayout='horizontal'
+              dataSource={data}
+              renderItem={(client) => (
+                <List.Item>
+                  <Skeleton loading={spinner} active>
+                    <List.Item.Meta
+                      title={
+                        <Link to={`/chat/${client._id}`}>
+                          {`${client.name.first} ${client.name.last}`}
+                        </Link>
+                      }
+                    />
+                  </Skeleton>
+                </List.Item>
+              )}
+            />
+          </>
         ) : (
           <Chat id={user._id}></Chat>
         )}
