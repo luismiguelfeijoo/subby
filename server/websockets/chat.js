@@ -42,6 +42,11 @@ module.exports = (server) => {
       }
     });
 
+    socket.on('end', async (user) => {
+      console.log('disconnecting');
+      socket.disconnect();
+    });
+
     socket.on('adminUserConnecting', (user) => {
       socket.user = user;
       console.log('reconnecting');

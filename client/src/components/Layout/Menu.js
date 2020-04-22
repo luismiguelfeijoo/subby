@@ -17,7 +17,9 @@ import { doLogout, UserContext } from '../../../lib/auth.api';
 
 export const SiderMenu = withRouter(
   ({ currentPage, currentMenuTab, broken = false, history }) => {
-    const { user, setUser, notifications } = useContext(UserContext);
+    const { user, setUser, notifications, socket, setSocket } = useContext(
+      UserContext
+    );
 
     return (
       <>
@@ -53,7 +55,9 @@ export const SiderMenu = withRouter(
                 <Menu.Item
                   key='Logout'
                   onClick={async () => {
+                    socket.emit('end', user);
                     setUser();
+                    setSocket(null);
                     await doLogout();
                     history.push('/');
                   }}
@@ -134,7 +138,9 @@ export const SiderMenu = withRouter(
                 <Menu.Item
                   key='Logout'
                   onClick={async () => {
+                    socket.emit('end', user);
                     setUser();
+                    setSocket(null);
                     await doLogout();
                     history.push('/');
                   }}
@@ -172,6 +178,7 @@ export const SiderMenu = withRouter(
 );
 
 import styled from 'styled-components';
+import { SocketConnection } from '../../../lib/socketConnection';
 
 const DotContainer = styled.div`
   position: relative;
