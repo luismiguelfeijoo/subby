@@ -4,6 +4,7 @@ import { notification } from 'antd';
 
 export const ChatService = (
   handleMessage,
+  handleNewMessage,
   id,
   socket,
   notifications,
@@ -26,7 +27,7 @@ export const ChatService = (
 
   // recieve message
   socket.on('chatmessage', (message) => {
-    handleMessage(message);
+    handleNewMessage(message);
   });
 
   // send a message
@@ -65,6 +66,16 @@ export const useChatService = (onMessage, id) => {
           //setChatMessages([...messages, msgobj]);
           onMessage(msg);
         },
+        (newMsg) => {
+          const msgobj = {
+            type: String(newMsg.user) === String(user._id) ? 'me' : 'server',
+            text: newMsg.text,
+          };
+          // IMPORTANT: use a function, as setChatMessages can be stale
+          setChatMessages((currentState) => [msgobj, ...currentState]);
+          //setChatMessages([...messages, msgobj]);
+          onMessage(newMsg);
+        },
         id,
         socket,
         notifications,
@@ -78,7 +89,7 @@ export const useChatService = (onMessage, id) => {
         emitter(msg);
         // Add to messages array
         const msgobj = { type: 'me', text: msg };
-        setChatMessages((currentState) => [...currentState, msgobj]);
+        setChatMessages((currentState) => [msgobj, ...currentState]);
         onMessage(msgobj);
       });
     }
