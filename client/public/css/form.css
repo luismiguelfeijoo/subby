@@ -1,0 +1,24 @@
+.outForm {
+  margin: 40px auto;
+  width: 100%;
+  background-color: #fff;
+  padding: 30px 8%;
+  border-radius: 5px;
+}
+
+@media (min-width: 769px) {
+  .outForm {
+    width: 50%;
+  }
+}
+
+.paymentList {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ant-spin-nested-loading {
+  margin-bottom: auto;
+}

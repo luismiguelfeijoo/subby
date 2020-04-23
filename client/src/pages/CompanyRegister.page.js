@@ -5,7 +5,7 @@ import { useForm, FormContext, Controller } from 'react-hook-form';
 import { LayoutTemplate } from '../components/Layout';
 import { Form, Input, Button, message, Typography, notification } from 'antd';
 import jwt from 'jsonwebtoken';
-import { SiderMenu } from '../components/Layout/Menu';
+import '../../public/css/form.css';
 const { Title } = Typography;
 
 export const CompanyRegisterPage = withRouter(({ history, match }) => {
@@ -59,20 +59,12 @@ export const CompanyRegisterPage = withRouter(({ history, match }) => {
   };
 
   return (
-    <LayoutTemplate menu={<SiderMenu broken />}>
+    <LayoutTemplate>
       <FormContext {...methods}>
         <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
           REGISTER
         </Title>
-        <Form
-          style={{
-            margin: '40px auto',
-            width: '50%',
-            backgroundColor: '#fff',
-            padding: '30px 8%',
-            borderRadius: '5px',
-          }}
-        >
+        <Form className='outForm'>
           <Form.Item
             wrapperCol={{ xs: { span: 24 } }}
             required={true}

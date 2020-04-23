@@ -17,7 +17,9 @@ import { doLogout, UserContext } from '../../../lib/auth.api';
 
 export const SiderMenu = withRouter(
   ({ currentPage, currentMenuTab, broken = false, history }) => {
-    const { user, setUser, notifications } = useContext(UserContext);
+    const { user, setUser, notifications, socket, setSocket } = useContext(
+      UserContext
+    );
 
     return (
       <>
@@ -35,11 +37,7 @@ export const SiderMenu = withRouter(
                   <>
                     <UserOutlined />
                     <span className='nav-text'>
-                      {user.type
-                        ? user.type === 'admin'
-                          ? 'Admin'
-                          : 'Coordinator'
-                        : 'Client'}
+                      {user.name ? `${user.name.first}` : 'User'}
                     </span>
                   </>
                 }
@@ -53,7 +51,9 @@ export const SiderMenu = withRouter(
                 <Menu.Item
                   key='Logout'
                   onClick={async () => {
+                    socket.emit('end', user);
                     setUser();
+                    setSocket(null);
                     await doLogout();
                     history.push('/');
                   }}
@@ -96,7 +96,7 @@ export const SiderMenu = withRouter(
                   <span className='nav-text'>Clients</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key='Chat'>
+              <Menu.Item key='chat'>
                 <Link to='/chat'>
                   <ChatIcon notifications={notifications} />
                   <span className='nav-text'>Chat</span>
@@ -116,11 +116,7 @@ export const SiderMenu = withRouter(
                   <>
                     <UserOutlined />
                     <span className='nav-text'>
-                      {user.type
-                        ? user.type === 'admin'
-                          ? 'Admin'
-                          : 'Coordinator'
-                        : 'Client'}
+                      {user.name ? `${user.name.first}` : 'User'}
                     </span>
                   </>
                 }
@@ -134,7 +130,9 @@ export const SiderMenu = withRouter(
                 <Menu.Item
                   key='Logout'
                   onClick={async () => {
+                    socket.emit('end', user);
                     setUser();
+                    setSocket(null);
                     await doLogout();
                     history.push('/');
                   }}
@@ -143,13 +141,13 @@ export const SiderMenu = withRouter(
                   <span>Logout</span>
                 </Menu.Item>
               </SubMenu>
-              <Menu.Item key='subscriptionsList'>
-                <Link to='/client/subscriptions' className='nav-text'>
+              <Menu.Item key='details'>
+                <Link to='/client/details' className='nav-text'>
                   <FileSearchOutlined />
-                  <span className='nav-text'>Subscriptions</span>
+                  <span className='nav-text'>Details</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key='Chat'>
+              <Menu.Item key='chat'>
                 <Link to='/chat'>
                   <ChatIcon notifications={notifications} />
                   <span className='nav-text'>Chat</span>
@@ -172,6 +170,7 @@ export const SiderMenu = withRouter(
 );
 
 import styled from 'styled-components';
+import { SocketConnection } from '../../../lib/socketConnection';
 
 const DotContainer = styled.div`
   position: relative;

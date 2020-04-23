@@ -5,8 +5,7 @@ import { useForm, FormContext, Controller } from 'react-hook-form';
 import { withProtected } from '../../lib/protectedRoute';
 import { LayoutTemplate } from '../components/Layout';
 import { Form, Button, Input, message, Typography } from 'antd';
-import { formItemLayout } from './utils/styles';
-import { SiderMenu } from '../components/Layout/Menu';
+import '../../public/css/form.css';
 const { Title } = Typography;
 
 export const ResetPasswordReq = withProtected(
@@ -37,19 +36,11 @@ export const ResetPasswordReq = withProtected(
 
     return (
       <LayoutTemplate>
-        <FormContext {...methods} menu={<SiderMenu broken />}>
+        <FormContext {...methods}>
           <Title level={1} style={{ color: '#fff', textAlign: 'center' }}>
             REQUEST NEW PASSWORD
           </Title>
-          <Form
-            style={{
-              margin: '40px auto',
-              width: '50%',
-              backgroundColor: '#fff',
-              padding: '30px 8%',
-              borderRadius: '5px',
-            }}
-          >
+          <Form className='outForm'>
             <Form.Item
               wrapperCol={{ xs: { span: 24 } }}
               validateStatus={errors.username?.message ? 'error' : 'success'}
