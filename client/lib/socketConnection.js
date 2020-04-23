@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
 
 export const SocketConnection = (setNotifications, user, notification) => {
-  console.log('Connecting websocket...');
+  //console.log('Connecting websocket...');
   const socket = io(process.env.BACK_URL);
 
   socket.emit('userType', user);
@@ -26,7 +26,7 @@ export const SocketConnection = (setNotifications, user, notification) => {
   });
 
   socket.on('newNotification', (name) => {
-    console.log('setting new notification');
+    //console.log('setting new notification');
     notification.open({
       message: 'New message',
       description: `${name.first} wrote you a new message`,
