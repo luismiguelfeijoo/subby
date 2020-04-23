@@ -12,7 +12,7 @@ export const HomePage = withProtected(
     const style = { margin: '10px 0' };
     const { user, setLoading } = useContext(UserContext);
     return (
-      <LayoutTemplate menu={<SiderMenu broken />}>
+      <LayoutTemplate>
         <Row gutter={16}>
           <Col xs={24} md={{ span: 10, offset: 12 }}>
             <Card

@@ -54,12 +54,9 @@ export const ProfilePage = withProtected(
     };
 
     return (
-      <LayoutTemplate
-        sider={true}
-        menu={<SiderMenu currentMenuTab='User' currentPage='profile' />}
-      >
+      <LayoutTemplate sider={true} currentMenuTab='User' currentPage='profile'>
         <FormContext {...methods}>
-          <Title style={{ textAlign: 'center' }} level={2}>
+          <Title style={{ textAlign: 'center' }} level={4}>
             Profile
           </Title>
           <Form style={{ width: '100%', marginTop: '40px' }}>

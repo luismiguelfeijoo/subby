@@ -85,7 +85,7 @@ export const SingleSubscriptionPage = withProtected(
       };
 
       return (
-        <LayoutTemplate sider menu={<SiderMenu />}>
+        <LayoutTemplate sider>
           {data ? (
             <>
               <Descriptions

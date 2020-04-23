@@ -15,7 +15,7 @@ export const SingleChatPage = withProtected(
       const [spinner, setSpinner] = useState(true);
 
       return (
-        <LayoutTemplate sider menu={<SiderMenu currentPage='chat' />}>
+        <LayoutTemplate sider currentPage='chat'>
           <Chat id={match.params.id}></Chat>
         </LayoutTemplate>
       );
