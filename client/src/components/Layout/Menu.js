@@ -149,6 +149,12 @@ export const SiderMenu = withRouter(
                   <span>Logout</span>
                 </Menu.Item>
               </SubMenu>
+              <Menu.Item key='details'>
+                <Link to='/client/details' className='nav-text'>
+                  <FileSearchOutlined />
+                  <span className='nav-text'>Details</span>
+                </Link>
+              </Menu.Item>
               <Menu.Item key='subscriptionsList'>
                 <Link to='/client/subscriptions' className='nav-text'>
                   <FileSearchOutlined />

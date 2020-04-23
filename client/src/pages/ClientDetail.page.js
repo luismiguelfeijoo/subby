@@ -83,7 +83,7 @@ export const ClientDetailPage = withProtected(
 
       console.log(client);
       return (
-        <LayoutTemplate sider>
+        <LayoutTemplate sider currentPage='details'>
           {client ? (
             <>
               <Descriptions
@@ -138,8 +138,8 @@ export const ClientDetailPage = withProtected(
                       calculateTotal(client.payments, e, setPayedTotal);
                     }}
                   />
-                  <Row gutter={[16, { xs: 16, lg: 24 }]}>
-                    <Col md={24} lg={12}>
+                  <Row gutter={[16, { xs: 16, s: 16, md: 16, lg: 24 }]}>
+                    <Col s={24} md={24} lg={12}>
                       <List
                         className='paymentList'
                         header={<div>Services Adquired</div>}
