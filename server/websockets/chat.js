@@ -109,6 +109,18 @@ module.exports = (server) => {
           ? existingRoom
           : await Chat.create({ company: socket.user.company, roomName: id });
         socket.join(socket.room.roomName);
+      } else if (!socket.room) {
+        const existingRoom = await Chat.findOne({
+          company: socket.user.company,
+          roomName: socket.user._id,
+        });
+        socket.room = existingRoom
+          ? existingRoom
+          : await Chat.create({
+              company: socket.user.company,
+              roomName: socket.user._id,
+            });
+        socket.join(socket.room.roomName);
       }
       socket.emit(
         'chatHistory',

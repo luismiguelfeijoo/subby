@@ -12,10 +12,10 @@ export const withUser = (Content) => () => {
   const [notifications, setNotifications] = useState({ active: false });
 
   useEffect(() => {
-    console.log('loading user...');
+    //console.log('loading user...');
     getUserLogged()
       .then((user) => {
-        console.log(`Welcome ${user.username}`);
+        //console.log(`Welcome ${user.username}`);
         setUser(user);
         const userSocket = SocketConnection(
           setNotifications,
