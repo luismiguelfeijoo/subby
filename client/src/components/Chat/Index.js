@@ -10,12 +10,10 @@ const ChatDeco = styled.div`
 
 const MessagesWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: ${({ page }) => (page === 'local' ? '90vh' : '76vh')};
-  flex-grow: 1;
+  flex-direction: column-reverse;
   overflow: auto;
-  padding-bottom: 20px;
+  height: ${({ page }) => (page === 'local' ? '90vh' : '76vh')};
+  padding-bottom: 15px;
 `;
 
 export const Message = styled.div`
@@ -64,3 +62,10 @@ export const Chat = ({ id }) => {
     </ChatDeco>
   );
 };
+
+/*
+height: 75vh;
+    display: flex;
+    flex-direction: column-reverse;
+    overflow: auto;
+    */

@@ -138,9 +138,9 @@ module.exports = (server) => {
         roomName: socket.user.company,
       });
 
-      room.messages = [...room.messages, { user: socket.user._id, text: msg }];
+      room.messages = [{ user: socket.user._id, text: msg }, ...room.messages];
       room.messages.length > 50 &&
-        (room.messages = [...room.messages].slice(-50));
+        (room.messages = [...room.messages].slice(0, 50));
       room.notifications = [
         ...room.notifications,
         { sentBy: socket.user._id, readBy: [socket.user._id] },
