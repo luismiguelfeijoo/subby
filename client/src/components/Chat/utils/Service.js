@@ -9,7 +9,7 @@ export const ChatService = (
   notifications,
   setNotifications
 ) => {
-  console.log('entering chat room');
+  //console.log('entering chat room');
 
   socket.emit('auth', id);
 
@@ -31,7 +31,7 @@ export const ChatService = (
 
   // send a message
   return (msg) => {
-    console.log(`Sending message: "${msg}"`);
+    //console.log(`Sending message: "${msg}"`);
     socket.emit('chatmessage', msg);
     return true;
   };
@@ -46,7 +46,7 @@ export const useChatService = (onMessage, id) => {
 
   // The emitter holder
   const [sendMessage, setEmitter] = useState(() => {
-    console.log('Server not connected');
+    //console.log('Server not connected');
     return false;
   });
 
@@ -86,7 +86,7 @@ export const useChatService = (onMessage, id) => {
       user.type &&
       (() => {
         if (socket) {
-          console.log('executing reconnect');
+          //console.log('executing reconnect');
           socket.emit('adminUserConnecting', user);
         }
       })

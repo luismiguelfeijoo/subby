@@ -54,7 +54,7 @@ export const LayoutTemplate = ({
         <>
           {user ? (
             <>
-              <Header style={{ background: '#ffffff' }}>
+              <Header>
                 <StyledBurger
                   visible={visible}
                   onClick={() => setVisible(!visible)}
@@ -120,7 +120,7 @@ import { generate, presetPalettes } from '@ant-design/colors';
 
 export const StyledBurger = styled.button`
   position: absolute;
-  top: 5%;
+  top: 15px;
   left: 2rem;
   display: flex;
   flex-direction: column;
@@ -140,7 +140,7 @@ export const StyledBurger = styled.button`
   div {
     width: 2rem;
     height: 0.15rem;
-    background: ${({ visible }) => (!visible ? '#531dab' : '#ffffff')};
+    background: #ffffff;
     border-radius: 10px;
     transition: all 0.1s cubic-bezier(0.55, 0.055, 0.675, 0.19);
     position: relative;

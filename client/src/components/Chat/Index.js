@@ -2,7 +2,6 @@ import React, { useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useChatService } from './utils/Service';
 import { MessageInput } from './utils/Input';
-import { Card } from 'antd';
 import { UserContext } from '../../../lib/auth.api';
 
 const ChatDeco = styled.div`
@@ -13,7 +12,7 @@ const MessagesWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: 90vh;
+  height: ${({ page }) => (page === 'local' ? '90vh' : '76vh')};
   flex-grow: 1;
   overflow: auto;
   padding-bottom: 20px;
@@ -38,7 +37,7 @@ export const Message = styled.div`
 
 export const Chat = ({ id }) => {
   // Use ref to messages div
-
+  const { user } = useContext(UserContext);
   const msgRef = useRef();
 
   // The Chat service :)
@@ -51,7 +50,10 @@ export const Chat = ({ id }) => {
 
   return (
     <ChatDeco>
-      <MessagesWrapper ref={msgRef}>
+      <MessagesWrapper
+        ref={msgRef}
+        page={String(id) !== String(user._id) ? 'local' : 'client'}
+      >
         {messages.map((message, i) => (
           <Message key={i} type={message.type}>
             {message.text}
