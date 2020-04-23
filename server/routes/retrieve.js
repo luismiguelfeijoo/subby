@@ -143,18 +143,19 @@ router.get('/clients', ensureLogin.ensureLoggedIn(), async (req, res, next) => {
                   console.log('monthToCharge', monthsToCharge);
 
                   let date = new Date();
-                  
+
                   date = moment(
                     date.setYear(plan.startDate.getFullYear())
                   ).toDate();
 
                   date = moment(
                     date.setMonth(plan.startDate.getMonth() - monthCount)
-                  ).endOf('month')
-                  .toDate();
+                  )
+                    .endOf('month')
+                    .toDate();
 
-                  date = moment(date).startOf("day").toDate()
-                    
+                  date = moment(date).startOf('day').toDate();
+
                   let fraction =
                     monthsToCharge % 1 == 0 ? 1 : monthsToCharge % 1;
                   console.log('fraction', fraction);
@@ -228,14 +229,28 @@ router.get(
   ensureLogin.ensureLoggedIn(),
   async (req, res, next) => {
     const { id } = req.params;
-    const loggedAdmin = req.user;
+    const loggedUser = req.user;
     try {
-      if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
+      if (loggedUser.type === 'admin' || loggedUser.type === 'coordinator') {
         const client = await ClientUser.findById(id).populate({
           path: 'subscriptions',
           populate: ['plans.plan', 'extras.extra', 'debts.data'],
         });
         return res.json(client);
+      } else if (String(loggedUser._id) === String(id)) {
+        const client = await ClientUser.findById(id).populate({
+          path: 'subscriptions',
+          populate: ['plans.plan', 'extras.extra', 'debts.data'],
+        });
+        return res.json(
+          _.pick(client, [
+            'name',
+            'debts',
+            'subscriptions',
+            'username',
+            'payments',
+          ])
+        );
       } else {
         return res.status(401).json({ status: 'User is not local' });
       }

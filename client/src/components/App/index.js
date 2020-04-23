@@ -10,6 +10,7 @@ import { CompanyRouter } from '../../routes/Company.router';
 import { ProfileRouter } from '../../routes/Profile.router';
 import { NotFoundPage } from '../../pages/NotFoundPage';
 import { ChatRouter } from '../../routes/Chat.router';
+import { ClientRouter } from '../../routes/Client.router';
 
 export const App = withUser(() => {
   return (
@@ -32,6 +33,10 @@ export const App = withUser(() => {
         <Route
           path='/company'
           component={(props) => <CompanyRouter {...props} />}
+        />
+        <Route
+          path='/client'
+          component={(props) => <ClientRouter {...props} />}
         />
         <Route
           path='/profile'

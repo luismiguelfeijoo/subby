@@ -25,7 +25,7 @@ export const withUser = (Content) => () => {
         setSocket(userSocket);
       })
       .catch((error) => {
-        console.error('No user logged in');
+        console.error(error);
       })
       .finally(() => {
         setLoading(false);

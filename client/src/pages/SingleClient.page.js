@@ -217,7 +217,7 @@ export const SingleClientPage = withProtected(
                       calculateTotal(client.payments, e, setPayedTotal);
                     }}
                   />
-                  <Row gutter={[16, { md: 16, lg: 24 }]}>
+                  <Row gutter={[16, { xs: 16, lg: 24 }]}>
                     <Col md={24} lg={12}>
                       <List
                         className='paymentList'
