@@ -81,7 +81,6 @@ export const ClientDetailPage = withProtected(
         );
       };
 
-      console.log(client);
       return (
         <LayoutTemplate sider currentPage='details'>
           {client ? (

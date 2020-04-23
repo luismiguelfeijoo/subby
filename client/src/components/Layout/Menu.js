@@ -37,11 +37,7 @@ export const SiderMenu = withRouter(
                   <>
                     <UserOutlined />
                     <span className='nav-text'>
-                      {user.type
-                        ? user.type === 'admin'
-                          ? 'Admin'
-                          : 'Coordinator'
-                        : 'Client'}
+                      {user.name ? `${user.name.first}` : 'User'}
                     </span>
                   </>
                 }
@@ -100,7 +96,7 @@ export const SiderMenu = withRouter(
                   <span className='nav-text'>Clients</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key='Chat'>
+              <Menu.Item key='chat'>
                 <Link to='/chat'>
                   <ChatIcon notifications={notifications} />
                   <span className='nav-text'>Chat</span>
@@ -120,11 +116,7 @@ export const SiderMenu = withRouter(
                   <>
                     <UserOutlined />
                     <span className='nav-text'>
-                      {user.type
-                        ? user.type === 'admin'
-                          ? 'Admin'
-                          : 'Coordinator'
-                        : 'Client'}
+                      {user.name ? `${user.name.first}` : 'User'}
                     </span>
                   </>
                 }
@@ -155,13 +147,7 @@ export const SiderMenu = withRouter(
                   <span className='nav-text'>Details</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key='subscriptionsList'>
-                <Link to='/client/subscriptions' className='nav-text'>
-                  <FileSearchOutlined />
-                  <span className='nav-text'>Subscriptions</span>
-                </Link>
-              </Menu.Item>
-              <Menu.Item key='Chat'>
+              <Menu.Item key='chat'>
                 <Link to='/chat'>
                   <ChatIcon notifications={notifications} />
                   <span className='nav-text'>Chat</span>

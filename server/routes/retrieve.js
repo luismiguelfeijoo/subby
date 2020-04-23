@@ -296,16 +296,20 @@ router.get(
   ensureLogin.ensureLoggedIn(),
   async (req, res, next) => {
     const { id } = req.params;
-    const loggedAdmin = req.user;
+    const loggedUser = req.user;
+    const subscription = await Subscription.findById(id)
+      .populate('parents')
+      .populate({ path: 'plans.plan' })
+      .populate({ path: 'extras.extra' });
     try {
-      if (loggedAdmin.type === 'admin' || loggedAdmin.type === 'coordinator') {
-        const subscription = await Subscription.findById(id)
-          .populate('parents')
-          .populate({ path: 'plans.plan' })
-          .populate({ path: 'extras.extra' });
+      if (loggedUser.type === 'admin' || loggedUser.type === 'coordinator') {
+        return res.json(subscription);
+      } else if (
+        String(loggedUser._id) === String(subscription.parents[0]._id)
+      ) {
         return res.json(subscription);
       } else {
-        return res.status(401).json({ status: 'User is not local' });
+        return res.status(401).json({ status: 'User is not allowed' });
       }
     } catch (error) {
       return res.status(401).json({ error });
