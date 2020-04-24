@@ -71,7 +71,7 @@ export const SubscriptionListPage = withProtected(
                 onClick={() => {
                   const newData = [...data];
                   newData.sort((a, b) => {
-                    return a.name.first < b.name.first ? -1 : 1;
+                    return a.name < b.name ? -1 : 1;
                   });
                   setData(newData);
                 }}

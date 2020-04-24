@@ -33,7 +33,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "DEBUG=back:* nodemon ./bin/www",
-    "dev-windows": "nodemon ./bin/www"
+    "dev-windows": "nodemon ./bin/www",
+    "seed": "node seeds/CompanyAndUser.js"
   },
   "author": "",
   "license": "ISC"
