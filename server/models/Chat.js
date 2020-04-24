@@ -6,7 +6,16 @@ const schema = new mongoose.Schema(
   {
     company: { type: ObjectId, ref: 'company' },
     roomName: { type: ObjectId, required: true },
-    messages: [{ text: String, user: ObjectId }],
+    messages: [
+      {
+        text: String,
+        user: ObjectId,
+        from: {
+          type: String,
+          enum: ['local', 'client'],
+        },
+      },
+    ],
     notifications: [
       { sentBy: { type: ObjectId }, readBy: [{ type: ObjectId }] },
     ],
