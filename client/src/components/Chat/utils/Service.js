@@ -57,13 +57,14 @@ export const useChatService = (onMessage, id) => {
     if (!loading) {
       const emitter = ChatService(
         (msg) => {
+          let msgobj;
           if (!user.type) {
-            const msgobj = {
+            msgobj = {
               type: String(msg.user) === String(user._id) ? 'me' : 'server',
               text: msg.text,
             };
           } else {
-            const msgobj = {
+            msgobj = {
               type:
                 String(msg.user) === String(user._id) || msg.from === 'local'
                   ? 'me'
@@ -77,13 +78,14 @@ export const useChatService = (onMessage, id) => {
           onMessage(msg);
         },
         (newMsg) => {
+          let msgobj;
           if (!user.type) {
-            const msgobj = {
+            msgobj = {
               type: String(newMsg.user) === String(user._id) ? 'me' : 'server',
               text: newMsg.text,
             };
           } else {
-            const msgobj = {
+            msgobj = {
               type:
                 String(newMsg.user) === String(user._id) || msg.from === 'local'
                   ? 'me'
