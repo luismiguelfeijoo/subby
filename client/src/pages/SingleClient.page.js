@@ -230,7 +230,7 @@ export const SingleClientPage = withProtected(
                             }}
                           >
                             <div>Total:</div>
-                            <div>{`${debtTotal} $`}</div>
+                            <div>{`${debtTotal} €`}</div>
                           </div>
                         }
                         size='small'
@@ -279,7 +279,7 @@ export const SingleClientPage = withProtected(
                             }}
                           >
                             <div>Total:</div>
-                            <div>{`${payedTotal} $`}</div>
+                            <div>{`${payedTotal} €`}</div>
                           </div>
                         }
                         size='small'
@@ -325,7 +325,7 @@ export const SingleClientPage = withProtected(
                         <Text
                           key='total-debt'
                           type='danger'
-                        >{`- ${debtTotal} $`}</Text>,
+                        >{`- ${debtTotal} €`}</Text>,
                       ]}
                     >
                       <List.Item.Meta title={`Consumed by Client`} />
@@ -335,7 +335,7 @@ export const SingleClientPage = withProtected(
                         <Text
                           key='total-payed'
                           type={payedTotal ? '' : 'warning'}
-                        >{`+ ${payedTotal} $`}</Text>,
+                        >{`+ ${payedTotal} €`}</Text>,
                       ]}
                     >
                       <List.Item.Meta title={`Payed by Client`} />
@@ -345,7 +345,7 @@ export const SingleClientPage = withProtected(
                         <Text
                           key='total-balance'
                           type={payedTotal - debtTotal > 0 ? '' : 'danger'}
-                        >{`${(payedTotal - debtTotal).toFixed(2)} $`}</Text>,
+                        >{`${(payedTotal - debtTotal).toFixed(2)} €`}</Text>,
                       ]}
                     >
                       <List.Item.Meta title={`Total:`} />
