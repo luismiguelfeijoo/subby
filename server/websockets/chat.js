@@ -142,7 +142,14 @@ module.exports = (server) => {
         roomName: socket.user.company,
       });
 
-      room.messages = [{ user: socket.user._id, text: msg }, ...room.messages];
+      room.messages = [
+        {
+          user: socket.user._id,
+          text: msg,
+          from: socket.user.type ? 'local' : 'client',
+        },
+        ...room.messages,
+      ];
       room.messages.length > 50 &&
         (room.messages = [...room.messages].slice(0, 50));
       room.notifications = [
@@ -161,9 +168,11 @@ module.exports = (server) => {
         (globalRoom.notifications = [...globalRoom.notifications].slice(-10));
       await globalRoom.save();
 
-      socket
-        .to(socket.room.roomName)
-        .emit('chatmessage', { user: socket.user._id, text: msg });
+      socket.to(socket.room.roomName).emit('chatmessage', {
+        user: socket.user._id,
+        text: msg,
+        from: socket.user.type ? 'local' : 'client',
+      });
 
       // send only last notification
 
