@@ -57,20 +57,41 @@ export const useChatService = (onMessage, id) => {
     if (!loading) {
       const emitter = ChatService(
         (msg) => {
-          const msgobj = {
-            type: String(msg.user) === String(user._id) ? 'me' : 'server',
-            text: msg.text,
-          };
+          if (!user.type) {
+            const msgobj = {
+              type: String(msg.user) === String(user._id) ? 'me' : 'server',
+              text: msg.text,
+            };
+          } else {
+            const msgobj = {
+              type:
+                String(msg.user) === String(user._id) || msg.from === 'local'
+                  ? 'me'
+                  : 'server',
+              text: msg.text,
+            };
+          }
           // IMPORTANT: use a function, as setChatMessages can be stale
           setChatMessages((currentState) => [...currentState, msgobj]);
           //setChatMessages([...messages, msgobj]);
           onMessage(msg);
         },
         (newMsg) => {
-          const msgobj = {
-            type: String(newMsg.user) === String(user._id) ? 'me' : 'server',
-            text: newMsg.text,
-          };
+          if (!user.type) {
+            const msgobj = {
+              type: String(newMsg.user) === String(user._id) ? 'me' : 'server',
+              text: newMsg.text,
+            };
+          } else {
+            const msgobj = {
+              type:
+                String(newMsg.user) === String(user._id) || msg.from === 'local'
+                  ? 'me'
+                  : 'server',
+              text: newMsg.text,
+            };
+          }
+
           // IMPORTANT: use a function, as setChatMessages can be stale
           setChatMessages((currentState) => [msgobj, ...currentState]);
           //setChatMessages([...messages, msgobj]);
