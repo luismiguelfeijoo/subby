@@ -131,7 +131,7 @@ export const SingleClientPage = withProtected(
           {client ? (
             <>
               <Descriptions
-                title={`Client: ${client.name.first} ${client.name.last}`}
+                title={`Client: ${client.name.first} ${client.name.last} - ${client.username}`}
                 bordered
                 column={1}
                 layout='vertical'

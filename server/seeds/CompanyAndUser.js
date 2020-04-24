@@ -103,7 +103,7 @@ withDbConnection(async () => {
   });
   const admin = await LocalUser.create({
     username: 'luism.feijoo26@gmail.com',
-    password: hashPassword('luis12345.'),
+    password: hashPassword('Luis12345.'),
     name: {
       first: 'Luis',
       last: 'Feijoo',
@@ -115,7 +115,7 @@ withDbConnection(async () => {
   const clients = new Array(50).fill(0).map((client, i) => {
     return {
       username: `${i}@gmail.com`,
-      password: hashPassword('luis12345.'),
+      password: hashPassword('Luis12345.'),
       name: {
         first: `${names[i]}`,
         last: `${surnames[i % 10]}`,
