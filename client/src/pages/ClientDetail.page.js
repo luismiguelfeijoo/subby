@@ -86,7 +86,7 @@ export const ClientDetailPage = withProtected(
           {client ? (
             <>
               <Descriptions
-                title={`Details:`}
+                title={<div style={{ textAlign: 'center' }}>Details</div>}
                 bordered
                 column={1}
                 layout='vertical'

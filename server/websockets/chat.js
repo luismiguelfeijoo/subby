@@ -126,7 +126,11 @@ module.exports = (server) => {
         'chatHistory',
         socket.room.messages.length > 0
           ? socket.room.messages
-          : [{ text: `Welcome ${socket.user.name.first}` }]
+          : [
+              {
+                text: `Welcome ${socket.user.name.first}, this is your first message`,
+              },
+            ]
       );
     });
 
