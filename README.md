@@ -4,7 +4,7 @@ An App that let's you track your clients subscriptions
 
 The front is developed with React and the back is an Express.js server with socket.io for the chat and comunication.
 
-<a href="https://subby-platform.herokuapp.com"><img width="200" alt="main-page" src="https://imgur.com/a/9OBFzM5"></a>
+<a href="https://subby-platform.herokuapp.com"><img width="100%" alt="main-page" src="https://i.imgur.com/pdJffkA.png"></a>
 
 ## What is S U B B Y
 
@@ -19,7 +19,7 @@ The company can register their plans (monthly) and extras (daily) services to ma
 
 To create a company you just have to submit your email and your company name, later you will recieve an email with a link to confirm your subscription!
 
-<img width="200" alt="new-company" src="https://imgur.com/a/9OBFzM5">
+<img width="100%" alt="new-company" src="https://i.imgur.com/Rvj3nV1.png">
 
 Every time you submit the creation of a new user we will generate a secure token to make sure their email is the one is submitted by the company. The creation of any client or local users are perform in similar manners as of the creation of the company.
 
