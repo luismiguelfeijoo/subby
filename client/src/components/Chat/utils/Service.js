@@ -87,7 +87,8 @@ export const useChatService = (onMessage, id) => {
           } else {
             msgobj = {
               type:
-                String(newMsg.user) === String(user._id) || msg.from === 'local'
+                String(newMsg.user) === String(user._id) ||
+                newMsg.from === 'local'
                   ? 'me'
                   : 'server',
               text: newMsg.text,
