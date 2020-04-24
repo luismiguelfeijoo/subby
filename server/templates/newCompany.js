@@ -73,7 +73,7 @@ const newCompanyTemplate = (context) => {
             <mj-social font-size="15px" icon-size="30px" mode="horizontal" padding="0" align="center">
               <mj-social-element name="github" href="https://github.com/luismiguelfeijoo" background-color="#A1A0A0">
               </mj-social-element>
-              <mj-social-element name="linkedin" href="www.linkedin.com/in/luismifeijoo" background-color="#A1A0A0">
+              <mj-social-element name="linkedin" href="https://www.linkedin.com/in/luismifeijoo" background-color="#A1A0A0">
               </mj-social-element>
             </mj-social>
             
