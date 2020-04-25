@@ -140,7 +140,8 @@ The implementation of JWT has made possible the secure user creation and passwor
 
 ## TODO (More work in the future 💪🏻)
 
-* Make a global static of the company
+* Make a global statictic of the company
+* Add client payment support directly to company
 
 All of the ideas are welcome!
 
